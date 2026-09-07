@@ -20,6 +20,10 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.security.firewall_engine import firewall_engine
+from packages.shared_types.src.firewall import (
+    FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
+)
 from services.digital_twin.core.topology.service_dependency_engine import service_dependency_engine
 from packages.shared_types.src.service_dependency import (
     ServiceDependencyModel, ServiceDependencyChainResult, DependencyTypeEnum
@@ -304,6 +308,59 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 35: FIREWALL & ZONE API ====================
+
+class TrafficInspectionPayload(BaseModel):
+    source_device_id: str
+    destination_device_id: str
+    protocol: str = "TCP"
+    destination_port: Optional[int] = None
+
+class DeviceZoneAssignPayload(BaseModel):
+    device_id: str
+
+@app.post("/api/v1/twin/firewall/rules", status_code=201)
+def add_firewall_rule(rule: FirewallRuleModel):
+    try:
+        created = firewall_engine.addRule(rule)
+        return {"status": "RULE_CREATED", "rule": created.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/firewall/rules")
+def list_firewall_rules():
+    rules = firewall_engine.listRules()
+    return {"count": len(rules), "rules": [r.model_dump() for r in rules]}
+
+@app.post("/api/v1/twin/firewall/inspect")
+def inspect_firewall_traffic(payload: TrafficInspectionPayload):
+    result = firewall_engine.inspectTraffic(
+        payload.source_device_id, payload.destination_device_id,
+        payload.protocol, payload.destination_port
+    )
+    return result.model_dump()
+
+@app.post("/api/v1/twin/zones", status_code=201)
+def create_network_zone(zone: NetworkZoneModel):
+    try:
+        created = firewall_engine.createZone(zone)
+        return {"status": "ZONE_CREATED", "zone": created.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/zones")
+def list_network_zones():
+    zones = firewall_engine.listZones()
+    return {"count": len(zones), "zones": [z.model_dump() for z in zones]}
+
+@app.post("/api/v1/twin/zones/{zone_id}/assign")
+def assign_device_zone(zone_id: str, payload: DeviceZoneAssignPayload):
+    try:
+        zone = firewall_engine.assignDeviceToZone(zone_id, payload.device_id)
+        return {"status": "DEVICE_ASSIGNED_TO_ZONE", "zone": zone.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 34: SERVICE DEPENDENCY API ====================
 
