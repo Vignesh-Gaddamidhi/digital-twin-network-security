@@ -20,6 +20,12 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.zone_engine import (
+    zone_engine, ZoneAlreadyExistsError, ZoneNotFoundError
+)
+from packages.shared_types.src.zone_graph import (
+    ZoneDefinitionModel, ZoneBoundaryLinkModel, ZoneSegmentationGraphModel
+)
 from services.digital_twin.core.topology.topology_engine_v2 import topology_engine
 from packages.shared_types.src.topology import TopologySummarySnapshotModel
 from services.digital_twin.core.topology.graph_engine import (
@@ -317,6 +323,65 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 38: ZONE SEGMENTATION GRAPH API ====================
+
+@app.post("/api/v1/twin/segmentation/zones", status_code=201)
+def create_segmentation_zone(zone: ZoneDefinitionModel):
+    try:
+        created = zone_engine.createZone(zone)
+        return {"status": "ZONE_CREATED", "zone": created.model_dump()}
+    except ZoneAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+@app.get("/api/v1/twin/segmentation/zones")
+def list_segmentation_zones():
+    zones = zone_engine.listZones()
+    return {"count": len(zones), "zones": [z.model_dump() for z in zones]}
+
+@app.get("/api/v1/twin/segmentation/zones/{zone_id}")
+def get_segmentation_zone(zone_id: str):
+    z = zone_engine.getZone(zone_id)
+    if not z:
+        raise HTTPException(status_code=404, detail=f"Zone '{zone_id}' not found.")
+    return z.model_dump()
+
+@app.delete("/api/v1/twin/segmentation/zones/{zone_id}")
+def delete_segmentation_zone(zone_id: str):
+    try:
+        zone_engine.deleteZone(zone_id)
+        return {"status": "ZONE_DELETED", "zone_id": zone_id}
+    except ZoneNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/segmentation/zones/{zone_id}/devices/{device_id}")
+def assign_device_to_segmentation_zone(zone_id: str, device_id: str):
+    try:
+        zone = zone_engine.assignDeviceToZone(zone_id, device_id)
+        return {"status": "DEVICE_ASSIGNED", "zone": zone.model_dump()}
+    except (ZoneNotFoundError, DeviceNotFoundError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.delete("/api/v1/twin/segmentation/zones/{zone_id}/devices/{device_id}")
+def remove_device_from_segmentation_zone(zone_id: str, device_id: str):
+    try:
+        removed = zone_engine.removeDeviceFromZone(zone_id, device_id)
+        return {"status": "DEVICE_REMOVED", "success": removed}
+    except ZoneNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/segmentation/zones/{zone_id}/connections")
+def get_segmentation_zone_connections(zone_id: str):
+    try:
+        conns = zone_engine.getZoneConnections(zone_id)
+        return {"zone_id": zone_id, "connection_count": len(conns), "connections": [c.model_dump() for c in conns]}
+    except ZoneNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/segmentation/graph")
+def get_zone_segmentation_graph():
+    graph_model = zone_engine.buildZoneSegmentationGraph()
+    return graph_model.model_dump()
 
 # ==================== DAY 37: TOPOLOGY ENGINE API ====================
 
