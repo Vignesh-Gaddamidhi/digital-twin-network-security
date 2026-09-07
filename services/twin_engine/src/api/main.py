@@ -20,6 +20,10 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.service_dependency_engine import service_dependency_engine
+from packages.shared_types.src.service_dependency import (
+    ServiceDependencyModel, ServiceDependencyChainResult, DependencyTypeEnum
+)
 from services.digital_twin.core.topology.switch_engine import switch_engine
 from packages.shared_types.src.switch import (
     SwitchPortModel, MacTableEntryModel, VlanModel, 
@@ -300,6 +304,32 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 34: SERVICE DEPENDENCY API ====================
+
+@app.post("/api/v1/twin/services/dependencies", status_code=201)
+def create_service_dependency(dep: ServiceDependencyModel):
+    try:
+        created = service_dependency_engine.registerDependency(dep)
+        return {"status": "DEPENDENCY_REGISTERED", "dependency": created.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/services/dependencies")
+def list_service_dependencies(device_id: Optional[str] = None):
+    if device_id:
+        deps = service_dependency_engine.getDependenciesForDevice(device_id)
+    else:
+        deps = service_dependency_engine.listAllDependencies()
+    return {"count": len(deps), "dependencies": [d.model_dump() for d in deps]}
+
+@app.get("/api/v1/twin/services/dependencies/chain")
+def trace_service_dependency_chain(
+    source_device_id: str = Query(..., description="Root client or service ID"),
+    target_device_id: str = Query(..., description="Target service host ID")
+):
+    chain = service_dependency_engine.traceDependencyChain(source_device_id, target_device_id)
+    return chain.model_dump()
 
 # ==================== DAY 33: SWITCH & LAYER 2 API ====================
 
