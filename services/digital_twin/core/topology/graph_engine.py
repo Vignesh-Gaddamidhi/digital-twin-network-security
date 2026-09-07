@@ -25,26 +25,56 @@ class GraphEngine:
         self._nodes: Dict[str, GraphNodeModel] = {}
         self._edges: Dict[str, GraphEdgeModel] = {}
 
-    def addNode(self, node: GraphNodeModel) -> GraphNodeModel:
-        if node.id in self._nodes:
-            raise NodeAlreadyExistsError(f"Node with ID '{node.id}' already exists in graph.")
+    def addNode(self, node: Any) -> GraphNodeModel:
+        # Support both GraphNodeModel, NetworkDeviceModel, or raw dicts
+        if isinstance(node, dict):
+            node_id = node.get("id")
+            node_type = node.get("type", "SERVER")
+            if hasattr(node_type, "value"):
+                node_type = node_type.value
+            label = node.get("label", node.get("hostname", node_id))
+            zone = node.get("zone", node.get("networkZone", "INTERNAL"))
+            if hasattr(zone, "value"):
+                zone = zone.value
+            state = node.get("state", node.get("currentState", "ACTIVE"))
+            metadata = node.get("metadata", {})
+            node_model = GraphNodeModel(id=node_id, type=str(node_type), label=str(label), zone=str(zone), state=str(state), metadata=metadata)
+        elif hasattr(node, "id"):
+            node_id = node.id
+            node_type = getattr(node, "type", "SERVER")
+            if hasattr(node_type, "value"):
+                node_type = node_type.value
+            label = getattr(node, "label", getattr(node, "hostname", node_id))
+            zone = getattr(node, "zone", getattr(node, "networkZone", "INTERNAL"))
+            if hasattr(zone, "value"):
+                zone = zone.value
+            state = getattr(node, "state", getattr(node, "currentState", "ACTIVE"))
+            metadata = getattr(node, "metadata", {})
+            node_model = GraphNodeModel(id=node_id, type=str(node_type), label=str(label), zone=str(zone), state=str(state), metadata=metadata)
+        else:
+            raise TypeError("Invalid node object passed to addNode.")
 
-        self._nodes[node.id] = node
+        if node_model.id in self._nodes:
+            # Update existing instead of hard crashing if re-registered
+            self._nodes[node_model.id] = node_model
+            self._graph.nodes[node_model.id].update(node_model.model_dump())
+            return node_model
+
+        self._nodes[node_model.id] = node_model
         self._graph.add_node(
-            node.id,
-            type=node.type,
-            label=node.label,
-            zone=node.zone,
-            state=node.state,
-            **node.metadata
+            node_model.id,
+            type=node_model.type,
+            label=node_model.label,
+            zone=node_model.zone,
+            state=node_model.state,
+            **node_model.metadata
         )
-        return node
+        return node_model
 
     def removeNode(self, node_id: str) -> bool:
         if node_id not in self._nodes:
             raise NodeNotFoundError(f"Cannot remove: Node '{node_id}' not found in graph.")
 
-        # Identify all associated edges to clean internal index
         edges_to_remove = [
             e_id for e_id, edge in self._edges.items()
             if edge.source == node_id or edge.target == node_id
@@ -56,52 +86,69 @@ class GraphEngine:
         del self._nodes[node_id]
         return True
 
-    def addEdge(self, edge: GraphEdgeModel, is_bidirectional: bool = False) -> GraphEdgeModel:
-        if edge.id in self._edges:
-            raise EdgeAlreadyExistsError(f"Edge with ID '{edge.id}' already exists in graph.")
+    def addEdge(self, edge: Any, is_bidirectional: bool = False) -> GraphEdgeModel:
+        if isinstance(edge, dict):
+            edge_model = GraphEdgeModel(**edge)
+        elif hasattr(edge, "id"):
+            edge_id = edge.id
+            src = getattr(edge, "source", getattr(edge, "sourceDevice", None))
+            tgt = getattr(edge, "target", getattr(edge, "destinationDevice", None))
+            proto = getattr(edge, "protocol", "TCP")
+            if hasattr(proto, "value"):
+                proto = proto.value
+            status = getattr(edge, "status", "ACTIVE")
+            if hasattr(status, "value"):
+                status = status.value
+            weight = getattr(edge, "weight", getattr(edge, "latency", 1.0))
+            metadata = getattr(edge, "metadata", {})
+            edge_model = GraphEdgeModel(id=edge_id, source=src, target=tgt, protocol=str(proto), status=str(status), weight=float(weight), metadata=metadata)
+        else:
+            raise TypeError("Invalid edge object passed to addEdge.")
 
-        if edge.source not in self._nodes:
-            raise NodeNotFoundError(f"Source node '{edge.source}' not registered in graph.")
+        if edge_model.id in self._edges:
+            self._edges[edge_model.id] = edge_model
+            return edge_model
 
-        if edge.target not in self._nodes:
-            raise NodeNotFoundError(f"Target node '{edge.target}' not registered in graph.")
+        if edge_model.source not in self._nodes:
+            raise NodeNotFoundError(f"Source node '{edge_model.source}' not registered in graph.")
 
-        self._edges[edge.id] = edge
+        if edge_model.target not in self._nodes:
+            raise NodeNotFoundError(f"Target node '{edge_model.target}' not registered in graph.")
+
+        self._edges[edge_model.id] = edge_model
         self._graph.add_edge(
-            edge.source,
-            edge.target,
-            key=edge.id,
-            protocol=edge.protocol,
-            status=edge.status,
-            weight=edge.weight,
-            **edge.metadata
+            edge_model.source,
+            edge_model.target,
+            key=edge_model.id,
+            protocol=edge_model.protocol,
+            status=edge_model.status,
+            weight=edge_model.weight,
+            **edge_model.metadata
         )
 
         if is_bidirectional:
-            rev_id = f"{edge.id}-rev"
+            rev_id = f"{edge_model.id}-rev"
             self._graph.add_edge(
-                edge.target,
-                edge.source,
+                edge_model.target,
+                edge_model.source,
                 key=rev_id,
-                protocol=edge.protocol,
-                status=edge.status,
-                weight=edge.weight,
-                **edge.metadata
+                protocol=edge_model.protocol,
+                status=edge_model.status,
+                weight=edge_model.weight,
+                **edge_model.metadata
             )
 
-        return edge
+        return edge_model
 
     def removeEdge(self, edge_id: str) -> bool:
         if edge_id not in self._edges:
-            raise EdgeNotFoundError(f"Cannot remove: Edge '{edge_id}' not found in graph.")
+            raise EdgeNotFoundError(f"Cannot remove: Edge '{edge_id}' not found.")
 
         edge = self._edges[edge_id]
 
-        # Remove from NetworkX
         if self._graph.has_edge(edge.source, edge.target, key=edge_id):
             self._graph.remove_edge(edge.source, edge.target, key=edge_id)
 
-        # Remove reverse edge if present
         rev_id = f"{edge_id}-rev"
         if self._graph.has_edge(edge.target, edge.source, key=rev_id):
             self._graph.remove_edge(edge.target, edge.source, key=rev_id)

@@ -20,6 +20,8 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.reachability_engine import reachability_engine
+from packages.shared_types.src.reachability import ReachabilityEvaluationResult
 from services.digital_twin.core.topology.zone_engine import (
     zone_engine, ZoneAlreadyExistsError, ZoneNotFoundError
 )
@@ -323,6 +325,39 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 39: REACHABILITY ENGINE API ====================
+
+class ReachabilityCheckPayload(BaseModel):
+    source_device_id: str
+    destination_device_id: str
+    protocol: str = "TCP"
+    destination_port: Optional[int] = None
+
+@app.post("/api/v1/twin/reachability/check")
+def evaluate_reachability(payload: ReachabilityCheckPayload):
+    try:
+        res = reachability_engine.isReachable(
+            payload.source_device_id, payload.destination_device_id,
+            payload.protocol, payload.destination_port
+        )
+        return res.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/reachability/path")
+def get_bfs_path(source_id: str = Query(..., min_length=1), destination_id: str = Query(..., min_length=1)):
+    path = reachability_engine.findPath(source_id, destination_id)
+    if not path:
+        return {"source_id": source_id, "destination_id": destination_id, "path_found": False, "hops": []}
+    return {"source_id": source_id, "destination_id": destination_id, "path_found": True, "hop_count": len(path) - 1, "hops": path}
+
+@app.get("/api/v1/twin/reachability/shortest")
+def get_dijkstra_shortest_path(source_id: str = Query(..., min_length=1), destination_id: str = Query(..., min_length=1)):
+    path, cost = reachability_engine.getShortestPath(source_id, destination_id)
+    if not path:
+        return {"source_id": source_id, "destination_id": destination_id, "path_found": False, "hops": [], "cost": 0.0}
+    return {"source_id": source_id, "destination_id": destination_id, "path_found": True, "hop_count": len(path) - 1, "cost": cost, "hops": path}
 
 # ==================== DAY 38: ZONE SEGMENTATION GRAPH API ====================
 
