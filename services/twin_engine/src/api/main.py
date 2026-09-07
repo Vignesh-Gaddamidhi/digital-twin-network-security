@@ -20,6 +20,8 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.topology_engine_v2 import topology_engine
+from packages.shared_types.src.topology import TopologySummarySnapshotModel
 from services.digital_twin.core.topology.graph_engine import (
     graph_engine, NodeAlreadyExistsError, NodeNotFoundError,
     EdgeAlreadyExistsError, EdgeNotFoundError
@@ -315,6 +317,26 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 37: TOPOLOGY ENGINE API ====================
+
+@app.get("/api/v1/twin/topology/snapshot/summary")
+def get_topology_snapshot_summary():
+    snapshot = topology_engine.generateTopologySnapshot()
+    return snapshot.model_dump()
+
+@app.get("/api/v1/twin/topology/isolated")
+def get_isolated_network_devices():
+    isolated = topology_engine.detectIsolatedDevices()
+    return {"count": len(isolated), "isolated_devices": isolated}
+
+@app.get("/api/v1/twin/topology/neighbors/{device_id}")
+def get_device_topology_neighbors(device_id: str):
+    try:
+        neighbors = topology_engine.findNeighbors(device_id)
+        return neighbors
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 36: GRAPH ENGINE API ====================
 

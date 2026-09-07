@@ -64,3 +64,10 @@ class NetworkTopologySchema(BaseModel):
     connections: List[NetworkConnectionModel]
     subnets_count: int
     critical_bridges: List[str] = Field(default_factory=list)
+class TopologySummarySnapshotModel(BaseModel):
+    nodes: int
+    edges: int
+    zones: int
+    activeDevices: int
+    inactiveDevices: int
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
