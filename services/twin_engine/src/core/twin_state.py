@@ -223,28 +223,41 @@ class DigitalTwinGraphManager:
         self.add_or_update_node(node)
         return node.current_state
 
-    def add_connection(self, conn: ConnectionEntity) -> None:
-        self.connections[conn.connection_id] = conn
+    def add_connection(self, conn: Any) -> None:
+        c_id = getattr(conn, "id", getattr(conn, "connection_id", "conn-unknown"))
+        src = getattr(conn, "sourceDevice", getattr(conn, "source_device", None))
+        dst = getattr(conn, "destinationDevice", getattr(conn, "destination_device", None))
+        c_type = getattr(conn, "connectionType", getattr(conn, "connection_type", "PHYSICAL"))
+        if hasattr(c_type, "value"):
+            c_type = c_type.value
+        proto = getattr(conn, "protocol", "TCP")
+        if hasattr(proto, "value"):
+            proto = proto.value
+        status = getattr(conn, "status", "ACTIVE")
+        if hasattr(status, "value"):
+            status = status.value
+        latency = getattr(conn, "latency", getattr(conn, "latency_ms", 1.0))
+        bandwidth = getattr(conn, "bandwidth", getattr(conn, "bandwidth_mbps", 1000.0))
+
+        self.connections[c_id] = conn
         self.topology.add_edge(
-            conn.source_device,
-            conn.destination_device,
-            key=conn.connection_id,
-            connection_type=conn.connection_type,
-            protocol=conn.protocol,
-            status=conn.status,
-            latency_ms=conn.latency_ms,
-            bandwidth_mbps=conn.bandwidth_mbps
+            src, dst,
+            key=c_id,
+            connection_type=c_type,
+            protocol=proto,
+            status=status,
+            latency_ms=latency,
+            bandwidth_mbps=bandwidth
         )
-        if conn.connection_type == "PHYSICAL_LINK":
+        if c_type in ("PHYSICAL", "PHYSICAL_LINK"):
             self.topology.add_edge(
-                conn.destination_device,
-                conn.source_device,
-                key=f"{conn.connection_id}-rev",
-                connection_type=conn.connection_type,
-                protocol=conn.protocol,
-                status=conn.status,
-                latency_ms=conn.latency_ms,
-                bandwidth_mbps=conn.bandwidth_mbps
+                dst, src,
+                key=f"{c_id}-rev",
+                connection_type=c_type,
+                protocol=proto,
+                status=status,
+                latency_ms=latency,
+                bandwidth_mbps=bandwidth
             )
 
     def add_link(self, link: NetworkLinkEntity) -> None:

@@ -8,7 +8,9 @@ from typing import Optional, List, Dict, Any
 from packages.shared_types.src.security import VulnerabilityEntity, CIAScore, AttackSurfaceExposure
 from packages.shared_types.src.events import SecurityEvent
 from packages.shared_types.src.device import OperatingSystemProfile, PortEntity, ServiceEntity
-from packages.shared_types.src.topology import ConnectionEntity, TopologyValidationResult
+from packages.shared_types.src.topology import (
+    NetworkConnectionModel, ConnectionTypeEnum, ConnectionStatusEnum, ProtocolEnum, TopologyValidationResult
+)
 from packages.shared_types.src.state import CurrentState, SecurityStateModel, StateTransitionRecord
 from packages.shared_types.src.network_device import (
     NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum, NetworkInterfaceConfig, RouteEntryConfig
@@ -18,6 +20,11 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.routing_engine import routing_engine
+from packages.shared_types.src.network_device import RouteEntryModel, ForwardingDecisionResult
+from services.digital_twin.core.connections.network_connection_registry import (
+    connection_registry, ConnectionAlreadyExistsError, ConnectionNotFoundError
+)
 from services.twin_engine.src.core.twin_state import (
     twin_engine, DeviceEntity, DeviceInterface, NetworkLinkEntity, 
     SubnetEntity, ArpCacheEntry, FirewallRuleEntity, RouteEntry
@@ -271,49 +278,107 @@ def bootstrap_security_grounding():
     for device in [pc1, server, pc2, router, switch_node]:
         twin_engine.add_or_update_node(device)
 
-    twin_engine.add_connection(ConnectionEntity(connection_id="c-d001-d005", source_device="D001", destination_device="D005", connection_type="PHYSICAL_LINK", latency_ms=0.5, bandwidth_mbps=1000.0))
-    twin_engine.add_connection(ConnectionEntity(connection_id="c-d002-d005", source_device="D002", destination_device="D005", connection_type="PHYSICAL_LINK", latency_ms=0.2, bandwidth_mbps=10000.0))
-    twin_engine.add_connection(ConnectionEntity(connection_id="c-d003-d005", source_device="D003", destination_device="D005", connection_type="PHYSICAL_LINK", latency_ms=0.5, bandwidth_mbps=1000.0))
-    twin_engine.add_connection(ConnectionEntity(connection_id="c-d004-d005", source_device="D004", destination_device="D005", connection_type="PHYSICAL_LINK", latency_ms=0.8, bandwidth_mbps=10000.0))
+    # Bootstrap Day 31 compliant connection instances
+    twin_engine.add_connection(NetworkConnectionModel(
+        id="c-d001-d005", sourceDevice="D001", destinationDevice="D005", 
+        connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.5, bandwidth=1000.0
+    ))
+    twin_engine.add_connection(NetworkConnectionModel(
+        id="c-d002-d005", sourceDevice="D002", destinationDevice="D005", 
+        connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.2, bandwidth=10000.0
+    ))
+    twin_engine.add_connection(NetworkConnectionModel(
+        id="c-d003-d005", sourceDevice="D003", destinationDevice="D005", 
+        connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.5, bandwidth=1000.0
+    ))
+    twin_engine.add_connection(NetworkConnectionModel(
+        id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
+        connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
+    ))
 
-# ==================== DAY 29: DEVICE REGISTRY API ====================
+# ==================== DAY 32: ROUTING & FORWARDING API ====================
 
-@app.post("/api/v1/twin/registry/devices", status_code=201)
-def create_registry_device(device: NetworkDeviceModel):
+class RouteLookupPayload(BaseModel):
+    destination_ip: str
+
+@app.post("/api/v1/twin/routing/{router_id}/routes")
+def add_router_route(router_id: str, route: RouteEntryModel):
     try:
-        created = device_registry.createDevice(device)
-        return {"status": "CREATED", "device": created.model_dump()}
-    except DeviceAlreadyExistsError as e:
-        raise HTTPException(status_code=409, detail=str(e))
+        created = routing_engine.addRoute(router_id, route)
+        return {"status": "ROUTE_ADDED", "route": created.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/api/v1/twin/registry/devices/{device_id}")
-def get_registry_device(device_id: str):
-    dev = device_registry.getDevice(device_id)
-    if not dev:
-        raise HTTPException(status_code=404, detail=f"Device {device_id} not found.")
-    return dev.model_dump()
-
-@app.get("/api/v1/twin/registry/devices")
-def list_registry_devices(zone: Optional[NetworkZoneEnum] = None, type: Optional[DeviceTypeEnum] = None):
-    devices = device_registry.getAllDevices(zone=zone, device_type=type)
-    return {"count": len(devices), "devices": [d.model_dump() for d in devices]}
-
-@app.put("/api/v1/twin/registry/devices/{device_id}")
-def update_registry_device(device_id: str, device: NetworkDeviceModel):
-    if device_id != device.id:
-        raise HTTPException(status_code=400, detail="Path parameter device_id does not match body id.")
+@app.get("/api/v1/twin/routing/{router_id}/routes")
+def get_router_routing_table(router_id: str):
     try:
-        updated = device_registry.updateDevice(device)
-        return {"status": "UPDATED", "device": updated.model_dump()}
+        routes = routing_engine.getRoutingTable(router_id)
+        return {"router_id": router_id, "routes_count": len(routes), "routes": [r.model_dump() for r in routes]}
     except DeviceNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@app.delete("/api/v1/twin/registry/devices/{device_id}")
-def delete_registry_device(device_id: str):
+@app.post("/api/v1/twin/routing/{router_id}/lookup")
+def lookup_route_destination(router_id: str, payload: RouteLookupPayload):
     try:
-        device_registry.deleteDevice(device_id)
-        return {"status": "DELETED", "device_id": device_id}
+        decision = routing_engine.findRoute(router_id, payload.destination_ip)
+        return decision.model_dump()
     except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/routing/trace")
+def trace_l3_forwarding_path(source_device_id: str = Query(..., description="Origin device ID"), destination_ip: str = Query(..., description="Target IP")):
+    trace = routing_engine.traceLayer3Path(source_device_id, destination_ip)
+    return {
+        "source_device": source_device_id,
+        "destination_ip": destination_ip,
+        "total_hops": len(trace),
+        "hops": trace
+    }
+
+# ==================== DAY 31: CONNECTION REGISTRY API ====================
+
+@app.post("/api/v1/twin/registry/connections", status_code=201)
+def create_registry_connection(conn: NetworkConnectionModel):
+    try:
+        created = connection_registry.createConnection(conn)
+        return {"status": "CREATED", "connection": created.model_dump()}
+    except ConnectionAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/registry/connections/{connection_id}")
+def get_registry_connection(connection_id: str):
+    c = connection_registry.getConnection(connection_id)
+    if not c:
+        raise HTTPException(status_code=404, detail=f"Connection {connection_id} not found.")
+    return c.model_dump()
+
+@app.get("/api/v1/twin/registry/connections")
+def list_registry_connections(
+    device_id: Optional[str] = None,
+    type: Optional[ConnectionTypeEnum] = None,
+    status: Optional[ConnectionStatusEnum] = None
+):
+    conns = connection_registry.getAllConnections(device_id=device_id, conn_type=type, status=status)
+    return {"count": len(conns), "connections": [c.model_dump() for c in conns]}
+
+@app.put("/api/v1/twin/registry/connections/{connection_id}")
+def update_registry_connection(connection_id: str, conn: NetworkConnectionModel):
+    if connection_id != conn.id:
+        raise HTTPException(status_code=400, detail="Path parameter connection_id does not match body id.")
+    try:
+        updated = connection_registry.updateConnection(conn)
+        return {"status": "UPDATED", "connection": updated.model_dump()}
+    except ConnectionNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.delete("/api/v1/twin/registry/connections/{connection_id}")
+def delete_registry_connection(connection_id: str):
+    try:
+        connection_registry.deleteConnection(connection_id)
+        return {"status": "DELETED", "connection_id": connection_id}
+    except ConnectionNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 30: DEVICE CONFIGURATION API ====================
@@ -395,6 +460,46 @@ def get_configuration_history(device_id: Optional[str] = None):
     history = config_engine.getConfigurationHistory(device_id)
     return {"count": len(history), "history": [h.model_dump() for h in history]}
 
+# ==================== DAY 29: DEVICE REGISTRY API ====================
+
+@app.post("/api/v1/twin/registry/devices", status_code=201)
+def create_registry_device(device: NetworkDeviceModel):
+    try:
+        created = device_registry.createDevice(device)
+        return {"status": "CREATED", "device": created.model_dump()}
+    except DeviceAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+@app.get("/api/v1/twin/registry/devices/{device_id}")
+def get_registry_device(device_id: str):
+    dev = device_registry.getDevice(device_id)
+    if not dev:
+        raise HTTPException(status_code=404, detail=f"Device {device_id} not found.")
+    return dev.model_dump()
+
+@app.get("/api/v1/twin/registry/devices")
+def list_registry_devices(zone: Optional[NetworkZoneEnum] = None, type: Optional[DeviceTypeEnum] = None):
+    devices = device_registry.getAllDevices(zone=zone, device_type=type)
+    return {"count": len(devices), "devices": [d.model_dump() for d in devices]}
+
+@app.put("/api/v1/twin/registry/devices/{device_id}")
+def update_registry_device(device_id: str, device: NetworkDeviceModel):
+    if device_id != device.id:
+        raise HTTPException(status_code=400, detail="Path parameter device_id does not match body id.")
+    try:
+        updated = device_registry.updateDevice(device)
+        return {"status": "UPDATED", "device": updated.model_dump()}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.delete("/api/v1/twin/registry/devices/{device_id}")
+def delete_registry_device(device_id: str):
+    try:
+        device_registry.deleteDevice(device_id)
+        return {"status": "DELETED", "device_id": device_id}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 # ==================== DIGITAL TWIN CORE ROUTES ====================
 
 @app.get("/api/v1/twin/topology")
@@ -421,13 +526,13 @@ def get_topology_dependencies():
     }
 
 @app.post("/api/v1/twin/topology/connections")
-def register_new_connection(connection: ConnectionEntity):
+def register_new_connection(connection: NetworkConnectionModel):
     twin_engine.add_connection(connection)
     return {
         "status": "CONNECTION_REGISTERED",
-        "connection_id": connection.connection_id,
-        "type": connection.connection_type,
-        "endpoints": f"{connection.source_device} <-> {connection.destination_device}"
+        "connection_id": connection.id,
+        "type": connection.connectionType.value,
+        "endpoints": f"{connection.sourceDevice} <-> {connection.destinationDevice}"
     }
 
 @app.get("/api/v1/twin/devices/{device_id}")

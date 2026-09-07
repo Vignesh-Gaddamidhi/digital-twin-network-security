@@ -26,39 +26,58 @@ class NetworkZoneEnum(str, Enum):
     MANAGEMENT = "MANAGEMENT"
     UNKNOWN = "UNKNOWN"
 
+class RouteStatusEnum(str, Enum):
+    ACTIVE = "ACTIVE"
+    DISABLED = "DISABLED"
+    UNREACHABLE = "UNREACHABLE"
+
 MAC_REGEX = re.compile(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
 
-class RouteEntryConfig(BaseModel):
-    destination_cidr: str = Field(..., description="Target network CIDR (e.g., 192.168.10.0/24 or 0.0.0.0/0)")
-    gateway_ip: str = Field(..., description="Next hop gateway IP")
-    interface_id: str = Field(default="eth0")
-    metric: int = Field(default=100)
+class RouteEntryModel(BaseModel):
+    id: str = Field(default_factory=lambda: f"rt-{uuid.uuid4().hex[:8]}")
+    destination: str = Field(..., description="Target CIDR (e.g., 192.168.1.0/24 or 0.0.0.0/0)")
+    nextHop: Optional[str] = Field(default=None, description="Next hop IP or None for DIRECT link")
+    interface: str = Field(..., description="Egress interface ID (e.g., eth0)")
+    metric: int = Field(default=1, ge=0, description="Routing metric / administrative distance")
+    status: RouteStatusEnum = Field(default=RouteStatusEnum.ACTIVE)
 
-    @field_validator("destination_cidr")
+    @field_validator("destination")
     @classmethod
-    def validate_cidr(cls, v: str) -> str:
+    def validate_destination(cls, v: str) -> str:
         try:
             ipaddress.ip_network(v, strict=False)
         except ValueError:
-            raise ValueError(f"Invalid network CIDR: '{v}'")
+            raise ValueError(f"Invalid CIDR network format: '{v}'")
         return v
 
-    @field_validator("gateway_ip")
+    @field_validator("nextHop")
     @classmethod
-    def validate_gateway(cls, v: str) -> str:
-        if v != "0.0.0.0":
+    def validate_next_hop(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v.upper() != "DIRECT":
             try:
                 ipaddress.ip_address(v)
             except ValueError:
-                raise ValueError(f"Invalid gateway IP: '{v}'")
+                raise ValueError(f"Invalid next hop IP address: '{v}'")
         return v
+
+class ForwardingDecisionResult(BaseModel):
+    destination_ip: str
+    matched_route: Optional[RouteEntryModel] = None
+    next_hop: str
+    egress_interface: str
+    is_direct: bool
+    path_resolved: bool
+    explanation: str
+
+# Legacy RouteEntryConfig alias for compatibility
+RouteEntryConfig = RouteEntryModel
 
 class NetworkInterfaceConfig(BaseModel):
     interface_id: str = Field(..., min_length=1)
     ip_address: str = Field(..., description="IPv4 or IPv6 address")
     mac_address: str = Field(..., description="EUI-48 MAC address")
     subnet_cidr: str = Field(default="192.168.1.0/24")
-    status: str = Field(default="UP") # UP, DOWN
+    status: str = Field(default="UP")
 
     @field_validator("ip_address")
     @classmethod
@@ -85,7 +104,7 @@ class NetworkDeviceModel(BaseModel):
     ipAddresses: List[str] = Field(default_factory=list)
     macAddresses: List[str] = Field(default_factory=list)
     interfaces: List[NetworkInterfaceConfig] = Field(default_factory=list)
-    routes: List[RouteEntryConfig] = Field(default_factory=list)
+    routes: List[RouteEntryModel] = Field(default_factory=list)
     operatingSystem: str = Field(default="Linux")
     services: List[str] = Field(default_factory=list)
     ports: List[int] = Field(default_factory=list)
