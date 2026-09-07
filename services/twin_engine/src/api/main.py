@@ -79,7 +79,7 @@ def bootstrap_security_grounding():
     )
     twin_engine.register_subnet(lan_subnet)
 
-    # D001: Workstation 1 (Engineering Client)
+    # D001: Workstation 1
     pc1 = DeviceEntity(
         id="D001",
         hostname="ws-pc-01",
@@ -333,7 +333,7 @@ def register_new_connection(connection: ConnectionEntity):
 def get_device_twin(device_id: str):
     node = twin_engine.node_registry.get(device_id)
     if not node:
-        return {"status": "ERROR", "message": f"Device {device_id} not found."}
+        raise HTTPException(status_code=404, detail=f"Device {device_id} not found.")
     return node.model_dump()
 
 @app.get("/api/v1/twin/attack-surface")
@@ -353,7 +353,7 @@ def get_network_attack_surface():
 def update_vulnerability_lifecycle(payload: VulnerabilityLifecyclePayload):
     success = twin_engine.update_vulnerability_status(payload.node_id, payload.vuln_id, payload.new_status)
     if not success:
-        return {"status": "ERROR", "message": f"Vulnerability {payload.vuln_id} on node {payload.node_id} not found."}
+        raise HTTPException(status_code=404, detail=f"Vulnerability {payload.vuln_id} on node {payload.node_id} not found.")
     risk = risk_engine.calculate_node_risk(twin_engine.node_registry[payload.node_id])
     return {
         "status": "VULNERABILITY_STATE_UPDATED",
@@ -387,7 +387,7 @@ def update_operational_health(payload: OperationalStatePayload):
         status=payload.status
     )
     if not current:
-        return {"status": "ERROR", "message": f"Node {payload.node_id} not found."}
+        raise HTTPException(status_code=404, detail=f"Node {payload.node_id} not found.")
     return {"status": "HEALTH_UPDATED", "node_id": payload.node_id, "current_state": current.model_dump()}
 
 @app.get("/api/v1/twin/state/history")
@@ -431,7 +431,7 @@ def get_mitre_attack_coverage():
 def degrade_node_cia(impact: CIADegradePayload):
     success = twin_engine.degrade_cia(impact.node_id, impact.dimension, impact.degradation)
     if not success:
-        return {"status": "ERROR", "message": f"Node {impact.node_id} not found."}
+        raise HTTPException(status_code=404, detail=f"Node {impact.node_id} not found.")
     node = twin_engine.node_registry[impact.node_id]
     return {
         "status": "IMPACT_APPLIED",

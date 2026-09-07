@@ -4,6 +4,7 @@ import re
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime, timezone
+import uuid
 
 class DeviceTypeEnum(str, Enum):
     ROUTER = "ROUTER"
@@ -27,23 +28,46 @@ class NetworkZoneEnum(str, Enum):
 
 MAC_REGEX = re.compile(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
 
+class RouteEntryConfig(BaseModel):
+    destination_cidr: str = Field(..., description="Target network CIDR (e.g., 192.168.10.0/24 or 0.0.0.0/0)")
+    gateway_ip: str = Field(..., description="Next hop gateway IP")
+    interface_id: str = Field(default="eth0")
+    metric: int = Field(default=100)
+
+    @field_validator("destination_cidr")
+    @classmethod
+    def validate_cidr(cls, v: str) -> str:
+        try:
+            ipaddress.ip_network(v, strict=False)
+        except ValueError:
+            raise ValueError(f"Invalid network CIDR: '{v}'")
+        return v
+
+    @field_validator("gateway_ip")
+    @classmethod
+    def validate_gateway(cls, v: str) -> str:
+        if v != "0.0.0.0":
+            try:
+                ipaddress.ip_address(v)
+            except ValueError:
+                raise ValueError(f"Invalid gateway IP: '{v}'")
+        return v
+
 class NetworkInterfaceConfig(BaseModel):
     interface_id: str = Field(..., min_length=1)
     ip_address: str = Field(..., description="IPv4 or IPv6 address")
     mac_address: str = Field(..., description="EUI-48 MAC address")
     subnet_cidr: str = Field(default="192.168.1.0/24")
-    is_up: bool = True
+    status: str = Field(default="UP") # UP, DOWN
 
     @field_validator("ip_address")
     @classmethod
     def validate_ip(cls, v: str) -> str:
-        try:
-            # Allow 0.0.0.0 for unnumbered switch/bridge interfaces
-            if v == "0.0.0.0":
-                return v
-            ipaddress.ip_address(v)
-        except ValueError:
-            raise ValueError(f"Invalid IP address format: '{v}'")
+        if v != "0.0.0.0":
+            try:
+                ipaddress.ip_address(v)
+            except ValueError:
+                raise ValueError(f"Invalid IP address format: '{v}'")
         return v
 
     @field_validator("mac_address")
@@ -61,6 +85,7 @@ class NetworkDeviceModel(BaseModel):
     ipAddresses: List[str] = Field(default_factory=list)
     macAddresses: List[str] = Field(default_factory=list)
     interfaces: List[NetworkInterfaceConfig] = Field(default_factory=list)
+    routes: List[RouteEntryConfig] = Field(default_factory=list)
     operatingSystem: str = Field(default="Linux")
     services: List[str] = Field(default_factory=list)
     ports: List[int] = Field(default_factory=list)
@@ -93,3 +118,14 @@ class NetworkDeviceModel(BaseModel):
                 raise ValueError(f"Invalid MAC address in list: '{mac}'")
             cleaned.append(mac.upper())
         return cleaned
+
+class ConfigurationHistoryRecord(BaseModel):
+    history_id: str = Field(default_factory=lambda: f"cfg-{uuid.uuid4().hex[:8]}")
+    device_id: str
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    action: str
+    field_changed: str
+    previous_value: Any
+    new_value: Any
+    operator: str = "SYSTEM_ADMIN"
+    reason: str = "Operational reconfiguration"
