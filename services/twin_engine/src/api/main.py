@@ -20,6 +20,11 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.switch_engine import switch_engine
+from packages.shared_types.src.switch import (
+    SwitchPortModel, MacTableEntryModel, VlanModel, 
+    PortStatusEnum, Layer2FrameForwardResult
+)
 from services.digital_twin.core.topology.routing_engine import routing_engine
 from packages.shared_types.src.network_device import RouteEntryModel, ForwardingDecisionResult
 from services.digital_twin.core.connections.network_connection_registry import (
@@ -295,6 +300,67 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 33: SWITCH & LAYER 2 API ====================
+
+class ConnectPortPayload(BaseModel):
+    port_number: int
+    device_id: str
+    mac_address: str
+
+class ProcessFramePayload(BaseModel):
+    ingress_port: int
+    source_mac: str
+    destination_mac: str
+
+class CreateVlanPayload(BaseModel):
+    vlan_id: int
+    name: str
+    subnet: Optional[str] = None
+
+@app.post("/api/v1/twin/switches/{switch_id}/ports/connect")
+def connect_switch_port(switch_id: str, payload: ConnectPortPayload):
+    try:
+        port = switch_engine.connectDeviceToSwitch(
+            switch_id, payload.port_number, payload.device_id, payload.mac_address
+        )
+        return {"status": "PORT_CONNECTED", "port": port.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/switches/{switch_id}/ports/disconnect")
+def disconnect_switch_port(switch_id: str, port_number: int = Query(..., ge=1)):
+    try:
+        port = switch_engine.disconnectDeviceFromSwitch(switch_id, port_number)
+        return {"status": "PORT_DISCONNECTED", "port": port.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/switches/{switch_id}/cam")
+def get_switch_cam_table(switch_id: str):
+    try:
+        entries = switch_engine.getMacTable(switch_id)
+        return {"switch_id": switch_id, "entries_count": len(entries), "cam_table": [e.model_dump() for e in entries]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/switches/{switch_id}/frame/process")
+def process_l2_frame(switch_id: str, payload: ProcessFramePayload):
+    try:
+        res = switch_engine.processEthernetFrame(
+            switch_id, payload.ingress_port, payload.source_mac, payload.destination_mac
+        )
+        return res.model_dump()
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/switches/{switch_id}/vlans")
+def create_switch_vlan(switch_id: str, payload: CreateVlanPayload):
+    try:
+        vlan = switch_engine.createVlan(switch_id, payload.vlan_id, payload.name, payload.subnet)
+        return {"status": "VLAN_CREATED", "vlan": vlan.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 32: ROUTING & FORWARDING API ====================
 
