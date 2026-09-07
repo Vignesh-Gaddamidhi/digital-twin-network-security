@@ -10,11 +10,14 @@ from packages.shared_types.src.events import SecurityEvent
 from packages.shared_types.src.device import OperatingSystemProfile, PortEntity, ServiceEntity
 from packages.shared_types.src.topology import ConnectionEntity, TopologyValidationResult
 from packages.shared_types.src.state import CurrentState, SecurityStateModel, StateTransitionRecord
-from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
+from packages.shared_types.src.network_device import (
+    NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum, NetworkInterfaceConfig, RouteEntryConfig
+)
 
 from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
+from services.digital_twin.core.devices.device_configuration_engine import config_engine
 from services.twin_engine.src.core.twin_state import (
     twin_engine, DeviceEntity, DeviceInterface, NetworkLinkEntity, 
     SubnetEntity, ArpCacheEntry, FirewallRuleEntity, RouteEntry
@@ -33,6 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- Base Payloads ---
 class PacketIngestPayload(BaseModel):
     source_ip: str
     destination_ip: str
@@ -65,6 +69,24 @@ class VulnerabilityLifecyclePayload(BaseModel):
     node_id: str
     vuln_id: str
     new_status: str
+
+# --- Day 30 Configuration Payloads ---
+class AssignIPPayload(BaseModel):
+    ip_address: str
+    interface_id: str = "eth0"
+    reason: str = "IP assignment"
+
+class PortControlPayload(BaseModel):
+    port: int
+    reason: str = "Port toggle"
+
+class ServiceControlPayload(BaseModel):
+    service: str
+    reason: str = "Service toggle"
+
+class ZoneChangePayload(BaseModel):
+    zone: NetworkZoneEnum
+    reason: str = "Zone migration"
 
 @app.on_event("startup")
 def bootstrap_security_grounding():
@@ -293,6 +315,85 @@ def delete_registry_device(device_id: str):
         return {"status": "DELETED", "device_id": device_id}
     except DeviceNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+# ==================== DAY 30: DEVICE CONFIGURATION API ====================
+
+@app.post("/api/v1/twin/configure/{device_id}/interface")
+def configure_device_interface(device_id: str, iface: NetworkInterfaceConfig, reason: str = "Interface config"):
+    try:
+        updated = config_engine.configureInterface(device_id, iface, reason=reason)
+        return {"status": "CONFIGURED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/ip/assign")
+def assign_device_ip(device_id: str, payload: AssignIPPayload):
+    try:
+        updated = config_engine.assignIPAddress(device_id, payload.ip_address, payload.interface_id, reason=payload.reason)
+        return {"status": "IP_ASSIGNED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/ip/remove")
+def remove_device_ip(device_id: str, ip_address: str, reason: str = "IP removal"):
+    try:
+        updated = config_engine.removeIPAddress(device_id, ip_address, reason=reason)
+        return {"status": "IP_REMOVED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/port/open")
+def open_device_port(device_id: str, payload: PortControlPayload):
+    try:
+        updated = config_engine.openPort(device_id, payload.port, reason=payload.reason)
+        return {"status": "PORT_OPENED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/port/close")
+def close_device_port(device_id: str, payload: PortControlPayload):
+    try:
+        updated = config_engine.closePort(device_id, payload.port, reason=payload.reason)
+        return {"status": "PORT_CLOSED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/service/add")
+def add_device_service(device_id: str, payload: ServiceControlPayload):
+    try:
+        updated = config_engine.addService(device_id, payload.service, reason=payload.reason)
+        return {"status": "SERVICE_ADDED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/service/remove")
+def remove_device_service(device_id: str, payload: ServiceControlPayload):
+    try:
+        updated = config_engine.removeService(device_id, payload.service, reason=payload.reason)
+        return {"status": "SERVICE_REMOVED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/zone")
+def change_device_zone(device_id: str, payload: ZoneChangePayload):
+    try:
+        updated = config_engine.changeZone(device_id, payload.zone, reason=payload.reason)
+        return {"status": "ZONE_CHANGED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/configure/{device_id}/route")
+def add_device_route(device_id: str, route: RouteEntryConfig, reason: str = "Add static route"):
+    try:
+        updated = config_engine.addRoute(device_id, route, reason=reason)
+        return {"status": "ROUTE_ADDED", "device": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/configure/history")
+def get_configuration_history(device_id: Optional[str] = None):
+    history = config_engine.getConfigurationHistory(device_id)
+    return {"count": len(history), "history": [h.model_dump() for h in history]}
 
 # ==================== DIGITAL TWIN CORE ROUTES ====================
 
