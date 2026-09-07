@@ -1,0 +1,9 @@
+# Day 15 Deliverable: Canonical Cybersecurity Fundamentals Matrix
+
+| Asset ID | Device & Role | Primary Vulnerability | Threat Scenario | Primary CIA Impact | Risk Level |
+|---|---|---|---|---|---|
+| `D001` | `ws-pc-01`<br>(Engineering Client) | Outdated browser runtime; unpatched local privilege escalation flaw. | Phishing link execution leading to reverse shell backdoor. | **Confidentiality:** Exfiltration of engineering credentials.<br>**Integrity:** Local system files altered. | **MEDIUM** (Criticality: 4.0) |
+| `D002` | `srv-web-01`<br>(Production Web Server) | `CVE-2023-38408` in OpenSSH; unvalidated HTTP input handling. | Remote exploitation via exposed port 22/80; web shell injection. | **Confidentiality:** Database access tokens leaked.<br>**Availability:** Web server process termination. | **HIGH** (Criticality: 8.5) |
+| `D003` | `ws-pc-02`<br>(Finance Client) | Stored credentials in memory; missing host-based egress filtering. | Lateral movement traversal from compromised web server. | **Confidentiality:** Financial ledger interception.<br>**Integrity:** Payment records tampered with. | **MEDIUM** (Criticality: 6.0) |
+| `D004` | `rtr-gw-01`<br>(Gateway Router/NAT) | Weak management credentials on SSH; exposed DNS recursion. | Router hijack via brute-force; DNS cache poisoning / redirection. | **Availability:** WAN routing table wiped, causing network blackout.<br>**Integrity:** Traffic diverted via malicious gateway. | **CRITICAL** (Criticality: 9.5) |
+| `D005` | `sw-core-01`<br>(Core Switch Fabric) | Unauthenticated CAM table capacity limits (no port-security). | MAC Flooding attack causing fail-open hub behavior. | **Confidentiality:** Internal unicast traffic broadcast to all physical ports, permitting sniffing. | **HIGH** (Criticality: 9.0) |

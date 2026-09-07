@@ -1,0 +1,16 @@
+{
+  "simulation_id": "SIM-WEEK2-BASE-01",
+  "default_gateway": "192.168.1.1",
+  "gateway_mac": "00:50:56:FE:01:00",
+  "endpoints": [
+    { "id": "D001", "ip": "192.168.1.11", "mac": "00:50:56:FE:01:11", "type": "WORKSTATION" },
+    { "id": "D002", "ip": "192.168.1.10", "mac": "00:50:56:FE:01:10", "type": "SERVER" },
+    { "id": "D003", "ip": "192.168.1.12", "mac": "00:50:56:FE:01:12", "type": "WORKSTATION" }
+  ],
+  "profiles": {
+    "web_sessions_count": 3,
+    "dns_heartbeats_count": 5,
+    "icmp_pings_count": 4,
+    "inter_packet_delay_sec": 0.02
+  }
+}

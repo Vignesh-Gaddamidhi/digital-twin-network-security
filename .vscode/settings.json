@@ -1,0 +1,18 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/services/twin_engine/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/services",
+    "${workspaceFolder}/services/twin_engine",
+    "${workspaceFolder}/services/twin_engine/src",
+    "${workspaceFolder}/services/network_simulator",
+    "${workspaceFolder}/services/network_simulator/src",
+    "${workspaceFolder}/packages",
+    "${workspaceFolder}/packages/shared_types",
+    "${workspaceFolder}/packages/shared_types/src",
+    "${workspaceFolder}/labs",
+    "${workspaceFolder}/tools"
+  ],
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.diagnosticMode": "workspace"
+}
