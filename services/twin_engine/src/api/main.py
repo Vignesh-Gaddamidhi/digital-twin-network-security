@@ -20,6 +20,13 @@ from services.digital_twin.core.devices.network_device_registry import (
     device_registry, DeviceAlreadyExistsError, DeviceNotFoundError
 )
 from services.digital_twin.core.devices.device_configuration_engine import config_engine
+from services.digital_twin.core.topology.graph_engine import (
+    graph_engine, NodeAlreadyExistsError, NodeNotFoundError,
+    EdgeAlreadyExistsError, EdgeNotFoundError
+)
+from packages.shared_types.src.graph import (
+    GraphNodeModel, GraphEdgeModel, GraphNeighborsResult, GraphSnapshotModel
+)
 from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
@@ -308,6 +315,64 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 36: GRAPH ENGINE API ====================
+
+@app.post("/api/v1/twin/graph/nodes", status_code=201)
+def add_graph_node(node: GraphNodeModel):
+    try:
+        created = graph_engine.addNode(node)
+        return {"status": "NODE_ADDED", "node": created.model_dump()}
+    except NodeAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+@app.get("/api/v1/twin/graph/nodes")
+def list_graph_nodes(zone: Optional[str] = None, type: Optional[str] = None):
+    nodes = graph_engine.getNodes(zone=zone, node_type=type)
+    return {"count": len(nodes), "nodes": [n.model_dump() for n in nodes]}
+
+@app.delete("/api/v1/twin/graph/nodes/{node_id}")
+def delete_graph_node(node_id: str):
+    try:
+        graph_engine.removeNode(node_id)
+        return {"status": "NODE_DELETED", "node_id": node_id}
+    except NodeNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/graph/edges", status_code=201)
+def add_graph_edge(edge: GraphEdgeModel, bidirectional: bool = False):
+    try:
+        created = graph_engine.addEdge(edge, is_bidirectional=bidirectional)
+        return {"status": "EDGE_ADDED", "edge": created.model_dump()}
+    except EdgeAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except NodeNotFoundError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/graph/edges")
+def list_graph_edges(status: Optional[str] = None, protocol: Optional[str] = None):
+    edges = graph_engine.getEdges(status=status, protocol=protocol)
+    return {"count": len(edges), "edges": [e.model_dump() for e in edges]}
+
+@app.delete("/api/v1/twin/graph/edges/{edge_id}")
+def delete_graph_edge(edge_id: str):
+    try:
+        graph_engine.removeEdge(edge_id)
+        return {"status": "EDGE_DELETED", "edge_id": edge_id}
+    except EdgeNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/graph/neighbors/{node_id}")
+def get_graph_neighbors(node_id: str):
+    try:
+        res = graph_engine.getNeighbors(node_id)
+        return res.model_dump()
+    except NodeNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/graph/snapshot")
+def get_graph_snapshot():
+    return graph_engine.getSnapshot().model_dump()
 
 # ==================== DAY 35: FIREWALL & ZONE API ====================
 
