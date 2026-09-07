@@ -8,13 +8,26 @@ from services.digital_twin.core.devices.network_device_registry import device_re
 from services.digital_twin.core.connections.network_connection_registry import connection_registry
 from services.digital_twin.core.topology.graph_engine import graph_engine
 from services.digital_twin.core.security.firewall_engine import firewall_engine
+from services.twin_engine.src.core.twin_state import twin_engine
 
 class ReachabilityEngine:
     """Calculates graph traversal paths and security-constrained reachability."""
 
     @staticmethod
-    def getNeighbors(device_id: str) -> List[str]:
+    def _resolve_device(device_id: str) -> Any:
+        """Resolves device from device_registry or falls back to twin_engine legacy registry."""
         dev = device_registry.getDevice(device_id)
+        if dev:
+            return dev
+        legacy = twin_engine.node_registry.get(device_id)
+        if legacy:
+            # Wrap legacy DeviceEntity into a compatible duck-type or model if needed
+            return legacy
+        return None
+
+    @classmethod
+    def getNeighbors(cls, device_id: str) -> List[str]:
+        dev = cls._resolve_device(device_id)
         if not dev:
             raise DeviceNotFoundError(f"Device '{device_id}' not found.")
         res = graph_engine.getNeighbors(device_id)
@@ -22,7 +35,6 @@ class ReachabilityEngine:
 
     @staticmethod
     def findPath(source_id: str, destination_id: str) -> Optional[List[str]]:
-        """Classic unweighted Breadth-First Search (BFS) to find the minimum-hop path."""
         if source_id not in graph_engine._nodes or destination_id not in graph_engine._nodes:
             return None
 
@@ -47,7 +59,6 @@ class ReachabilityEngine:
 
     @staticmethod
     def getShortestPath(source_id: str, destination_id: str, weight_metric: str = "weight") -> Tuple[Optional[List[str]], float]:
-        """Calculates the lowest-cost path using Dijkstra's algorithm."""
         if source_id not in graph_engine._nodes or destination_id not in graph_engine._nodes:
             return None, 0.0
 
@@ -67,42 +78,49 @@ class ReachabilityEngine:
         protocol: str = "TCP",
         destination_port: Optional[int] = None
     ) -> ReachabilityEvaluationResult:
-        """Evaluates whether traffic can traverse from source to destination under all operational and firewall constraints."""
-        src_dev = device_registry.getDevice(source_id)
-        dst_dev = device_registry.getDevice(destination_id)
+        src_dev = cls._resolve_device(source_id)
+        dst_dev = cls._resolve_device(destination_id)
 
         if not src_dev:
             raise DeviceNotFoundError(f"Source device '{source_id}' not found.")
         if not dst_dev:
             raise DeviceNotFoundError(f"Destination device '{destination_id}' not found.")
 
-        # 1. Base Endpoint Health Check
-        if src_dev.currentState != "ONLINE":
+        src_status = getattr(src_dev, "currentState", getattr(src_dev, "status", "ONLINE"))
+        if hasattr(src_status, "value"):
+            src_status = src_status.value
+        if src_status not in ("ONLINE", "HEALTHY"):
             return ReachabilityEvaluationResult(
                 source_device=source_id, destination_device=destination_id,
                 is_reachable=False, protocol=protocol, destination_port=destination_port,
                 hop_count=0, path=[], hops_detail=[], total_latency_ms=0.0,
-                blocking_reason=f"Source device '{src_dev.hostname}' is {src_dev.currentState}."
+                blocking_reason=f"Source device '{getattr(src_dev, 'hostname', source_id)}' is {src_status}."
             )
 
-        if dst_dev.currentState != "ONLINE":
+        dst_status = getattr(dst_dev, "currentState", getattr(dst_dev, "status", "ONLINE"))
+        if hasattr(dst_status, "value"):
+            dst_status = dst_status.value
+        if dst_status not in ("ONLINE", "HEALTHY"):
             return ReachabilityEvaluationResult(
                 source_device=source_id, destination_device=destination_id,
                 is_reachable=False, protocol=protocol, destination_port=destination_port,
                 hop_count=0, path=[], hops_detail=[], total_latency_ms=0.0,
-                blocking_reason=f"Destination device '{dst_dev.hostname}' is {dst_dev.currentState}."
+                blocking_reason=f"Destination device '{getattr(dst_dev, 'hostname', destination_id)}' is {dst_status}."
             )
 
-        # 2. Port Listening Check on Destination
-        if destination_port is not None and destination_port not in dst_dev.ports:
-            return ReachabilityEvaluationResult(
-                source_device=source_id, destination_device=destination_id,
-                is_reachable=False, protocol=protocol, destination_port=destination_port,
-                hop_count=0, path=[], hops_detail=[], total_latency_ms=0.0,
-                blocking_reason=f"Port {destination_port} is not listening on '{dst_dev.hostname}'."
-            )
+        dst_ports = getattr(dst_dev, "ports", getattr(dst_dev, "open_ports", []))
+        if destination_port is not None and destination_port not in dst_ports:
+            # Check detailed ports if available
+            detailed_ports = getattr(dst_dev, "detailed_ports", [])
+            port_match = any(p.port_number == destination_port for p in detailed_ports)
+            if not port_match and destination_port != 0:
+                return ReachabilityEvaluationResult(
+                    source_device=source_id, destination_device=destination_id,
+                    is_reachable=False, protocol=protocol, destination_port=destination_port,
+                    hop_count=0, path=[], hops_detail=[], total_latency_ms=0.0,
+                    blocking_reason=f"Port {destination_port} is not listening on '{getattr(dst_dev, 'hostname', destination_id)}'."
+                )
 
-        # 3. Path Discovery (BFS)
         path = cls.findPath(source_id, destination_id)
         if not path:
             return ReachabilityEvaluationResult(
@@ -112,27 +130,27 @@ class ReachabilityEngine:
                 blocking_reason="No topological path exists in graph."
             )
 
-        # 4. Multi-Hop Step-by-Step Validation
         hops_detail: List[PathHopDetail] = []
         total_latency = 0.0
 
         for i, node_id in enumerate(path):
-            node_dev = device_registry.getDevice(node_id)
+            node_dev = cls._resolve_device(node_id)
             node_zone = firewall_engine.getDeviceZone(node_id).value
+            node_status = getattr(node_dev, "currentState", getattr(node_dev, "status", "ONLINE"))
+            if hasattr(node_status, "value"):
+                node_status = node_status.value
 
-            # Check intermediate forwarder operational status
-            if node_dev.currentState != "ONLINE":
+            if node_status not in ("ONLINE", "HEALTHY"):
                 return ReachabilityEvaluationResult(
                     source_device=source_id, destination_device=destination_id,
                     is_reachable=False, protocol=protocol, destination_port=destination_port,
                     hop_count=len(path) - 1, path=path, hops_detail=hops_detail, total_latency_ms=total_latency,
-                    blocking_reason=f"Intermediate hop '{node_dev.hostname}' is {node_dev.currentState}."
+                    blocking_reason=f"Intermediate hop '{getattr(node_dev, 'hostname', node_id)}' is {node_status}."
                 )
 
             egress_conn_id = None
             if i < len(path) - 1:
                 next_node_id = path[i + 1]
-                # Find connection between node_id and next_node_id
                 conns = connection_registry.getAllConnections(device_id=node_id)
                 active_conn = next(
                     (c for c in conns if (c.sourceDevice == node_id and c.destinationDevice == next_node_id) or
@@ -140,12 +158,13 @@ class ReachabilityEngine:
                     None
                 )
                 if active_conn:
-                    if active_conn.status.value != "ACTIVE":
+                    c_status = active_conn.status.value if hasattr(active_conn.status, "value") else str(active_conn.status)
+                    if c_status != "ACTIVE":
                         return ReachabilityEvaluationResult(
                             source_device=source_id, destination_device=destination_id,
                             is_reachable=False, protocol=protocol, destination_port=destination_port,
                             hop_count=len(path) - 1, path=path, hops_detail=hops_detail, total_latency_ms=total_latency,
-                            blocking_reason=f"Connection '{active_conn.id}' is {active_conn.status.value}."
+                            blocking_reason=f"Connection '{active_conn.id}' is {c_status}."
                         )
                     egress_conn_id = active_conn.id
                     total_latency += active_conn.latency
@@ -153,15 +172,14 @@ class ReachabilityEngine:
             hops_detail.append(PathHopDetail(
                 hop_number=i + 1,
                 device_id=node_id,
-                hostname=node_dev.hostname,
-                device_type=node_dev.type.value,
+                hostname=getattr(node_dev, "hostname", node_id),
+                device_type=getattr(node_dev, "type", "NODE"),
                 zone=node_zone,
-                state=node_dev.currentState,
+                state=node_status,
                 egress_connection_id=egress_conn_id,
                 firewall_decision="PERMITTED"
             ))
 
-        # 5. Security Boundary & Firewall Evaluation
         firewall_check = firewall_engine.inspectTraffic(
             source_device_id=source_id,
             destination_device_id=destination_id,
