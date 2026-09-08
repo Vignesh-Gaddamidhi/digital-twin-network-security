@@ -41,6 +41,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.unified_state_coordinator import (
+    unified_state_coordinator, DuplicateEventError, OutOfOrderEventError
+)
+from packages.shared_types.src.state_integration import (
+    UniversalStateEvent, DualSourceDeviceState, StateAuditHistoryEntry
+)
 from services.digital_twin.core.state.security_state_engine import (
     security_state_engine, InvalidSecurityTransitionError,
     InvalidVulnerabilityTransitionError, VulnerabilityNotFoundError
@@ -365,6 +371,36 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 49: UNIFIED DUAL-SOURCE STATE API ====================
+
+@app.post("/api/v1/twin/state/events/ingest")
+def api_ingest_state_event(event: UniversalStateEvent):
+    try:
+        updated_state = unified_state_coordinator.ingestEvent(event)
+        return {"status": "EVENT_INGESTED", "state": updated_state.model_dump()}
+    except DuplicateEventError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except OutOfOrderEventError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/state/devices/{device_id}/dual")
+def api_get_dual_source_device_state(device_id: str):
+    try:
+        ds = unified_state_coordinator.getDeviceDualState(device_id)
+        return ds.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/state/events/history")
+def api_get_state_events_history(device_id: Optional[str] = None):
+    try:
+        records = unified_state_coordinator.getAuditHistory(device_id)
+        return {"count": len(records), "records": [r.model_dump() for r in records]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 48: SECURITY & VULNERABILITY STATE API ====================
 
