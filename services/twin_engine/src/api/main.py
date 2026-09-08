@@ -48,6 +48,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.protocol_anomaly_engine import protocol_anomaly_engine
+from packages.shared_types.src.protocol_anomaly import (
+    ProtocolWindowPhaseEnum, WindowProtocolStats, ProtocolAnomalyEvent, ProtocolAnomalyRunResult
+)
 from services.digital_twin.simulation.generators.port_anomaly_engine import port_anomaly_engine
 from packages.shared_types.src.port_anomaly import (
     PortAnomalyProfile, PortProbeMetric, PortAnomalyRunResult, PortStateMutationConfig
@@ -432,6 +436,36 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 62: PROTOCOL ANOMALY SIMULATION API ====================
+
+class ProtocolAnomalyRunPayload(BaseModel):
+    sourceDevice: str = "client-01"
+    destinationDevice: str = "web-01"
+    windowDurationSeconds: int = Field(default=10, ge=1, le=3600)
+    packetsPerSecond: int = Field(default=10, ge=1, le=500)
+    simulationId: str = "sim-proto-01"
+
+_last_protocol_result: Optional[ProtocolAnomalyRunResult] = None
+
+@app.post("/api/v1/twin/simulation/abnormal/protocol/run")
+def api_run_protocol_anomaly(payload: ProtocolAnomalyRunPayload):
+    global _last_protocol_result
+    result = protocol_anomaly_engine.runThreeStageScenario(
+        source_dev=payload.sourceDevice,
+        dest_dev=payload.destinationDevice,
+        window_duration=payload.windowDurationSeconds,
+        packets_per_second=payload.packetsPerSecond,
+        simulation_id=payload.simulationId
+    )
+    _last_protocol_result = result
+    return {"status": "PROTOCOL_ANOMALY_RUN_COMPLETED", "result": result.model_dump()}
+
+@app.get("/api/v1/twin/simulation/abnormal/protocol/last")
+def api_get_last_protocol_result():
+    if not _last_protocol_result:
+        raise HTTPException(status_code=404, detail="No protocol anomaly scenario has been executed yet.")
+    return _last_protocol_result.model_dump()
 
 # ==================== DAY 61: PORT ANOMALY SIMULATION API ====================
 
