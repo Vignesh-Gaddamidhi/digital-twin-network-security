@@ -41,6 +41,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.engine.simulation_engine import (
+    simulation_engine, InvalidSimulationStateTransitionError, ScenarioNotFoundError
+)
+from packages.shared_types.src.simulation import (
+    ScenarioModel, SimulationStateEnum, SimulationEventModel, SimulationStatusSnapshotModel
+)
 from services.digital_twin.core.state.unified_state_coordinator import (
     unified_state_coordinator, DuplicateEventError, OutOfOrderEventError
 )
@@ -371,6 +377,76 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 50: SIMULATION ENGINE ARCHITECTURE API ====================
+
+class TickRequestPayload(BaseModel):
+    seconds: float = Field(default=1.0, ge=0.1, le=3600.0)
+
+@app.post("/api/v1/twin/simulation/create", status_code=201)
+def api_create_simulation(scenario: ScenarioModel):
+    try:
+        created = simulation_engine.createSimulation(scenario)
+        return {"status": "SIMULATION_CREATED", "scenario": created.model_dump()}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/start")
+def api_start_simulation():
+    try:
+        status = simulation_engine.startSimulation()
+        return {"status": "SIMULATION_STARTED", "snapshot": status.model_dump()}
+    except (ScenarioNotFoundError, InvalidSimulationStateTransitionError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/pause")
+def api_pause_simulation():
+    try:
+        status = simulation_engine.pauseSimulation()
+        return {"status": "SIMULATION_PAUSED", "snapshot": status.model_dump()}
+    except InvalidSimulationStateTransitionError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/resume")
+def api_resume_simulation():
+    try:
+        status = simulation_engine.resumeSimulation()
+        return {"status": "SIMULATION_RESUMED", "snapshot": status.model_dump()}
+    except InvalidSimulationStateTransitionError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/stop")
+def api_stop_simulation():
+    try:
+        status = simulation_engine.stopSimulation()
+        return {"status": "SIMULATION_STOPPED", "snapshot": status.model_dump()}
+    except InvalidSimulationStateTransitionError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/reset")
+def api_reset_simulation():
+    simulation_engine.resetSimulation()
+    return {"status": "SIMULATION_RESET"}
+
+@app.post("/api/v1/twin/simulation/tick")
+def api_tick_simulation(payload: TickRequestPayload):
+    evt = simulation_engine.tick(payload.seconds)
+    state = simulation_engine.getSimulationState()
+    return {
+        "status": "TICK_EXECUTED",
+        "clock_seconds": state.simCurrentTimeSeconds,
+        "event": evt.model_dump() if evt else None,
+        "simulation_state": state.state.value
+    }
+
+@app.get("/api/v1/twin/simulation/state")
+def api_get_simulation_state():
+    return simulation_engine.getSimulationState().model_dump()
+
+@app.get("/api/v1/twin/simulation/events")
+def api_get_simulation_events(limit: Optional[int] = None):
+    evts = simulation_engine.getSimulationEvents(limit=limit)
+    return {"count": len(evts), "events": [e.model_dump() for e in evts]}
 
 # ==================== DAY 49: UNIFIED DUAL-SOURCE STATE API ====================
 
