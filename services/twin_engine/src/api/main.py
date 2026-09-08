@@ -41,6 +41,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.dns_traffic_generator import dns_orchestrator
+from packages.shared_types.src.dns_traffic import (
+    DnsRecordTypeEnum, DnsResponseCodeEnum, DnsTrafficProfile, DnsTransactionEvent
+)
 from services.digital_twin.simulation.generators.web_traffic_generator import web_orchestrator
 from packages.shared_types.src.web_traffic import (
     WebProtocolEnum, HttpMethodEnum, WebTrafficProfile, HttpTransactionEvent
@@ -392,6 +396,40 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 54: DNS TRAFFIC SIMULATION API ====================
+
+class DnsQueryRequestPayload(BaseModel):
+    sourceDevice: str = "client-01"
+    dnsServer: str = "dns-01"
+    domain: str = "web.internal.test"
+    queryType: DnsRecordTypeEnum = DnsRecordTypeEnum.A
+    simulationId: str = "sim-001"
+
+@app.post("/api/v1/twin/simulation/traffic/dns/query")
+def api_generate_dns_query_pair(payload: DnsQueryRequestPayload):
+    q, r = dns_orchestrator.generator.generateQueryPair(
+        source_dev=payload.sourceDevice,
+        dns_server=payload.dnsServer,
+        domain=payload.domain,
+        query_type=payload.queryType,
+        simulation_id=payload.simulationId
+    )
+    return {
+        "status": "DNS_PAIR_GENERATED",
+        "query": q.model_dump(),
+        "response": r.model_dump()
+    }
+
+@app.post("/api/v1/twin/simulation/traffic/dns/profile-run")
+def api_run_dns_profile(profile: DnsTrafficProfile, source_device: str = "client-01"):
+    events = dns_orchestrator.generateFromProfile(profile, source_dev=source_device)
+    return {"status": "DNS_PROFILE_EXECUTED", "count": len(events), "events": [e.model_dump() for e in events]}
+
+@app.get("/api/v1/twin/simulation/traffic/dns/events")
+def api_list_dns_events():
+    events = dns_orchestrator.getEvents()
+    return {"count": len(events), "events": [e.model_dump() for e in events]}
 
 # ==================== DAY 53: HTTP & HTTPS WEB TRAFFIC SIMULATION API ====================
 
