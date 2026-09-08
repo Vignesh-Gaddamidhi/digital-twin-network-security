@@ -41,6 +41,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.port_service_engine import (
+    port_service_engine, PortNotFoundError, ServiceNotFoundError, DuplicateServiceError
+)
+from packages.shared_types.src.port_service_state import (
+    TrackedPortModel, TrackedServiceModel, PortStateEnum, ServiceDaemonStateEnum, DevicePortServiceSnapshotModel
+)
 from services.digital_twin.core.state.network_state_engine import (
     network_state_engine, ConnectionAlreadyExistsError as SessionAlreadyExistsError,
     ConnectionSessionNotFoundError
@@ -351,6 +357,96 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 47: PORT & SERVICE STATE API ====================
+
+class OpenPortPayload(BaseModel):
+    port: int = Field(..., ge=1, le=65535)
+    protocol: str = "TCP"
+    service: str = "unknown"
+    reason: str = "Port opened"
+
+class SetPortStatePayload(BaseModel):
+    state: PortStateEnum
+    reason: str = "State change"
+
+class SetServiceStatusPayload(BaseModel):
+    status: ServiceDaemonStateEnum
+    reason: str = "Daemon state update"
+
+@app.post("/api/v1/twin/ports/{device_id}/open")
+def api_open_port(device_id: str, payload: OpenPortPayload):
+    try:
+        p = port_service_engine.openPort(
+            device_id=device_id,
+            port_number=payload.port,
+            protocol=payload.protocol,
+            service_name=payload.service,
+            reason=payload.reason
+        )
+        return {"status": "PORT_OPENED", "port": p.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/ports/{device_id}/{port}/close")
+def api_close_port(device_id: str, port: int):
+    try:
+        p = port_service_engine.closePort(device_id, port)
+        return {"status": "PORT_CLOSED", "port": p.model_dump()}
+    except PortNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/ports/{device_id}/{port}/state")
+def api_set_port_state(device_id: str, port: int, payload: SetPortStatePayload):
+    try:
+        p = port_service_engine.setPortState(device_id, port, payload.state, reason=payload.reason)
+        return {"status": "PORT_STATE_UPDATED", "port": p.model_dump()}
+    except (PortNotFoundError, DeviceNotFoundError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/ports/{device_id}")
+def api_list_ports(device_id: str):
+    try:
+        ports = port_service_engine.listPorts(device_id)
+        return {"device_id": device_id, "count": len(ports), "ports": [p.model_dump() for p in ports]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/services/{device_id}/register", status_code=201)
+def api_register_service(device_id: str, service: TrackedServiceModel):
+    try:
+        s = port_service_engine.registerService(device_id, service)
+        return {"status": "SERVICE_REGISTERED", "service": s.model_dump()}
+    except DuplicateServiceError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/services/{device_id}/{service_name}/status")
+def api_set_service_status(device_id: str, service_name: str, payload: SetServiceStatusPayload):
+    try:
+        s = port_service_engine.setServiceStatus(device_id, service_name, payload.status, reason=payload.reason)
+        return {"status": "SERVICE_STATUS_UPDATED", "service": s.model_dump()}
+    except (ServiceNotFoundError, DeviceNotFoundError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/services/{device_id}")
+def api_list_services(device_id: str):
+    try:
+        services = port_service_engine.listServices(device_id)
+        return {"device_id": device_id, "count": len(services), "services": [s.model_dump() for s in services]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/ports-services/{device_id}/snapshot")
+def api_get_port_service_snapshot(device_id: str):
+    try:
+        snap = port_service_engine.getDeviceSnapshot(device_id)
+        return snap.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 46: NETWORK & CONNECTION STATE API ====================
 
