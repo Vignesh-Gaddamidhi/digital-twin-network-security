@@ -41,6 +41,8 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.topology.complete_graph_engine import complete_graph_engine
+from packages.shared_types.src.complete_graph import CompleteDigitalTwinGraphModel
 from services.digital_twin.core.topology.service_graph_engine import service_graph_engine
 from packages.shared_types.src.service_graph import (
     DetailedServiceDependencyModel, ImpactPropagationResult
@@ -329,6 +331,13 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 41: COMPLETE DIGITAL TWIN GRAPH API ====================
+
+@app.get("/api/v1/twin/graph/complete")
+def get_complete_digital_twin_graph(graph_id: str = Query(default="DT-PROD-V1")):
+    model = complete_graph_engine.getCompleteDigitalTwinGraph(graph_id=graph_id)
+    return model.model_dump()
 
 # ==================== DAY 40: SERVICE GRAPH & IMPACT API ====================
 
