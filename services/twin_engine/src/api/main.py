@@ -41,6 +41,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.state_engine import state_engine
+from packages.shared_types.src.device_state import (
+    ComprehensiveDeviceStateModel, PerformanceStateModel, NetworkTelemetryStateModel,
+    PortStateEntry, ServiceRuntimeEntry, SecurityStateBlockModel, OperationalStatusEnum
+)
 from services.digital_twin.core.topology.complete_graph_engine import complete_graph_engine
 from packages.shared_types.src.complete_graph import CompleteDigitalTwinGraphModel
 from services.digital_twin.core.topology.service_graph_engine import service_graph_engine
@@ -331,6 +336,62 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 43: DIGITAL TWIN STATE ENGINE API ====================
+
+@app.get("/api/v1/twin/state/devices")
+def get_all_device_states():
+    states = state_engine.getAllDeviceStates()
+    return {"count": len(states), "states": [s.model_dump() for s in states]}
+
+@app.get("/api/v1/twin/state/devices/{device_id}")
+def get_device_state(device_id: str):
+    try:
+        s = state_engine.getDeviceState(device_id)
+        if not s:
+            raise HTTPException(status_code=404, detail=f"State for device '{device_id}' not initialized.")
+        return s.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.put("/api/v1/twin/state/devices/{device_id}")
+def update_full_device_state(device_id: str, state: ComprehensiveDeviceStateModel):
+    if device_id != state.deviceId:
+        raise HTTPException(status_code=400, detail="Path device_id does not match body deviceId.")
+    try:
+        updated = state_engine.updateDeviceState(state)
+        return {"status": "STATE_UPDATED", "state": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/state/devices/{device_id}/performance")
+def update_device_performance(device_id: str, perf: PerformanceStateModel, reason: str = "Telemetry ingest"):
+    try:
+        updated = state_engine.updatePerformanceState(device_id, perf, reason=reason)
+        return {"status": "PERFORMANCE_UPDATED", "state": updated.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/state/devices/{device_id}/operational")
+def update_device_operational_state(device_id: str, operational_state: OperationalStatusEnum, reason: str = "Operator action"):
+    try:
+        updated = state_engine.updateOperationalState(device_id, operational_state, reason=reason)
+        return {"status": "OPERATIONAL_STATE_UPDATED", "state": updated.model_dump()}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/state/devices/{device_id}/security")
+def update_device_security_state(device_id: str, sec: SecurityStateBlockModel, reason: str = "SIEM evaluation"):
+    try:
+        updated = state_engine.updateSecurityState(device_id, sec, reason=reason)
+        return {"status": "SECURITY_STATE_UPDATED", "state": updated.model_dump()}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/state/ledger")
+def get_state_transition_ledger(device_id: Optional[str] = None, component: Optional[str] = None):
+    records = state_engine.getStateHistory(device_id=device_id, component=component)
+    return {"count": len(records), "records": [r.model_dump() for r in records]}
 
 # ==================== DAY 42: PHASE 5 SNAPSHOT API ====================
 
