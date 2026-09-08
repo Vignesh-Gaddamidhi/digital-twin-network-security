@@ -41,6 +41,13 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.network_state_engine import (
+    network_state_engine, ConnectionAlreadyExistsError as SessionAlreadyExistsError,
+    ConnectionSessionNotFoundError
+)
+from packages.shared_types.src.network_state import (
+    DeviceNetworkMetricsModel, ActiveConnectionSessionModel, SessionStateEnum, DeviceConnectionStatsModel
+)
 from services.digital_twin.core.state.performance_state_engine import performance_state_engine
 from packages.shared_types.src.performance import (
     PerformanceMetricSnapshot, PerformanceTelemetryPayload, PerformanceLevelEnum
@@ -344,6 +351,80 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 46: NETWORK & CONNECTION STATE API ====================
+
+class NetworkMetricIngestPayload(BaseModel):
+    networkUtilisation: float = Field(..., ge=0.0, le=100.0)
+    bytesSent: int = Field(default=0, ge=0)
+    bytesReceived: int = Field(default=0, ge=0)
+    packetsSent: int = Field(default=0, ge=0)
+    packetsReceived: int = Field(default=0, ge=0)
+
+@app.post("/api/v1/twin/network-state/{device_id}/metrics")
+def update_device_network_metrics(device_id: str, payload: NetworkMetricIngestPayload):
+    try:
+        metrics = network_state_engine.updateNetworkMetrics(
+            device_id=device_id,
+            network_utilisation=payload.networkUtilisation,
+            bytes_sent=payload.bytesSent,
+            bytes_received=payload.bytesReceived,
+            packets_sent=payload.packetsSent,
+            packets_received=payload.packetsReceived
+        )
+        return {"status": "METRICS_UPDATED", "metrics": metrics.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/network-state/{device_id}/metrics")
+def get_device_network_metrics(device_id: str):
+    try:
+        metrics = network_state_engine.getNetworkMetrics(device_id)
+        return metrics.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/network-state/connections", status_code=201)
+def create_connection_session(session: ActiveConnectionSessionModel):
+    try:
+        created = network_state_engine.createConnectionState(session)
+        return {"status": "SESSION_CREATED", "session": created.model_dump()}
+    except SessionAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/network-state/connections/{session_id}/close")
+def close_connection_session(session_id: str):
+    try:
+        closed = network_state_engine.closeConnection(session_id)
+        return {"status": "SESSION_CLOSED", "session": closed.model_dump()}
+    except ConnectionSessionNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/network-state/connections/{session_id}/fail")
+def fail_connection_session(session_id: str):
+    try:
+        failed = network_state_engine.failConnection(session_id)
+        return {"status": "SESSION_FAILED", "session": failed.model_dump()}
+    except ConnectionSessionNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/network-state/devices/{device_id}/connections")
+def get_device_connection_sessions(device_id: str):
+    try:
+        sessions = network_state_engine.getDeviceConnections(device_id)
+        return {"device_id": device_id, "count": len(sessions), "sessions": [s.model_dump() for s in sessions]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/network-state/devices/{device_id}/stats")
+def get_device_connection_stats(device_id: str):
+    try:
+        stats = network_state_engine.getConnectionStats(device_id)
+        return stats.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 45: PERFORMANCE STATE ENGINE API ====================
 
