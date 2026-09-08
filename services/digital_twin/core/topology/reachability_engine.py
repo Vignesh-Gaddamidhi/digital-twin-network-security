@@ -15,15 +15,10 @@ class ReachabilityEngine:
 
     @staticmethod
     def _resolve_device(device_id: str) -> Any:
-        """Resolves device from device_registry or falls back to twin_engine legacy registry."""
         dev = device_registry.getDevice(device_id)
         if dev:
             return dev
-        legacy = twin_engine.node_registry.get(device_id)
-        if legacy:
-            # Wrap legacy DeviceEntity into a compatible duck-type or model if needed
-            return legacy
-        return None
+        return twin_engine.node_registry.get(device_id)
 
     @classmethod
     def getNeighbors(cls, device_id: str) -> List[str]:
@@ -34,7 +29,14 @@ class ReachabilityEngine:
         return res.all_neighbors
 
     @staticmethod
-    def findPath(source_id: str, destination_id: str) -> Optional[List[str]]:
+    def _is_connection_active(conn: Any) -> bool:
+        if not conn:
+            return False
+        status_val = conn.status.value if hasattr(conn.status, "value") else str(conn.status)
+        return status_val.upper() == "ACTIVE"
+
+    @classmethod
+    def findPath(cls, source_id: str, destination_id: str, respect_link_status: bool = False) -> Optional[List[str]]:
         if source_id not in graph_engine._nodes or destination_id not in graph_engine._nodes:
             return None
 
@@ -50,6 +52,16 @@ class ReachabilityEngine:
             last_node = current_path[-1]
 
             for neighbor in undirected.neighbors(last_node):
+                if respect_link_status:
+                    conns = connection_registry.getAllConnections(device_id=last_node)
+                    conn = next(
+                        (c for c in conns if (c.sourceDevice == last_node and c.destinationDevice == neighbor) or 
+                                             (c.sourceDevice == neighbor and c.destinationDevice == last_node)),
+                        None
+                    )
+                    if conn and not cls._is_connection_active(conn):
+                        continue
+
                 if neighbor == destination_id:
                     return current_path + [neighbor]
                 if neighbor not in visited:
@@ -110,9 +122,8 @@ class ReachabilityEngine:
 
         dst_ports = getattr(dst_dev, "ports", getattr(dst_dev, "open_ports", []))
         if destination_port is not None and destination_port not in dst_ports:
-            # Check detailed ports if available
             detailed_ports = getattr(dst_dev, "detailed_ports", [])
-            port_match = any(p.port_number == destination_port for p in detailed_ports)
+            port_match = any(getattr(p, "port_number", p) == destination_port for p in detailed_ports)
             if not port_match and destination_port != 0:
                 return ReachabilityEvaluationResult(
                     source_device=source_id, destination_device=destination_id,
@@ -121,7 +132,8 @@ class ReachabilityEngine:
                     blocking_reason=f"Port {destination_port} is not listening on '{getattr(dst_dev, 'hostname', destination_id)}'."
                 )
 
-        path = cls.findPath(source_id, destination_id)
+        # 1. Discover topological path
+        path = cls.findPath(source_id, destination_id, respect_link_status=False)
         if not path:
             return ReachabilityEvaluationResult(
                 source_device=source_id, destination_device=destination_id,
@@ -158,8 +170,8 @@ class ReachabilityEngine:
                     None
                 )
                 if active_conn:
-                    c_status = active_conn.status.value if hasattr(active_conn.status, "value") else str(active_conn.status)
-                    if c_status != "ACTIVE":
+                    if not cls._is_connection_active(active_conn):
+                        c_status = active_conn.status.value if hasattr(active_conn.status, "value") else str(active_conn.status)
                         return ReachabilityEvaluationResult(
                             source_device=source_id, destination_device=destination_id,
                             is_reachable=False, protocol=protocol, destination_port=destination_port,

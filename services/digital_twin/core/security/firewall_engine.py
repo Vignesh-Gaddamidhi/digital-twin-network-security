@@ -24,7 +24,6 @@ class FirewallEngine:
         for z in defaults:
             self._zones[z.id] = z
 
-    # --- Zone Management ---
     def createZone(self, zone: NetworkZoneModel) -> NetworkZoneModel:
         if zone.id in self._zones:
             raise ValueError(f"Zone '{zone.id}' already exists.")
@@ -45,7 +44,6 @@ class FirewallEngine:
         if not dev:
             raise DeviceNotFoundError(f"Device '{device_id}' not found in registry.")
 
-        # Remove from any existing zones
         for z in self._zones.values():
             if device_id in z.devices:
                 z.devices.remove(device_id)
@@ -63,18 +61,41 @@ class FirewallEngine:
         return True
 
     def getDeviceZone(self, device_id: str) -> NetworkZoneTypeEnum:
+        # 1. Check local firewall engine zones
         for z in self._zones.values():
             if device_id in z.devices:
                 return z.name
+
+        # 2. Check zone_engine if available
+        try:
+            from services.digital_twin.core.topology.zone_engine import zone_engine
+            z_id = zone_engine.getDeviceZone(device_id)
+            if z_id:
+                clean_name = z_id.replace("zone-", "").upper()
+                if clean_name in NetworkZoneTypeEnum.__members__:
+                    return NetworkZoneTypeEnum[clean_name]
+        except Exception:
+            pass
+
+        # 3. Check device model metadata or networkZone attribute
         dev = device_registry.getDevice(device_id)
-        if dev and hasattr(dev, "networkZone") and dev.networkZone:
-            try:
-                return NetworkZoneTypeEnum(dev.networkZone.value)
-            except Exception:
-                pass
+        if dev:
+            raw_zone = dev.metadata.get("zone_name") or dev.metadata.get("zone_id")
+            if raw_zone:
+                clean = raw_zone.replace("zone-", "").upper()
+                if clean in NetworkZoneTypeEnum.__members__:
+                    return NetworkZoneTypeEnum[clean]
+
+            if hasattr(dev, "networkZone") and dev.networkZone:
+                z_val = dev.networkZone.value if hasattr(dev.networkZone, "value") else str(dev.networkZone)
+                z_clean = z_val.upper()
+                if z_clean == "EXTERNAL":
+                    return NetworkZoneTypeEnum.INTERNET
+                if z_clean in NetworkZoneTypeEnum.__members__:
+                    return NetworkZoneTypeEnum[z_clean]
+
         return NetworkZoneTypeEnum.UNKNOWN
 
-    # --- Firewall Policy Rule Management ---
     def addRule(self, rule: FirewallRuleModel) -> FirewallRuleModel:
         if rule.id in self._rules:
             raise ValueError(f"Rule with ID '{rule.id}' already exists.")
@@ -88,10 +109,8 @@ class FirewallEngine:
         return False
 
     def listRules(self) -> List[FirewallRuleModel]:
-        # Evaluated strictly by ascending priority number
         return sorted(self._rules.values(), key=lambda r: r.priority)
 
-    # --- Stateful Policy Inspection ---
     def inspectTraffic(
         self,
         source_device_id: str,
@@ -116,12 +135,16 @@ class FirewallEngine:
                 explanation=f"Traffic within trusted zone {src_zone.value} permitted by default."
             )
 
-        # Check explicit rules in priority order
+        # Check explicit rules
         for rule in self.listRules():
             if rule.status != "ACTIVE":
                 continue
 
-            zone_match = (rule.sourceZone == src_zone and rule.destinationZone == dst_zone)
+            # Allow EXTERNAL / INTERNET equivalence
+            s_match = (rule.sourceZone == src_zone) or (rule.sourceZone == NetworkZoneTypeEnum.INTERNET and src_zone == NetworkZoneTypeEnum.EXTERNAL)
+            d_match = (rule.destinationZone == dst_zone) or (rule.destinationZone == NetworkZoneTypeEnum.INTERNET and dst_zone == NetworkZoneTypeEnum.EXTERNAL)
+
+            zone_match = s_match and d_match
             proto_match = (rule.protocol.upper() in ("ANY", protocol.upper()))
             port_match = (rule.destinationPort is None or rule.destinationPort == destination_port)
 
@@ -138,7 +161,6 @@ class FirewallEngine:
                     explanation=f"Traffic matched policy rule '{rule.id}' ({rule.description}) -> {rule.action.value}."
                 )
 
-        # Implicit Default Deny
         return TrafficInspectionResult(
             source_device_id=source_device_id,
             destination_device_id=destination_device_id,

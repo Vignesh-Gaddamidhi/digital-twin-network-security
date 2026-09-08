@@ -28,3 +28,22 @@ class CompleteDigitalTwinGraphModel(BaseModel):
     dependencies: List[DetailedServiceDependencyModel]
     firewall_rules: List[FirewallRuleModel]
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+class NetworkOverviewModel(BaseModel):
+    devices: int
+    connections: int
+    zones: int
+
+class DeviceSummaryItem(BaseModel):
+    id: str
+    type: str
+    zone: Optional[str] = None
+    state: str = "ONLINE"
+
+class TopologyStateOverview(BaseModel):
+    reachable: bool
+
+class Day42DigitalTwinSnapshot(BaseModel):
+    network: NetworkOverviewModel
+    devices: List[DeviceSummaryItem]
+    topology: TopologyStateOverview

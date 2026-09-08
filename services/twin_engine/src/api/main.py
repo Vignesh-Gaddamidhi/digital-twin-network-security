@@ -332,6 +332,12 @@ def bootstrap_security_grounding():
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
 
+# ==================== DAY 42: PHASE 5 SNAPSHOT API ====================
+
+@app.get("/api/v1/twin/snapshot/phase5")
+def get_phase5_snapshot():
+    return complete_graph_engine.generateDay42Snapshot()
+
 # ==================== DAY 41: COMPLETE DIGITAL TWIN GRAPH API ====================
 
 @app.get("/api/v1/twin/graph/complete")
