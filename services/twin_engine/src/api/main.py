@@ -41,6 +41,14 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.security_state_engine import (
+    security_state_engine, InvalidSecurityTransitionError,
+    InvalidVulnerabilityTransitionError, VulnerabilityNotFoundError
+)
+from packages.shared_types.src.security_state import (
+    SecurityPostureStatusEnum, VulnerabilityLifecycleStatusEnum,
+    DynamicVulnerabilityEntity, DeviceVulnerabilitySummary
+)
 from services.digital_twin.core.state.port_service_engine import (
     port_service_engine, PortNotFoundError, ServiceNotFoundError, DuplicateServiceError
 )
@@ -357,6 +365,77 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 48: SECURITY & VULNERABILITY STATE API ====================
+
+class SecurityStatusTransitionPayload(BaseModel):
+    new_status: SecurityPostureStatusEnum
+    reason: str = "Security posture transition"
+    source: str = "ANOMALY_DETECTOR"
+
+class VulnerabilityStatusTransitionPayload(BaseModel):
+    new_status: VulnerabilityLifecycleStatusEnum
+    reason: str = "Vulnerability lifecycle update"
+    source: str = "PATCH_MANAGER"
+
+@app.post("/api/v1/twin/security/{device_id}/status/transition")
+def api_transition_security_status(device_id: str, payload: SecurityStatusTransitionPayload):
+    try:
+        rec = security_state_engine.transitionSecurityStatus(
+            device_id=device_id,
+            new_status=payload.new_status,
+            reason=payload.reason,
+            source=payload.source
+        )
+        return {"status": "POSTURE_UPDATED", "record": rec.model_dump()}
+    except (DeviceNotFoundError, InvalidSecurityTransitionError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/security/{device_id}/status")
+def api_get_security_status(device_id: str):
+    try:
+        status = security_state_engine.getSecurityStatus(device_id)
+        return {"device_id": device_id, "security_status": status.value}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/security/{device_id}/vulnerabilities", status_code=201)
+def api_add_vulnerability(device_id: str, vuln: DynamicVulnerabilityEntity):
+    try:
+        added = security_state_engine.addVulnerability(device_id, vuln)
+        return {"status": "VULNERABILITY_REGISTERED", "vulnerability": added.model_dump()}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/security/{device_id}/vulnerabilities/{vuln_id}/transition")
+def api_transition_vulnerability_status(device_id: str, vuln_id: str, payload: VulnerabilityStatusTransitionPayload):
+    try:
+        rec = security_state_engine.transitionVulnerabilityStatus(
+            device_id=device_id,
+            vulnerability_id=vuln_id,
+            new_status=payload.new_status,
+            reason=payload.reason,
+            source=payload.source
+        )
+        return {"status": "VULN_STATUS_UPDATED", "record": rec.model_dump()}
+    except (DeviceNotFoundError, VulnerabilityNotFoundError, InvalidVulnerabilityTransitionError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/security/{device_id}/vulnerabilities/summary")
+def api_get_vulnerability_summary(device_id: str):
+    try:
+        summary = security_state_engine.getVulnerabilitySummary(device_id)
+        return summary.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/security/{device_id}/history")
+def api_get_security_history(device_id: str):
+    try:
+        history = security_state_engine.getSecurityHistory(device_id)
+        return {"device_id": device_id, "count": len(history), "history": [h.model_dump() for h in history]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 47: PORT & SERVICE STATE API ====================
 
