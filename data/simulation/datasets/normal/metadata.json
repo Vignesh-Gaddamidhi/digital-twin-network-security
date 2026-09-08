@@ -1,0 +1,11 @@
+{
+  "datasetId": "normal-baseline-run-001",
+  "version": "1.0.0",
+  "seed": 12345,
+  "durationSeconds": 60,
+  "devicesCount": 9,
+  "zonesCount": 4,
+  "clockTickSeconds": 1.0,
+  "createdAt": "2026-09-08T17:26:48.085619+00:00",
+  "hardwareProfile": "Enterprise-Branch-Canonical"
+}

@@ -1,0 +1,28 @@
+{
+  "totalEvents": 655,
+  "totalPackets": 754,
+  "totalBytes": 550441,
+  "trafficRateBps": 9174.02,
+  "tcpCount": 588,
+  "udpCount": 120,
+  "icmpCount": 46,
+  "httpCount": 39,
+  "httpsCount": 60,
+  "dnsCount": 120,
+  "sshCount": 18,
+  "activeConnections": 18,
+  "averageConnectionsPerDevice": 2.0,
+  "portDistribution": {
+    "53": 120,
+    "443": 120,
+    "80": 78,
+    "5432": 300,
+    "22": 90
+  },
+  "protocolDistribution": {
+    "TCP": 77.98,
+    "UDP": 15.92,
+    "ICMP": 6.1
+  },
+  "generatedAt": "2026-09-08T17:26:48.085605+00:00"
+}

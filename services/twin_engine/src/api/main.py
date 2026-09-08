@@ -48,6 +48,8 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.day57_baseline_generator import day57_generator
+from packages.shared_types.src.baseline_dataset import NormalTrafficSummaryModel, BaselineMetadataModel
 from services.digital_twin.simulation.generators.normal_traffic_orchestrator import normal_orchestrator
 from packages.shared_types.src.normal_traffic import (
     NormalTrafficScenarioConfig, BaselineSummaryModel, OrchestratorEventEnvelope
@@ -413,6 +415,55 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 57: GRAND BASELINE INTEGRATION API ====================
+
+class Day57RunPayload(BaseModel):
+    durationSeconds: int = Field(default=60, ge=1, le=86400)
+    seed: int = Field(default=12345)
+
+@app.post("/api/v1/twin/simulation/baseline/generate")
+def api_generate_day57_baseline(payload: Day57RunPayload):
+    summary = day57_generator.generate_baseline(
+        duration_seconds=payload.durationSeconds,
+        seed=payload.seed
+    )
+    return {"status": "DAY57_BASELINE_GENERATED", "summary": summary.model_dump()}
+
+@app.get("/api/v1/twin/simulation/baseline/summary")
+def api_get_day57_summary():
+    summary_path = day57_generator.output_dir / "summary.json"
+    if not summary_path.exists():
+        raise HTTPException(status_code=404, detail="summary.json not found. Run generation first.")
+    with open(summary_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/v1/twin/simulation/baseline/metadata")
+def api_get_day57_metadata():
+    meta_path = day57_generator.output_dir / "metadata.json"
+    if not meta_path.exists():
+        raise HTTPException(status_code=404, detail="metadata.json not found. Run generation first.")
+    with open(meta_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/v1/twin/simulation/baseline/events")
+def api_get_day57_events(limit: int = 10, offset: int = 0):
+    events_path = day57_generator.output_dir / "events.jsonl"
+    if not events_path.exists():
+        raise HTTPException(status_code=404, detail="events.jsonl not found. Run generation first.")
+    
+    events = []
+    with open(events_path, "r", encoding="utf-8") as f:
+        for idx, line in enumerate(f):
+            if idx < offset:
+                continue
+            if len(events) >= limit:
+                break
+            stripped = line.strip()
+            if stripped:
+                events.append(json.loads(stripped))
+                
+    return {"offset": offset, "limit": limit, "count": len(events), "events": events}
 
 # ==================== DAY 56: NORMAL TRAFFIC ORCHESTRATOR API ====================
 
