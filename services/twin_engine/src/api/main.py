@@ -48,6 +48,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.connection_anomaly_engine import connection_anomaly_engine
+from packages.shared_types.src.connection_anomaly import (
+    ConnectionAnomalyProfile, ConnectionLifecycleStateEnum,
+    ConnectionAnomalyPatternEnum, ConnectionAnomalyRunResult
+)
 from services.digital_twin.simulation.generators.traffic_spike_engine import traffic_spike_engine
 from packages.shared_types.src.traffic_spike import (
     TrafficSpikeProfile, SpikePhaseEnum, SpikeTickTelemetry, TrafficSpikeRunResult
@@ -424,7 +429,24 @@ def bootstrap_security_grounding():
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
 
-# ==================== DAY 59: TRAFFIC SPIKE SIMULATION API ====================
+# ==================== DAY 60: CONNECTION ANOMALY SIMULATION API ====================
+
+_last_connection_anomaly_result: Optional[ConnectionAnomalyRunResult] = None
+
+@app.post("/api/v1/twin/simulation/abnormal/connection/run")
+def api_run_connection_anomaly(profile: ConnectionAnomalyProfile, sync_to_twin: bool = True):
+    global _last_connection_anomaly_result
+    result = connection_anomaly_engine.runAnomalyScenario(profile, sync_to_twin=sync_to_twin)
+    _last_connection_anomaly_result = result
+    return {"status": "CONNECTION_ANOMALY_COMPLETED", "result": result.model_dump()}
+
+@app.get("/api/v1/twin/simulation/abnormal/connection/last")
+def api_get_last_connection_anomaly_result():
+    if not _last_connection_anomaly_result:
+        raise HTTPException(status_code=404, detail="No connection anomaly scenario has been executed yet.")
+    return _last_connection_anomaly_result.model_dump()
+
+# ==================== DAY 59: TRAFFIC SPIKE SIMULATION API ===================="
 
 _last_spike_result: Optional[TrafficSpikeRunResult] = None
 
