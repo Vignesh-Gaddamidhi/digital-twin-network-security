@@ -41,6 +41,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.ssh_traffic_generator import (
+    ssh_orchestrator, SshTargetPortClosedError
+)
+from packages.shared_types.src.ssh_traffic import (
+    SshSessionStateEnum, SshAuthMethodEnum, SshTrafficProfile, SshTransactionEvent
+)
 from services.digital_twin.simulation.generators.dns_traffic_generator import dns_orchestrator
 from packages.shared_types.src.dns_traffic import (
     DnsRecordTypeEnum, DnsResponseCodeEnum, DnsTrafficProfile, DnsTransactionEvent
@@ -396,6 +402,46 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 55: SSH TRAFFIC SIMULATION API ====================
+
+class SshSessionRequestPayload(BaseModel):
+    sourceDevice: str = "admin-01"
+    destinationDevice: str = "server-01"
+    username: str = "sysadmin"
+    destinationPort: int = 22
+    authMethod: SshAuthMethodEnum = SshAuthMethodEnum.PUBLIC_KEY
+    shouldFail: bool = False
+    simulationId: str = "sim-001"
+
+@app.post("/api/v1/twin/simulation/traffic/ssh/session")
+def api_generate_ssh_session(payload: SshSessionRequestPayload):
+    try:
+        events = ssh_orchestrator.generator.generateSessionSequence(
+            source_dev=payload.sourceDevice,
+            dest_dev=payload.destinationDevice,
+            username=payload.username,
+            auth_method=payload.authMethod,
+            destination_port=payload.destinationPort,
+            should_fail=payload.shouldFail,
+            simulation_id=payload.simulationId
+        )
+        return {"status": "SSH_SESSION_GENERATED", "events_count": len(events), "events": [e.model_dump() for e in events]}
+    except (DeviceNotFoundError, SshTargetPortClosedError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/traffic/ssh/profile-run")
+def api_run_ssh_profile(profile: SshTrafficProfile):
+    try:
+        events = ssh_orchestrator.generateFromProfile(profile)
+        return {"status": "SSH_PROFILE_EXECUTED", "count": len(events), "events": [e.model_dump() for e in events]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/simulation/traffic/ssh/events")
+def api_list_ssh_events():
+    events = ssh_orchestrator.getEvents()
+    return {"count": len(events), "events": [e.model_dump() for e in events]}
 
 # ==================== DAY 54: DNS TRAFFIC SIMULATION API ====================
 
