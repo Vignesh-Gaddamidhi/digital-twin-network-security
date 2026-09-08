@@ -1,0 +1,21 @@
+{
+  "baselineId": "run-p7-5c4c858c-stage-a1a761",
+  "scenarioName": "Normal-stage-a1a761",
+  "seed": 16792,
+  "durationSeconds": 3,
+  "totalEventsCount": 3,
+  "totalBytesTransferred": 485,
+  "totalPacketsTransferred": 6,
+  "protocolDistribution": {
+    "DNS": 1,
+    "ICMP": 2
+  },
+  "portDistribution": {
+    "53": 1
+  },
+  "destinationDistribution": {
+    "dns-01": 1,
+    "server-01": 2
+  },
+  "generatedAt": "2026-09-08T17:57:31.602423+00:00"
+}
