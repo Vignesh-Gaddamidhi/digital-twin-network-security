@@ -48,6 +48,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.abnormal_traffic_engine import abnormal_traffic_engine
+from packages.shared_types.src.abnormal_traffic import (
+    AnomalyTypeEnum, AnomalySeverityEnum, AnomalyProfile, AbnormalEventModel
+)
 from services.digital_twin.simulation.generators.day57_baseline_generator import day57_generator
 from packages.shared_types.src.baseline_dataset import NormalTrafficSummaryModel, BaselineMetadataModel
 from services.digital_twin.simulation.generators.normal_traffic_orchestrator import normal_orchestrator
@@ -415,6 +419,32 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 58: ABNORMAL TRAFFIC SIMULATION API ====================
+
+@app.post("/api/v1/twin/simulation/abnormal/inject")
+def api_inject_abnormal_traffic(profile: AnomalyProfile, simulation_id: str = "sim-001"):
+    try:
+        event, packets = abnormal_traffic_engine.injectAnomaly(profile, simulation_id=simulation_id)
+        return {
+            "status": "ANOMALY_INJECTED",
+            "anomaly_event": event.model_dump(),
+            "packets_generated_count": len(packets)
+        }
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/simulation/abnormal/events")
+def api_list_abnormal_events():
+    events = abnormal_traffic_engine.getAbnormalEvents()
+    return {"count": len(events), "events": [e.model_dump() for e in events]}
+
+@app.get("/api/v1/twin/simulation/abnormal/raw-traffic")
+def api_list_abnormal_raw_traffic(limit: int = 50):
+    traffic = abnormal_traffic_engine.getRawTrafficEvents()
+    return {"count": len(traffic), "events": [t.model_dump() for t in traffic[-limit:]]}
 
 # ==================== DAY 57: GRAND BASELINE INTEGRATION API ====================
 
