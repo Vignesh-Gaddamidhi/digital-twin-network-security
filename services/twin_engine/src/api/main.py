@@ -48,6 +48,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.traffic_spike_engine import traffic_spike_engine
+from packages.shared_types.src.traffic_spike import (
+    TrafficSpikeProfile, SpikePhaseEnum, SpikeTickTelemetry, TrafficSpikeRunResult
+)
 from services.digital_twin.simulation.generators.abnormal_traffic_engine import abnormal_traffic_engine
 from packages.shared_types.src.abnormal_traffic import (
     AnomalyTypeEnum, AnomalySeverityEnum, AnomalyProfile, AbnormalEventModel
@@ -419,6 +423,23 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 59: TRAFFIC SPIKE SIMULATION API ====================
+
+_last_spike_result: Optional[TrafficSpikeRunResult] = None
+
+@app.post("/api/v1/twin/simulation/abnormal/spike/run")
+def api_run_traffic_spike(profile: TrafficSpikeProfile, sync_to_twin: bool = True):
+    global _last_spike_result
+    result = traffic_spike_engine.runSpikeScenario(profile, sync_to_twin=sync_to_twin)
+    _last_spike_result = result
+    return {"status": "SPIKE_SCENARIO_COMPLETED", "result": result.model_dump()}
+
+@app.get("/api/v1/twin/simulation/abnormal/spike/last")
+def api_get_last_spike_result():
+    if not _last_spike_result:
+        raise HTTPException(status_code=404, detail="No traffic spike scenario has been executed yet.")
+    return _last_spike_result.model_dump()
 
 # ==================== DAY 58: ABNORMAL TRAFFIC SIMULATION API ====================
 
