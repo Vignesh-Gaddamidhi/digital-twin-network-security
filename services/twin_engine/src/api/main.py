@@ -41,6 +41,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.web_traffic_generator import web_orchestrator
+from packages.shared_types.src.web_traffic import (
+    WebProtocolEnum, HttpMethodEnum, WebTrafficProfile, HttpTransactionEvent
+)
 from services.digital_twin.simulation.generators.protocol_generators import protocol_coordinator
 from packages.shared_types.src.protocol_traffic import (
     TransportProtocolEnum, TrafficDirectionEnum, SimulatedTcpStateEnum,
@@ -388,6 +392,50 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 53: HTTP & HTTPS WEB TRAFFIC SIMULATION API ====================
+
+class WebTransactionRequestPayload(BaseModel):
+    sourceDevice: str = "client-01"
+    destinationDevice: str = "web-01"
+    method: HttpMethodEnum = HttpMethodEnum.GET
+    path: str = "/"
+    statusCode: int = 200
+    simulationId: str = "sim-001"
+
+@app.post("/api/v1/twin/simulation/traffic/web/http")
+def api_generate_http_transaction(payload: WebTransactionRequestPayload):
+    evt = web_orchestrator.http_gen.generateTransaction(
+        source_dev=payload.sourceDevice,
+        dest_dev=payload.destinationDevice,
+        method=payload.method,
+        path=payload.path,
+        status_code=payload.statusCode,
+        simulation_id=payload.simulationId
+    )
+    return {"status": "HTTP_TRANSACTION_GENERATED", "event": evt.model_dump()}
+
+@app.post("/api/v1/twin/simulation/traffic/web/https")
+def api_generate_https_transaction(payload: WebTransactionRequestPayload):
+    evt = web_orchestrator.https_gen.generateTransaction(
+        source_dev=payload.sourceDevice,
+        dest_dev=payload.destinationDevice,
+        method=payload.method,
+        path=payload.path,
+        status_code=payload.statusCode,
+        simulation_id=payload.simulationId
+    )
+    return {"status": "HTTPS_TRANSACTION_GENERATED", "event": evt.model_dump()}
+
+@app.post("/api/v1/twin/simulation/traffic/web/profile-run")
+def api_run_web_profile(profile: WebTrafficProfile, source_device: str = "client-01"):
+    evts = web_orchestrator.generateFromProfile(profile, source_dev=source_device)
+    return {"status": "PROFILE_EXECUTED", "count": len(evts), "events": [e.model_dump() for e in evts]}
+
+@app.get("/api/v1/twin/simulation/traffic/web/events")
+def api_list_web_events():
+    evts = web_orchestrator.getEvents()
+    return {"count": len(evts), "events": [e.model_dump() for e in evts]}
 
 # ==================== DAY 52: PROTOCOL TRAFFIC GENERATION API ====================
 
