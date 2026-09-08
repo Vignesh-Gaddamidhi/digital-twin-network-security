@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import asyncio
 import json
 from typing import Optional, List, Dict, Any
@@ -40,6 +40,10 @@ from packages.shared_types.src.graph import (
 from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
+)
+from services.digital_twin.core.state.performance_state_engine import performance_state_engine
+from packages.shared_types.src.performance import (
+    PerformanceMetricSnapshot, PerformanceTelemetryPayload, PerformanceLevelEnum
 )
 from services.digital_twin.core.state.state_transition_engine import (
     state_transition_engine, InvalidStateTransitionError
@@ -340,6 +344,54 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 45: PERFORMANCE STATE ENGINE API ====================
+
+class SingleMetricPayload(BaseModel):
+    value: float = Field(..., ge=0.0, le=100.0)
+    source: str = "TELEMETRY"
+
+@app.post("/api/v1/twin/performance/{device_id}/telemetry")
+def ingest_performance_telemetry(device_id: str, payload: PerformanceTelemetryPayload):
+    try:
+        snapshot = performance_state_engine.recordTelemetry(
+            device_id, cpu=payload.cpu, memory=payload.memory, source=payload.source
+        )
+        return {"status": "INGESTED", "performance": snapshot.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/performance/{device_id}/cpu")
+def update_device_cpu_metric(device_id: str, payload: SingleMetricPayload):
+    try:
+        snapshot = performance_state_engine.updateCpu(device_id, payload.value, source=payload.source)
+        return {"status": "CPU_UPDATED", "performance": snapshot.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/performance/{device_id}/memory")
+def update_device_memory_metric(device_id: str, payload: SingleMetricPayload):
+    try:
+        snapshot = performance_state_engine.updateMemory(device_id, payload.value, source=payload.source)
+        return {"status": "MEMORY_UPDATED", "performance": snapshot.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/performance/{device_id}/current")
+def get_current_performance_snapshot(device_id: str):
+    try:
+        snapshot = performance_state_engine.getPerformanceState(device_id)
+        return snapshot.model_dump()
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/performance/{device_id}/history")
+def get_performance_telemetry_history(device_id: str):
+    try:
+        records = performance_state_engine.getHistory(device_id)
+        return {"device_id": device_id, "count": len(records), "history": [r.model_dump() for r in records]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 44: STATE TRANSITION ENGINE API ====================
 
