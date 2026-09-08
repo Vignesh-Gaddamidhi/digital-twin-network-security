@@ -41,6 +41,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.protocol_generators import protocol_coordinator
+from packages.shared_types.src.protocol_traffic import (
+    TransportProtocolEnum, TrafficDirectionEnum, SimulatedTcpStateEnum,
+    IcmpMessageTypeEnum, UnifiedTrafficEventModel
+)
 from services.digital_twin.simulation.engine.reproducible_engine import (
     reproducible_engine, DuplicateSimulationIdError
 )
@@ -383,6 +388,63 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 52: PROTOCOL TRAFFIC GENERATION API ====================
+
+class TcpSimulationPayload(BaseModel):
+    sourceDevice: str
+    destinationDevice: str
+    destinationPort: int = 443
+    payloadBytes: int = 1200
+    simulationId: str = "sim-001"
+
+class UdpSimulationPayload(BaseModel):
+    sourceDevice: str
+    destinationDevice: str
+    destinationPort: int = 53
+    payloadBytes: int = 128
+    simulationId: str = "sim-001"
+
+class IcmpSimulationPayload(BaseModel):
+    sourceDevice: str
+    destinationDevice: str
+    simulationId: str = "sim-001"
+
+@app.post("/api/v1/twin/simulation/traffic/tcp")
+def api_generate_tcp_traffic(payload: TcpSimulationPayload):
+    evts = protocol_coordinator.emitTcpFlow(
+        src=payload.sourceDevice,
+        dst=payload.destinationDevice,
+        dst_port=payload.destinationPort,
+        payload_bytes=payload.payloadBytes,
+        simulation_id=payload.simulationId
+    )
+    return {"status": "TCP_FLOW_GENERATED", "events_count": len(evts), "events": [e.model_dump() for e in evts]}
+
+@app.post("/api/v1/twin/simulation/traffic/udp")
+def api_generate_udp_traffic(payload: UdpSimulationPayload):
+    evt = protocol_coordinator.emitUdpDatagram(
+        src=payload.sourceDevice,
+        dst=payload.destinationDevice,
+        dst_port=payload.destinationPort,
+        payload_bytes=payload.payloadBytes,
+        simulation_id=payload.simulationId
+    )
+    return {"status": "UDP_DATAGRAM_GENERATED", "event": evt.model_dump()}
+
+@app.post("/api/v1/twin/simulation/traffic/icmp")
+def api_generate_icmp_traffic(payload: IcmpSimulationPayload):
+    req, rep = protocol_coordinator.emitIcmpPing(
+        src=payload.sourceDevice,
+        dst=payload.destinationDevice,
+        simulation_id=payload.simulationId
+    )
+    return {"status": "ICMP_PING_GENERATED", "request": req.model_dump(), "reply": rep.model_dump()}
+
+@app.get("/api/v1/twin/simulation/traffic/events")
+def api_list_traffic_events():
+    evts = protocol_coordinator.getEvents()
+    return {"count": len(evts), "events": [e.model_dump() for e in evts]}
 
 # ==================== DAY 51: REPRODUCIBLE SIMULATION API ====================
 
