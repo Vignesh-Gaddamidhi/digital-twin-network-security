@@ -1,0 +1,24 @@
+{
+  "baselineId": "run-p7-266224e9-stage-dabc51",
+  "scenarioName": "Normal-stage-dabc51",
+  "seed": 26383,
+  "durationSeconds": 3,
+  "totalEventsCount": 3,
+  "totalBytesTransferred": 6695,
+  "totalPacketsTransferred": 6,
+  "protocolDistribution": {
+    "HTTPS": 1,
+    "HTTP": 1,
+    "DNS": 1
+  },
+  "portDistribution": {
+    "443": 1,
+    "80": 1,
+    "53": 1
+  },
+  "destinationDistribution": {
+    "web-01": 2,
+    "dns-01": 1
+  },
+  "generatedAt": "2026-09-08T18:00:59.476297+00:00"
+}

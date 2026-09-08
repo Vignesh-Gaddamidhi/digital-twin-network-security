@@ -1,8 +1,8 @@
 {
   "totalEvents": 655,
   "totalPackets": 754,
-  "totalBytes": 550441,
-  "trafficRateBps": 9174.02,
+  "totalBytes": 554074,
+  "trafficRateBps": 9234.57,
   "tcpCount": 588,
   "udpCount": 120,
   "icmpCount": 46,
@@ -24,5 +24,5 @@
     "UDP": 15.92,
     "ICMP": 6.1
   },
-  "generatedAt": "2026-09-08T17:26:48.085605+00:00"
+  "generatedAt": "2026-09-08T18:00:59.234790+00:00"
 }

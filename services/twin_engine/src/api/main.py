@@ -2080,3 +2080,7 @@ async def websocket_telemetry_stream(websocket: WebSocket):
             await asyncio.sleep(1.0)
     except WebSocketDisconnect:
         pass
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    return {"status": "HEALTHY", "phase": "PHASE_7_COMPLETE", "engine": "twin_engine"}

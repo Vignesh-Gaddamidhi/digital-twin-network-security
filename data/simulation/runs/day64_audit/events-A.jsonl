@@ -1,6 +1,6 @@
 {
   "scenarioId": "normal-plus-anomalies",
-  "runId": "run-p7-b6feccfe",
+  "runId": "run-p7-31c3d9a3",
   "state": "COMPLETED",
   "currentStageIndex": 4,
   "totalStages": 4,
@@ -8,6 +8,6 @@
   "totalPacketsEmitted": 308,
   "totalEventsLogged": 18,
   "anomaliesTriggeredCount": 2,
-  "startedAt": "2026-09-08T17:57:31.552591+00:00",
-  "lastTickAt": "2026-09-08T17:57:31.552675+00:00"
+  "startedAt": "2026-09-08T18:00:50.660313+00:00",
+  "lastTickAt": "2026-09-08T18:00:50.660369+00:00"
 }
