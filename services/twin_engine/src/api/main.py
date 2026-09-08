@@ -41,6 +41,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.state.state_transition_engine import (
+    state_transition_engine, InvalidStateTransitionError
+)
+from packages.shared_types.src.device_state import OperationalTransitionRecord
 from services.digital_twin.core.state.state_engine import state_engine
 from packages.shared_types.src.device_state import (
     ComprehensiveDeviceStateModel, PerformanceStateModel, NetworkTelemetryStateModel,
@@ -336,6 +340,59 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 44: STATE TRANSITION ENGINE API ====================
+
+class TransitionRequestPayload(BaseModel):
+    device_id: str
+    target_state: OperationalStatusEnum
+    reason: str = "State transition requested"
+    trigger: str = "OPERATOR"
+
+@app.post("/api/v1/twin/operational/transition")
+def transition_device_operational_state(payload: TransitionRequestPayload):
+    try:
+        rec = state_transition_engine.transitionState(
+            device_id=payload.device_id,
+            to_state=payload.target_state,
+            reason=payload.reason,
+            trigger=payload.trigger
+        )
+        return {"status": "TRANSITIONED", "record": rec.model_dump(by_alias=True)}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except InvalidStateTransitionError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+
+@app.get("/api/v1/twin/operational/{device_id}/current")
+def get_current_operational_state(device_id: str):
+    try:
+        curr = state_transition_engine.getCurrentState(device_id)
+        return {"device_id": device_id, "operational_state": curr.value}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/operational/{device_id}/can-transition")
+def check_can_transition(device_id: str, target_state: OperationalStatusEnum):
+    try:
+        allowed = state_transition_engine.canTransition(device_id, target_state)
+        current = state_transition_engine.getCurrentState(device_id)
+        return {
+            "device_id": device_id,
+            "current_state": current.value,
+            "target_state": target_state.value,
+            "allowed": allowed
+        }
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/operational/{device_id}/history")
+def get_device_operational_history(device_id: str):
+    try:
+        history = state_transition_engine.getStateHistory(device_id)
+        return {"device_id": device_id, "count": len(history), "history": [h.model_dump(by_alias=True) for h in history]}
+    except DeviceNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 43: DIGITAL TWIN STATE ENGINE API ====================
 

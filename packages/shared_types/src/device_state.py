@@ -5,10 +5,22 @@ from datetime import datetime, timezone
 import uuid
 
 class OperationalStatusEnum(str, Enum):
+    UNKNOWN = "UNKNOWN"
+    STARTING = "STARTING"
     ACTIVE = "ACTIVE"
     DEGRADED = "DEGRADED"
     OFFLINE = "OFFLINE"
     MAINTENANCE = "MAINTENANCE"
+    ISOLATED = "ISOLATED"
+
+class SecurityPostureEnum(str, Enum):
+    NORMAL = "NORMAL"
+    MONITORED = "MONITORED"
+    SUSPICIOUS = "SUSPICIOUS"
+    AT_RISK = "AT_RISK"
+    COMPROMISED = "COMPROMISED"
+    ISOLATED = "ISOLATED"
+    UNKNOWN = "UNKNOWN"
 
 class SecurityConditionEnum(str, Enum):
     NORMAL = "NORMAL"
@@ -89,3 +101,15 @@ class StateTransitionAuditRecord(BaseModel):
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     triggerSource: str = "TELEMETRY"  # TELEMETRY, SIMULATION, OPERATOR
     reason: str = "State update"
+class OperationalTransitionRecord(BaseModel):
+    transitionId: str = Field(default_factory=lambda: f"trans-{uuid.uuid4().hex[:8]}")
+    deviceId: str = Field(..., min_length=1)
+    fromState: OperationalStatusEnum = Field(..., alias="from")
+    toState: OperationalStatusEnum = Field(..., alias="to")
+    reason: str = Field(default="Operational state update")
+    triggerSource: str = Field(default="TELEMETRY") # TELEMETRY, SIMULATION, OPERATOR
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    model_config = {
+        "populate_by_name": True
+    }
