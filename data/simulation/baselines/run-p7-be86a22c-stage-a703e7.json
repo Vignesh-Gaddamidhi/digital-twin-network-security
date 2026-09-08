@@ -1,0 +1,22 @@
+{
+  "baselineId": "run-p7-be86a22c-stage-a703e7",
+  "scenarioName": "Normal-stage-a703e7",
+  "seed": 2332,
+  "durationSeconds": 3,
+  "totalEventsCount": 3,
+  "totalBytesTransferred": 4626,
+  "totalPacketsTransferred": 6,
+  "protocolDistribution": {
+    "HTTPS": 1,
+    "DNS": 2
+  },
+  "portDistribution": {
+    "443": 1,
+    "53": 2
+  },
+  "destinationDistribution": {
+    "web-01": 1,
+    "dns-01": 2
+  },
+  "generatedAt": "2026-09-08T17:45:31.573540+00:00"
+}

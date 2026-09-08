@@ -48,6 +48,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.repeated_connection_engine import repeated_connection_engine
+from packages.shared_types.src.repeated_connection import RepeatedConnectionProfile, RepeatedConnectionEvent
+from services.digital_twin.simulation.scenarios.scenario_runner import scenario_runner
+from packages.shared_types.src.master_scenario import (
+    MasterScenarioDefinition, MasterScenarioStageConfig, ScenarioStageTypeEnum, ScenarioExecutionStatus
+)
 from services.digital_twin.simulation.generators.protocol_anomaly_engine import protocol_anomaly_engine
 from packages.shared_types.src.protocol_anomaly import (
     ProtocolWindowPhaseEnum, WindowProtocolStats, ProtocolAnomalyEvent, ProtocolAnomalyRunResult
@@ -436,6 +442,42 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 63 & 64: MASTER SCENARIO PLATFORM API ====================
+
+@app.post("/api/v1/twin/simulation/abnormal/repeated-connections/run")
+def api_run_repeated_connections(profile: RepeatedConnectionProfile):
+    event, packets = repeated_connection_engine.runScenario(profile)
+    return {
+        "status": "REPEATED_CONNECTIONS_COMPLETED",
+        "event": event.model_dump(),
+        "packets_count": len(packets)
+    }
+
+@app.post("/api/v1/twin/simulation/master/scenario/load-and-run")
+def api_load_and_run_master_scenario(scenario: MasterScenarioDefinition):
+    try:
+        scenario_runner.loadScenario(scenario)
+        status = scenario_runner.run()
+        scenario_runner.exportResults()
+        return {"status": "SCENARIO_RUN_COMPLETED", "execution": status.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/simulation/master/scenario/status")
+def api_get_master_scenario_status():
+    status = scenario_runner.getStatus()
+    if not status:
+        raise HTTPException(status_code=404, detail="No scenario has been initialized yet.")
+    return status.model_dump()
+
+@app.post("/api/v1/twin/simulation/master/scenario/replay")
+def api_replay_master_scenario():
+    try:
+        status = scenario_runner.replay()
+        return {"status": "SCENARIO_REPLAYED", "execution": status.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 62: PROTOCOL ANOMALY SIMULATION API ====================
 
