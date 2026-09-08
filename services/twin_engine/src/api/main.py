@@ -41,6 +41,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.core.topology.service_graph_engine import service_graph_engine
+from packages.shared_types.src.service_graph import (
+    DetailedServiceDependencyModel, ImpactPropagationResult
+)
 from services.digital_twin.core.topology.service_dependency_engine import service_dependency_engine
 from packages.shared_types.src.service_dependency import (
     ServiceDependencyModel, ServiceDependencyChainResult, DependencyTypeEnum
@@ -325,6 +329,30 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 40: SERVICE GRAPH & IMPACT API ====================
+
+class ImpactEvaluationPayload(BaseModel):
+    failed_device_id: str
+    failed_service_name: str
+
+@app.post("/api/v1/twin/services/graph/dependencies", status_code=201)
+def create_detailed_service_dependency(dep: DetailedServiceDependencyModel):
+    try:
+        created = service_graph_engine.addDependency(dep)
+        return {"status": "SERVICE_DEPENDENCY_CREATED", "dependency": created.model_dump()}
+    except (DeviceNotFoundError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/services/graph/dependencies")
+def list_detailed_service_dependencies(device_id: Optional[str] = None):
+    deps = service_graph_engine.listDependencies(device_id)
+    return {"count": len(deps), "dependencies": [d.model_dump() for d in deps]}
+
+@app.post("/api/v1/twin/services/graph/impact")
+def evaluate_service_impact(payload: ImpactEvaluationPayload):
+    res = service_graph_engine.propagateImpact(payload.failed_device_id, payload.failed_service_name)
+    return res.model_dump()
 
 # ==================== DAY 39: REACHABILITY ENGINE API ====================
 

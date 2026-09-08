@@ -1,5 +1,5 @@
 import ipaddress
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from packages.shared_types.src.network_device import (
     NetworkDeviceModel, RouteEntryModel, RouteStatusEnum, 
     ForwardingDecisionResult, DeviceTypeEnum
