@@ -48,6 +48,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.generators.port_anomaly_engine import port_anomaly_engine
+from packages.shared_types.src.port_anomaly import (
+    PortAnomalyProfile, PortProbeMetric, PortAnomalyRunResult, PortStateMutationConfig
+)
 from services.digital_twin.simulation.generators.connection_anomaly_engine import connection_anomaly_engine
 from packages.shared_types.src.connection_anomaly import (
     ConnectionAnomalyProfile, ConnectionLifecycleStateEnum,
@@ -428,6 +432,23 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 61: PORT ANOMALY SIMULATION API ====================
+
+_last_port_anomaly_result: Optional[PortAnomalyRunResult] = None
+
+@app.post("/api/v1/twin/simulation/abnormal/port/run")
+def api_run_port_anomaly(profile: PortAnomalyProfile):
+    global _last_port_anomaly_result
+    result = port_anomaly_engine.runPortAnomalyScenario(profile)
+    _last_port_anomaly_result = result
+    return {"status": "PORT_ANOMALY_COMPLETED", "result": result.model_dump()}
+
+@app.get("/api/v1/twin/simulation/abnormal/port/last")
+def api_get_last_port_anomaly_result():
+    if not _last_port_anomaly_result:
+        raise HTTPException(status_code=404, detail="No port anomaly scenario has been executed yet.")
+    return _last_port_anomaly_result.model_dump()
 
 # ==================== DAY 60: CONNECTION ANOMALY SIMULATION API ====================
 
