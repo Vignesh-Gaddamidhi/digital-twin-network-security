@@ -41,6 +41,12 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.engine.reproducible_engine import (
+    reproducible_engine, DuplicateSimulationIdError
+)
+from packages.shared_types.src.reproducible_simulation import (
+    SimulationExecutionConfig, ReproducibleSimulationEvent, SimulationRunComparisonResult
+)
 from services.digital_twin.simulation.engine.simulation_engine import (
     simulation_engine, InvalidSimulationStateTransitionError, ScenarioNotFoundError
 )
@@ -377,6 +383,46 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 51: REPRODUCIBLE SIMULATION API ====================
+
+class CompareRunsPayload(BaseModel):
+    run1_id: str
+    run2_id: str
+
+class ExecuteCompletePayload(BaseModel):
+    source_device: str = "client-01"
+    destination_device: str = "web-01"
+
+@app.post("/api/v1/twin/simulation/reproducible/init", status_code=201)
+def api_init_reproducible_sim(config: SimulationExecutionConfig):
+    try:
+        cfg = reproducible_engine.initializeSimulation(config)
+        return {"status": "INITIALIZED", "config": cfg.model_dump()}
+    except DuplicateSimulationIdError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/simulation/reproducible/execute-complete")
+def api_execute_complete_reproducible_sim(payload: ExecuteCompletePayload):
+    try:
+        evts = reproducible_engine.runComplete(
+            source_dev=payload.source_device, dest_dev=payload.destination_device
+        )
+        return {"status": "EXECUTION_COMPLETED", "event_count": len(evts)}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/simulation/reproducible/events/{run_id}")
+def api_get_reproducible_events(run_id: str):
+    evts = reproducible_engine.getRunEvents(run_id)
+    return {"run_id": run_id, "count": len(evts), "events": [e.model_dump() for e in evts]}
+
+@app.post("/api/v1/twin/simulation/reproducible/compare")
+def api_compare_simulation_runs(payload: CompareRunsPayload):
+    res = reproducible_engine.compareRuns(payload.run1_id, payload.run2_id)
+    return res.model_dump()
 
 # ==================== DAY 50: SIMULATION ENGINE ARCHITECTURE API ====================
 
