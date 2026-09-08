@@ -32,21 +32,23 @@ class NetworkStateEngine:
         self,
         device_id: str,
         network_utilisation: float,
-        bytes_sent: int = 0,
-        bytes_received: int = 0,
-        packets_sent: int = 0,
-        packets_received: int = 0
+        bytes_sent: Optional[int] = None,
+        bytes_received: Optional[int] = None,
+        packets_sent: Optional[int] = None,
+        packets_received: Optional[int] = None
     ) -> DeviceNetworkMetricsModel:
         self._ensure_device_exists(device_id)
         if not (0.0 <= network_utilisation <= 100.0):
             raise ValueError(f"Network utilisation must be between 0.0 and 100.0%. Got {network_utilisation}")
 
+        existing = self._device_metrics.get(device_id, DeviceNetworkMetricsModel())
+
         metrics = DeviceNetworkMetricsModel(
             networkUtilisation=round(network_utilisation, 2),
-            bytesSent=bytes_sent,
-            bytesReceived=bytes_received,
-            packetsSent=packets_sent,
-            packetsReceived=packets_received,
+            bytesSent=existing.bytesSent if bytes_sent is None else bytes_sent,
+            bytesReceived=existing.bytesReceived if bytes_received is None else bytes_received,
+            packetsSent=existing.packetsSent if packets_sent is None else packets_sent,
+            packetsReceived=existing.packetsReceived if packets_received is None else packets_received,
             timestamp=datetime.now(timezone.utc).isoformat()
         )
         self._device_metrics[device_id] = metrics
@@ -113,7 +115,6 @@ class NetworkStateEngine:
         match = next((c for c in conns if (c.sourceDevice == session.source and c.destinationDevice == session.destination) or
                                           (c.sourceDevice == session.destination and c.destinationDevice == session.source)), None)
         if match:
-            # Map SessionStateEnum to NetworkConnection status
             if session.status == SessionStateEnum.FAILED:
                 from packages.shared_types.src.topology import ConnectionStatusEnum
                 match.status = ConnectionStatusEnum.BLOCKED

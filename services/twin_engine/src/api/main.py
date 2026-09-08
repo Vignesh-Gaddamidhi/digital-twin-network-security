@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+# Ensure project root is available to resolver
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -40,6 +47,10 @@ from packages.shared_types.src.graph import (
 from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
+)
+from services.digital_twin.simulation.generators.normal_traffic_orchestrator import normal_orchestrator
+from packages.shared_types.src.normal_traffic import (
+    NormalTrafficScenarioConfig, BaselineSummaryModel, OrchestratorEventEnvelope
 )
 from services.digital_twin.simulation.generators.ssh_traffic_generator import (
     ssh_orchestrator, SshTargetPortClosedError
@@ -402,6 +413,27 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 56: NORMAL TRAFFIC ORCHESTRATOR API ====================
+
+@app.post("/api/v1/twin/simulation/orchestrator/normal/run")
+def api_run_normal_traffic_scenario(config: NormalTrafficScenarioConfig, sync_to_twin: bool = True):
+    baseline = normal_orchestrator.runScenario(config, sync_to_twin=sync_to_twin)
+    return {"status": "BASELINE_GENERATED", "summary": baseline.model_dump()}
+
+@app.get("/api/v1/twin/simulation/orchestrator/normal/baseline/{baseline_id}")
+def api_get_normal_baseline(baseline_id: str):
+    baseline = normal_orchestrator.getBaseline(baseline_id)
+    if not baseline:
+        raise HTTPException(status_code=404, detail=f"Baseline dataset '{baseline_id}' not found.")
+    return baseline.model_dump()
+
+@app.get("/api/v1/twin/simulation/orchestrator/normal/events")
+def api_list_orchestrator_events(limit: Optional[int] = None):
+    envelopes = normal_orchestrator.getEnvelopes()
+    if limit:
+        envelopes = envelopes[-limit:]
+    return {"count": len(envelopes), "events": [e.model_dump() for e in envelopes]}
 
 # ==================== DAY 55: SSH TRAFFIC SIMULATION API ====================
 

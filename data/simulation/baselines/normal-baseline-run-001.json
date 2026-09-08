@@ -1,0 +1,30 @@
+{
+  "baselineId": "normal-baseline-run-001",
+  "scenarioName": "Office 24-Hour Daytime Blend",
+  "seed": 12345,
+  "durationSeconds": 60,
+  "totalEventsCount": 60,
+  "totalBytesTransferred": 176826,
+  "totalPacketsTransferred": 128,
+  "protocolDistribution": {
+    "DNS": 18,
+    "ICMP": 2,
+    "HTTPS": 26,
+    "HTTP": 10,
+    "TCP": 2,
+    "UDP": 1,
+    "SSH": 1
+  },
+  "portDistribution": {
+    "53": 19,
+    "443": 28,
+    "80": 10,
+    "22": 1
+  },
+  "destinationDistribution": {
+    "dns-01": 19,
+    "db-01": 4,
+    "web-01": 37
+  },
+  "generatedAt": "2026-09-08T17:15:57.021911+00:00"
+}
