@@ -37,8 +37,12 @@ class IndicatorEvaluator:
         )
 
         # Inter-arrival timing variance and mean interval
+        # Focus on outbound flow-initiator requests if bidirectional packets exist
+        outbound_evts = [e for e in events if getattr(e, "direction", None) and getattr(e.direction, "value", str(e.direction)) == "OUTBOUND"]
+        eval_evts = outbound_evts if len(outbound_evts) >= 3 else events
+
         timestamps = []
-        for e in events:
+        for e in eval_evts:
             try:
                 dt = datetime.fromisoformat(e.timestamp)
                 timestamps.append(dt.timestamp())
@@ -93,7 +97,16 @@ class IndicatorEvaluator:
             "unique_subdomains_count": float(
                 len(set([e.details.get("dns_domain") for e in events if e.details and e.details.get("dns_domain")]))
             ),
-            "interval_variance_seconds": float(interval_variance),
+                        "interval_variance_seconds": float(interval_variance),
+            "regular_interval_score": float(
+                sum(1 for x in intervals if abs(x - mean_int) <= 0.15 * mean_int) / max(1.0, float(len(intervals)))
+                if len(timestamps) > 2 else 0.0
+            ),
+            "repeated_destination_count": float(
+                max([len([x for x in events if x.destinationDevice == e.destinationDevice and x.destinationPort == e.destinationPort]) for e in events] or [1.0])
+                if events else 0.0
+            ),
+            "periodic_connection_frequency": float(conn_attempts / effective_duration),
             "auth_failures_total": float(auth_failures),
             "auth_failure_rate_per_sec": float(auth_failures / effective_duration),
             "auth_failure_ratio": float(auth_failure_ratio),

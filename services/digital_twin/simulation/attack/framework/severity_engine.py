@@ -24,7 +24,7 @@ class SeverityEngine:
         AttackScenarioCategoryEnum.BRUTE_FORCE: 0.70,
         AttackScenarioCategoryEnum.DOS: 0.75,
         AttackScenarioCategoryEnum.SUSPICIOUS_DNS: 0.60,
-        AttackScenarioCategoryEnum.BEACONING: 0.65,
+        AttackScenarioCategoryEnum.BEACONING: 0.75,
         AttackScenarioCategoryEnum.LATERAL_MOVEMENT: 0.70,
         AttackScenarioCategoryEnum.DATA_EXFILTRATION: 0.80,
     }

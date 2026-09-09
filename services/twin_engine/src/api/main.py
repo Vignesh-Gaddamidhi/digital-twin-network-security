@@ -78,6 +78,7 @@ from services.digital_twin.simulation.attack.scenarios.port_discovery_scenario i
 from services.digital_twin.simulation.attack.scenarios.brute_force_scenario import BruteForceAttackScenario
 from services.digital_twin.simulation.attack.scenarios.dos_saturation_scenario import DosSaturationScenario
 from services.digital_twin.simulation.attack.scenarios.suspicious_dns_scenario import SuspiciousDnsScenario
+from services.digital_twin.simulation.attack.scenarios.beaconing_scenario import BeaconingAttackScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -475,6 +476,34 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 76: SCN-BEACON-001 SIMULATION API ====================
+
+class BeaconRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "SERVER-01"
+    targetPort: int = 443
+    intervalSeconds: float = 1.0
+    totalBeacons: int = 10
+    jitterRatio: float = 0.05
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/beacon/run")
+def api_run_beaconing_scenario(req: BeaconRunRequest):
+    scenario = BeaconingAttackScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        target_port=req.targetPort,
+        interval_seconds=req.intervalSeconds,
+        total_beacons=req.totalBeacons,
+        jitter_ratio=req.jitterRatio,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "BEACONING_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 75: SCN-DNS-001 SIMULATION API ====================
 
