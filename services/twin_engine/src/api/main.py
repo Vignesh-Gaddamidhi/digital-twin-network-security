@@ -74,6 +74,7 @@ from packages.shared_types.src.preconditions import (
 )
 from services.digital_twin.simulation.attack.framework.scenario_registry import attack_scenario_registry
 from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import PortScanAttackScenario
+from services.digital_twin.simulation.attack.scenarios.port_discovery_scenario import PortDiscoveryScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -471,6 +472,26 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 72: SCN-PORTSCAN-001 SIMULATION API ====================
+
+class PortScanRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "SERVER-01"
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/port-scan/run")
+def api_run_port_discovery_scenario(req: PortScanRunRequest):
+    scenario = PortDiscoveryScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "PORT_SCAN_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 71: ATTACK SCENARIO RUNNER MASTER API ====================
 
