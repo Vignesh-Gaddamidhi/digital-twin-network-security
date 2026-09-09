@@ -49,6 +49,10 @@ from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
 from services.digital_twin.simulation.attack.indicators.indicator_registry import indicator_registry
+from services.digital_twin.simulation.attack.recovery.recovery_engine import recovery_engine, RecoveryVerifier
+from packages.shared_types.src.attack_recovery import (
+    RecoveryStrategyEnum, ScenarioRecoveryPlan, DeviceRecoveryResult, RecoveryExecutionReport
+)
 from services.digital_twin.simulation.attack.framework.severity_engine import severity_engine
 from packages.shared_types.src.attack_severity import (
     SeverityLevelEnum, RiskLevelEnum, ScenarioClassificationResult, RiskAssessmentReport
@@ -465,6 +469,22 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 70: ATTACK SCENARIO RECOVERY API ====================
+
+class RecoveryExecutePayload(BaseModel):
+    plan: ScenarioRecoveryPlan
+    mutatedPorts: Optional[Dict[str, List[int]]] = None
+
+@app.post("/api/v1/twin/attack/recovery/execute")
+def api_execute_scenario_recovery(payload: RecoveryExecutePayload):
+    report = recovery_engine.execute_recovery(payload.plan, mutated_ports=payload.mutatedPorts)
+    return {"status": "RECOVERY_COMPLETED", "report": report.model_dump()}
+
+@app.post("/api/v1/twin/attack/recovery/verify")
+def api_verify_recovery(devices: List[str]):
+    verified, details = RecoveryVerifier.verify(devices)
+    return {"verified": verified, "details": details}
 
 # ==================== DAY 69: SEVERITY & SCENARIO CLASSIFICATION API ====================
 
