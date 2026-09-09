@@ -1,0 +1,13 @@
+{
+  "scenarioId": "master-phase7-audit",
+  "runId": "run-p7-1f8b97a7",
+  "state": "COMPLETED",
+  "currentStageIndex": 11,
+  "totalStages": 11,
+  "virtualTimeSeconds": 40.0,
+  "totalPacketsEmitted": 1210,
+  "totalEventsLogged": 33,
+  "anomaliesTriggeredCount": 5,
+  "startedAt": "2026-09-08T18:04:16.939022+00:00",
+  "lastTickAt": "2026-09-08T18:04:16.939077+00:00"
+}

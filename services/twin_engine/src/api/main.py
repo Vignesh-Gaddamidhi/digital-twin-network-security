@@ -48,6 +48,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.attack.framework.scenario_registry import attack_scenario_registry
+from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import PortScanAttackScenario
+from packages.shared_types.src.attack_scenario import (
+    AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
+)
 from services.digital_twin.simulation.generators.repeated_connection_engine import repeated_connection_engine
 from packages.shared_types.src.repeated_connection import RepeatedConnectionProfile, RepeatedConnectionEvent
 from services.digital_twin.simulation.scenarios.scenario_runner import scenario_runner
@@ -443,7 +448,40 @@ def bootstrap_security_grounding():
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
 
-# ==================== DAY 63 & 64: MASTER SCENARIO PLATFORM API ====================
+# ==================== DAY 65: ATTACK SCENARIO FRAMEWORK API ====================
+
+@app.post("/api/v1/twin/attack/scenarios/register")
+def api_register_attack_scenario(scenario: AttackScenarioModel):
+    try:
+        registered = attack_scenario_registry.register(scenario)
+        return {"status": "SCENARIO_REGISTERED", "scenario": registered.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/attack/scenarios")
+def api_list_attack_scenarios():
+    scenarios = attack_scenario_registry.listScenarios()
+    return {"count": len(scenarios), "scenarios": [s.model_dump() for s in scenarios]}
+
+@app.post("/api/v1/twin/attack/scenarios/run/{scenario_id}")
+def api_run_attack_scenario(scenario_id: str):
+    scen_def = attack_scenario_registry.get(scenario_id)
+    if not scen_def:
+        # If running canonical port scan
+        if scenario_id == "SCN-PORTSCAN-001":
+            runner = PortScanAttackScenario.create_canonical()
+        else:
+            raise HTTPException(status_code=404, detail=f"Scenario '{scenario_id}' not found in registry.")
+    else:
+        if scen_def.category.value == "PORT_SCAN":
+            runner = PortScanAttackScenario(scen_def)
+        else:
+            raise HTTPException(status_code=501, detail=f"Category '{scen_def.category.value}' runner under construction.")
+
+    status = runner.run()
+    return {"status": "SCENARIO_RUN_COMPLETED", "execution": status.model_dump()}
+
+# ==================== DAY 63 & 64: MASTER SCENARIO PLATFORM API ===================="
 
 @app.post("/api/v1/twin/simulation/abnormal/repeated-connections/run")
 def api_run_repeated_connections(profile: RepeatedConnectionProfile):

@@ -1,0 +1,21 @@
+{
+  "baselineId": "run-p7-7dbbfd44-stage-fc6017",
+  "scenarioName": "Normal-stage-fc6017",
+  "seed": 16792,
+  "durationSeconds": 3,
+  "totalEventsCount": 3,
+  "totalBytesTransferred": 485,
+  "totalPacketsTransferred": 6,
+  "protocolDistribution": {
+    "DNS": 1,
+    "ICMP": 2
+  },
+  "portDistribution": {
+    "53": 1
+  },
+  "destinationDistribution": {
+    "dns-01": 1,
+    "server-01": 2
+  },
+  "generatedAt": "2026-09-08T18:04:12.372158+00:00"
+}

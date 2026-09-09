@@ -1,5 +1,5 @@
 import random
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from datetime import datetime, timezone
 
 from packages.shared_types.src.connection_anomaly import (

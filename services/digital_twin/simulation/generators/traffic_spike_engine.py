@@ -1,5 +1,5 @@
 import random
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from datetime import datetime, timezone
 
 from packages.shared_types.src.traffic_spike import (
