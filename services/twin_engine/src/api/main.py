@@ -48,6 +48,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.attack.generators.pattern_generator_engine import pattern_generator_engine
+from packages.shared_types.src.traffic_pattern import (
+    GenericTrafficPatternModel, PatternTypeEnum, ConnectionBehaviourEnum,
+    PatternTimingConfig, PatternGenerationResult
+)
 from services.digital_twin.simulation.attack.validation.precondition_engine import precondition_engine
 from packages.shared_types.src.preconditions import (
     PreconditionTypeEnum, PreconditionOperatorEnum, PreconditionRuleModel, PreconditionValidationReport
@@ -451,6 +456,29 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 67: TRAFFIC PATTERN FRAMEWORK API ====================
+
+@app.post("/api/v1/twin/attack/patterns/generate")
+def api_generate_traffic_pattern(pattern: GenericTrafficPatternModel, simulation_id: str = "sim-pat-01"):
+    try:
+        result, events = pattern_generator_engine.generate_events(pattern, simulation_id=simulation_id)
+        return {
+            "status": "PATTERN_GENERATED",
+            "summary": result.model_dump(),
+            "sample_events": [e.model_dump() for e in events[:10]],
+            "total_event_count": len(events)
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack/patterns/validate")
+def api_validate_traffic_pattern(pattern: GenericTrafficPatternModel):
+    try:
+        pattern_generator_engine.validate_pattern(pattern)
+        return {"patternId": pattern.patternId, "valid": True}
+    except ValueError as e:
+        return {"patternId": pattern.patternId, "valid": False, "reason": str(e)}
 
 # ==================== DAY 66: PRECONDITIONS & TARGET VALIDATION API ====================
 
