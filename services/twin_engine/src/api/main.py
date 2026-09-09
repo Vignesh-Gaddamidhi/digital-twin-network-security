@@ -81,6 +81,8 @@ from services.digital_twin.simulation.attack.scenarios.suspicious_dns_scenario i
 from services.digital_twin.simulation.attack.scenarios.beaconing_scenario import BeaconingAttackScenario
 from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario import LateralMovementScenario
 from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenario import DataExfiltrationScenario
+from services.digital_twin.ids.processor.ids_processor import ids_processor
+from packages.shared_types.src.normalized_security_event import NormalizedSecurityEvent
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -478,6 +480,35 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 79: IDS INTEGRATION & SURICATA TELEMETRY API ====================
+
+class SuricataIngestPayload(BaseModel):
+    eveJson: str
+
+@app.post("/api/v1/twin/ids/suricata/ingest")
+def api_ingest_suricata_eve(payload: SuricataIngestPayload):
+    try:
+        events = ids_processor.ingest_suricata_eve_json(payload.eveJson)
+        return {
+            "status": "SURICATA_INGEST_SUCCESS",
+            "count": len(events),
+            "events": [e.model_dump() for e in events]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ids/events")
+def api_get_normalized_ids_events():
+    return {
+        "count": len(ids_processor.processed_events),
+        "events": [e.model_dump() for e in ids_processor.processed_events]
+    }
+
+@app.post("/api/v1/twin/ids/clear")
+def api_clear_ids_events():
+    ids_processor.clear()
+    return {"status": "IDS_EVENTS_CLEARED"}
 
 # ==================== DAY 78: SCN-EXFIL-001 SIMULATION API ====================
 
