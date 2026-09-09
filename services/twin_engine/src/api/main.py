@@ -49,6 +49,10 @@ from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
 from services.digital_twin.simulation.attack.indicators.indicator_registry import indicator_registry
+from services.digital_twin.simulation.attack.framework.severity_engine import severity_engine
+from packages.shared_types.src.attack_severity import (
+    SeverityLevelEnum, RiskLevelEnum, ScenarioClassificationResult, RiskAssessmentReport
+)
 from services.digital_twin.simulation.attack.indicators.indicator_matcher import indicator_matcher
 from packages.shared_types.src.attack_indicators import (
     ExpectedIndicatorModel, ObservedIndicatorModel, IndicatorVerificationReport, IndicatorTypeEnum
@@ -461,6 +465,18 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 69: SEVERITY & SCENARIO CLASSIFICATION API ====================
+
+@app.post("/api/v1/twin/attack/scenarios/classify")
+def api_classify_scenario(scenario: AttackScenarioModel):
+    res = severity_engine.classify_scenario(scenario)
+    return {"status": "SCENARIO_CLASSIFIED", "classification": res.model_dump()}
+
+@app.post("/api/v1/twin/attack/scenarios/risk-assessment")
+def api_assess_scenario_risk(scenario: AttackScenarioModel):
+    report = severity_engine.assess_risk(scenario)
+    return {"status": "RISK_ASSESSED", "report": report.model_dump()}
 
 # ==================== DAY 68: EXPECTED INDICATORS FRAMEWORK API ====================
 
