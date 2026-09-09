@@ -80,6 +80,7 @@ from services.digital_twin.simulation.attack.scenarios.dos_saturation_scenario i
 from services.digital_twin.simulation.attack.scenarios.suspicious_dns_scenario import SuspiciousDnsScenario
 from services.digital_twin.simulation.attack.scenarios.beaconing_scenario import BeaconingAttackScenario
 from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario import LateralMovementScenario
+from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenario import DataExfiltrationScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -477,6 +478,34 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 78: SCN-EXFIL-001 SIMULATION API ====================
+
+class ExfilRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "EXTERNAL-SIMULATED-ENDPOINT"
+    targetPort: int = 443
+    totalChunks: int = 250
+    chunkSizeBytes: int = 1460
+    durationSeconds: int = 6
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/exfiltration/run")
+def api_run_data_exfiltration_scenario(req: ExfilRunRequest):
+    scenario = DataExfiltrationScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        target_port=req.targetPort,
+        total_chunks=req.totalChunks,
+        chunk_size_bytes=req.chunkSizeBytes,
+        duration_seconds=req.durationSeconds,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "DATA_EXFILTRATION_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 77: SCN-LATERAL-001 SIMULATION API ====================
 

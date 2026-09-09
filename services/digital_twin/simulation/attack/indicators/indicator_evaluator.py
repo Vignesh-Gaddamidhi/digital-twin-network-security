@@ -81,7 +81,10 @@ class IndicatorEvaluator:
             "peak_network_utilisation": float(max([e.details.get("network_utilisation", 20.0) for e in events if e.details] or [20.0])),
             "failed_connections_count": float(failed_conns),
             "connection_rate_per_second": float(conn_attempts / effective_duration),
-            "outbound_bytes_total": float(total_bytes),
+                        "outbound_bytes_total": float(sum(e.bytes for e in events if getattr(e, "direction", None) and getattr(e.direction, "value", str(e.direction)) == "OUTBOUND") or total_bytes),
+            "transfer_rate_bytes_per_sec": float((sum(e.bytes for e in events if getattr(e, "direction", None) and getattr(e.direction, "value", str(e.direction)) == "OUTBOUND") or total_bytes) / effective_duration),
+            "is_unusual_destination": 1.0 if any(e.destinationDevice and ("external" in e.destinationDevice.lower() or "untrusted" in e.destinationDevice.lower()) for e in events) else 0.0,
+            "outbound_session_duration": float(duration_seconds),
                         "dns_query_frequency": float(dns_events / effective_duration),
             "dns_query_rate_per_sec": float(dns_events / effective_duration),
             "dns_txt_query_ratio": float(

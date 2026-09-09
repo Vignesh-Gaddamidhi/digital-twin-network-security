@@ -50,6 +50,8 @@ class IndicatorTypeEnum(str, Enum):
     # Data Exfiltration Indicators (Day 78)
     UNUSUAL_OUTBOUND_VOLUME = "UNUSUAL_OUTBOUND_VOLUME"
     HIGH_ENTROPY_EGRESS = "HIGH_ENTROPY_EGRESS"
+    HIGH_TRANSFER_RATE = "HIGH_TRANSFER_RATE"
+    LONG_OUTBOUND_SESSION = "LONG_OUTBOUND_SESSION"
 
 class IndicatorDirectionEnum(str, Enum):
     GREATER_THAN = "GREATER_THAN"
