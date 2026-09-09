@@ -78,7 +78,21 @@ class IndicatorEvaluator:
             "failed_connections_count": float(failed_conns),
             "connection_rate_per_second": float(conn_attempts / effective_duration),
             "outbound_bytes_total": float(total_bytes),
-            "dns_query_frequency": float(dns_events / effective_duration),
+                        "dns_query_frequency": float(dns_events / effective_duration),
+            "dns_query_rate_per_sec": float(dns_events / effective_duration),
+            "dns_txt_query_ratio": float(
+                sum(1 for e in events if e.details and e.details.get("dns_record_type") == "TXT") / max(1.0, float(dns_events))
+            ),
+            "max_repeated_domain_count": float(
+                max([
+                    [e.details.get("dns_domain") for e in events if e.details and e.details.get("dns_domain")].count(d)
+                    for d in set([e.details.get("dns_domain") for e in events if e.details and e.details.get("dns_domain")])
+                ] or [1.0])
+                if dns_events > 0 else 0.0
+            ),
+            "unique_subdomains_count": float(
+                len(set([e.details.get("dns_domain") for e in events if e.details and e.details.get("dns_domain")]))
+            ),
             "interval_variance_seconds": float(interval_variance),
             "auth_failures_total": float(auth_failures),
             "auth_failure_rate_per_sec": float(auth_failures / effective_duration),

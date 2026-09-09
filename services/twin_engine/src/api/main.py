@@ -77,6 +77,7 @@ from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import
 from services.digital_twin.simulation.attack.scenarios.port_discovery_scenario import PortDiscoveryScenario
 from services.digital_twin.simulation.attack.scenarios.brute_force_scenario import BruteForceAttackScenario
 from services.digital_twin.simulation.attack.scenarios.dos_saturation_scenario import DosSaturationScenario
+from services.digital_twin.simulation.attack.scenarios.suspicious_dns_scenario import SuspiciousDnsScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -474,6 +475,30 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 75: SCN-DNS-001 SIMULATION API ====================
+
+class DnsRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "DNS-01"
+    targetPort: int = 53
+    totalQueries: int = 60
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/dns/run")
+def api_run_suspicious_dns_scenario(req: DnsRunRequest):
+    scenario = SuspiciousDnsScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        target_port=req.targetPort,
+        total_queries=req.totalQueries,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "DNS_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 74: SCN-DOS-001 SIMULATION API ====================
 
