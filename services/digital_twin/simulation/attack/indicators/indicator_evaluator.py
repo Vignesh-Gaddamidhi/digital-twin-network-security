@@ -72,7 +72,9 @@ class IndicatorEvaluator:
 
         return {
             "unique_destination_ports": float(unique_ports),
-            "packet_rate_per_second": float(total_packets / effective_duration),
+                        "packet_rate_per_second": float(total_packets / effective_duration),
+            "high_packet_rate": float(total_packets / effective_duration),
+            "peak_network_utilisation": float(max([e.details.get("network_utilisation", 20.0) for e in events if e.details] or [20.0])),
             "failed_connections_count": float(failed_conns),
             "connection_rate_per_second": float(conn_attempts / effective_duration),
             "outbound_bytes_total": float(total_bytes),

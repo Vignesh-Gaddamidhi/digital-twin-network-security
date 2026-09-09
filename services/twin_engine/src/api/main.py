@@ -76,6 +76,7 @@ from services.digital_twin.simulation.attack.framework.scenario_registry import 
 from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import PortScanAttackScenario
 from services.digital_twin.simulation.attack.scenarios.port_discovery_scenario import PortDiscoveryScenario
 from services.digital_twin.simulation.attack.scenarios.brute_force_scenario import BruteForceAttackScenario
+from services.digital_twin.simulation.attack.scenarios.dos_saturation_scenario import DosSaturationScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -473,6 +474,32 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 74: SCN-DOS-001 SIMULATION API ====================
+
+class DosRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "WEB-01"
+    targetPort: int = 443
+    baselineRate: float = 100.0
+    spikeRate: float = 800.0
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/dos/run")
+def api_run_dos_saturation_scenario(req: DosRunRequest):
+    scenario = DosSaturationScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        target_port=req.targetPort,
+        baseline_rate=req.baselineRate,
+        spike_rate=req.spikeRate,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "DOS_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 73: SCN-BRUTEFORCE-001 SIMULATION API ====================
 
