@@ -48,6 +48,10 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.attack.validation.precondition_engine import precondition_engine
+from packages.shared_types.src.preconditions import (
+    PreconditionTypeEnum, PreconditionOperatorEnum, PreconditionRuleModel, PreconditionValidationReport
+)
 from services.digital_twin.simulation.attack.framework.scenario_registry import attack_scenario_registry
 from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import PortScanAttackScenario
 from packages.shared_types.src.attack_scenario import (
@@ -447,6 +451,41 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 66: PRECONDITIONS & TARGET VALIDATION API ====================
+
+class ScenarioValidationPayload(BaseModel):
+    scenarioId: str
+    targetDevice: str
+    sourceDevice: Optional[str] = "client-01"
+    rules: List[PreconditionRuleModel]
+
+@app.post("/api/v1/twin/attack/preconditions/validate")
+def api_validate_preconditions(payload: ScenarioValidationPayload):
+    report = precondition_engine.validate_scenario_preconditions(
+        scenario_id=payload.scenarioId,
+        target_device=payload.targetDevice,
+        rules=payload.rules,
+        source_device=payload.sourceDevice
+    )
+    return {"status": "VALIDATION_COMPLETED", "report": report.model_dump()}
+
+@app.post("/api/v1/twin/attack/scenarios/validate/{scenario_id}")
+def api_validate_registered_scenario(scenario_id: str):
+    scen_def = attack_scenario_registry.get(scenario_id)
+    if not scen_def:
+        if scenario_id == "SCN-PORTSCAN-001":
+            runner = PortScanAttackScenario.create_canonical()
+        else:
+            raise HTTPException(status_code=404, detail=f"Scenario '{scenario_id}' not found.")
+    else:
+        runner = PortScanAttackScenario(scen_def)
+
+    try:
+        runner.validate()
+        return {"scenarioId": scenario_id, "isValid": True, "state": runner.status.currentState.value}
+    except Exception as e:
+        return {"scenarioId": scenario_id, "isValid": False, "state": runner.status.currentState.value, "reason": str(e)}
 
 # ==================== DAY 65: ATTACK SCENARIO FRAMEWORK API ====================
 

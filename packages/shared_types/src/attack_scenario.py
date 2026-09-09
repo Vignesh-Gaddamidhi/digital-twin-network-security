@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field, field_validator
+from packages.shared_types.src.preconditions import PreconditionRuleModel
 from datetime import datetime, timezone
 import uuid
 
@@ -69,6 +70,7 @@ class AttackScenarioModel(BaseModel):
     severity: AttackScenarioSeverityEnum = AttackScenarioSeverityEnum.MEDIUM
     durationSeconds: int = Field(default=15, ge=1, le=3600)
     preconditions: ScenarioPrecondition
+    preconditionRules: List[PreconditionRuleModel] = Field(default_factory=list)
     trafficPattern: ScenarioTrafficPattern
     expectedIndicators: List[ExpectedIndicator] = Field(default_factory=list)
     recovery: ScenarioRecoveryConfig = Field(default_factory=ScenarioRecoveryConfig)
