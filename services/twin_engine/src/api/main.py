@@ -49,6 +49,8 @@ from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
 from services.digital_twin.simulation.attack.indicators.indicator_registry import indicator_registry
+from services.digital_twin.simulation.attack.framework.attack_scenario_runner import attack_scenario_runner
+from packages.shared_types.src.scenario_result import ScenarioResult
 from services.digital_twin.simulation.attack.recovery.recovery_engine import recovery_engine, RecoveryVerifier
 from packages.shared_types.src.attack_recovery import (
     RecoveryStrategyEnum, ScenarioRecoveryPlan, DeviceRecoveryResult, RecoveryExecutionReport
@@ -469,6 +471,35 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 71: ATTACK SCENARIO RUNNER MASTER API ====================
+
+@app.post("/api/v1/twin/attack/runner/execute")
+def api_execute_attack_scenario_runner(scenario: AttackScenarioModel):
+    try:
+        attack_scenario_runner.loadScenario(scenario)
+        result = attack_scenario_runner.executeScenario()
+        return {"status": "SCENARIO_RUNNER_COMPLETED", "result": result.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/attack/runner/status")
+def api_get_attack_runner_status():
+    st = attack_scenario_runner.getScenarioState()
+    if not st:
+        raise HTTPException(status_code=404, detail="No attack scenario is loaded in runner.")
+    return {"state": st, "status": attack_scenario_runner.status.model_dump() if attack_scenario_runner.status else None}
+
+@app.post("/api/v1/twin/attack/runner/reset")
+def api_reset_attack_runner():
+    attack_scenario_runner.resetScenario()
+    return {"status": "RUNNER_RESET"}
+
+@app.get("/api/v1/twin/attack/runner/last-result")
+def api_get_last_scenario_result():
+    if not attack_scenario_runner.result:
+        raise HTTPException(status_code=404, detail="No scenario run has completed yet.")
+    return attack_scenario_runner.result.model_dump()
 
 # ==================== DAY 70: ATTACK SCENARIO RECOVERY API ====================
 

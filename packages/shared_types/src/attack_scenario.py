@@ -57,6 +57,7 @@ class ScenarioRecoveryConfig(BaseModel):
     autoRecover: bool = True
     recoveryDurationSeconds: int = Field(default=5, ge=1)
     resetSocketConnections: bool = True
+    restoreTraffic: bool = True
     restoreNormalTraffic: bool = True
     revertPortMutations: bool = True
 
