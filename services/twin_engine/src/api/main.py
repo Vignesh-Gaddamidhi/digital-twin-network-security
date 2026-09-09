@@ -48,6 +48,11 @@ from services.digital_twin.core.security.firewall_engine import firewall_engine
 from packages.shared_types.src.firewall import (
     FirewallRuleModel, NetworkZoneModel, NetworkZoneTypeEnum, FirewallActionEnum, TrafficInspectionResult
 )
+from services.digital_twin.simulation.attack.indicators.indicator_registry import indicator_registry
+from services.digital_twin.simulation.attack.indicators.indicator_matcher import indicator_matcher
+from packages.shared_types.src.attack_indicators import (
+    ExpectedIndicatorModel, ObservedIndicatorModel, IndicatorVerificationReport, IndicatorTypeEnum
+)
 from services.digital_twin.simulation.attack.generators.pattern_generator_engine import pattern_generator_engine
 from packages.shared_types.src.traffic_pattern import (
     GenericTrafficPatternModel, PatternTypeEnum, ConnectionBehaviourEnum,
@@ -456,6 +461,29 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 68: EXPECTED INDICATORS FRAMEWORK API ====================
+
+class IndicatorVerificationPayload(BaseModel):
+    scenarioId: str
+    expectedIndicators: List[ExpectedIndicatorModel]
+    events: List[UnifiedTrafficEventModel]
+    durationSeconds: float = 1.0
+
+@app.get("/api/v1/twin/attack/indicators/catalog")
+def api_get_indicator_catalog():
+    catalog = indicator_registry.listAll()
+    return {"count": len(catalog), "indicators": [i.model_dump() for i in catalog]}
+
+@app.post("/api/v1/twin/attack/indicators/verify")
+def api_verify_scenario_indicators(payload: IndicatorVerificationPayload):
+    report = indicator_matcher.verify_scenario_indicators(
+        scenario_id=payload.scenarioId,
+        expected_indicators=payload.expectedIndicators,
+        events=payload.events,
+        duration_seconds=payload.durationSeconds
+    )
+    return {"status": "INDICATORS_VERIFIED", "report": report.model_dump()}
 
 # ==================== DAY 67: TRAFFIC PATTERN FRAMEWORK API ====================
 
