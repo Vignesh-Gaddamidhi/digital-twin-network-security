@@ -75,6 +75,7 @@ from packages.shared_types.src.preconditions import (
 from services.digital_twin.simulation.attack.framework.scenario_registry import attack_scenario_registry
 from services.digital_twin.simulation.attack.scenarios.port_scan_scenario import PortScanAttackScenario
 from services.digital_twin.simulation.attack.scenarios.port_discovery_scenario import PortDiscoveryScenario
+from services.digital_twin.simulation.attack.scenarios.brute_force_scenario import BruteForceAttackScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -472,6 +473,32 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 73: SCN-BRUTEFORCE-001 SIMULATION API ====================
+
+class BruteForceRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    targetDevice: str = "SERVER-01"
+    targetAccount: str = "admin"
+    totalAttempts: int = 12
+    succeedAtEnd: bool = True
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/brute-force/run")
+def api_run_brute_force_scenario(req: BruteForceRunRequest):
+    scenario = BruteForceAttackScenario(
+        source_device=req.sourceDevice,
+        target_device=req.targetDevice,
+        target_account=req.targetAccount,
+        total_attempts=req.totalAttempts,
+        succeed_at_end=req.succeedAtEnd,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "BRUTE_FORCE_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 72: SCN-PORTSCAN-001 SIMULATION API ====================
 

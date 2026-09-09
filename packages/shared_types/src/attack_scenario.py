@@ -45,6 +45,7 @@ class ExpectedIndicator(BaseModel):
     indicatorType: str = "VOLUMETRIC_SPIKE"  # e.g., AUTH_FAIL_SURGE, PORT_SPREAD, DNS_ENTROPY
     thresholdMetric: str = "packets_per_second"
     expectedThreshold: float
+    direction: str = "GREATER_THAN"
     description: str
 
 class ScenarioTrafficPattern(BaseModel):
