@@ -79,6 +79,7 @@ from services.digital_twin.simulation.attack.scenarios.brute_force_scenario impo
 from services.digital_twin.simulation.attack.scenarios.dos_saturation_scenario import DosSaturationScenario
 from services.digital_twin.simulation.attack.scenarios.suspicious_dns_scenario import SuspiciousDnsScenario
 from services.digital_twin.simulation.attack.scenarios.beaconing_scenario import BeaconingAttackScenario
+from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario import LateralMovementScenario
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
 )
@@ -476,6 +477,30 @@ def bootstrap_security_grounding():
         id="c-d004-d005", sourceDevice="D004", destinationDevice="D005", 
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
+
+# ==================== DAY 77: SCN-LATERAL-001 SIMULATION API ====================
+
+class LateralMovementRunRequest(BaseModel):
+    sourceDevice: str = "CLIENT-01"
+    intermediate1: str = "SERVER-01"
+    intermediate2: str = "SERVER-02"
+    destinationTarget: str = "DB-01"
+    seed: int = 12345
+
+@app.post("/api/v1/twin/attack/scenarios/lateral-movement/run")
+def api_run_lateral_movement_scenario(req: LateralMovementRunRequest):
+    scenario = LateralMovementScenario(
+        source_device=req.sourceDevice,
+        intermediate_1=req.intermediate1,
+        intermediate_2=req.intermediate2,
+        destination_target=req.destinationTarget,
+        seed=req.seed
+    )
+    try:
+        res = scenario.execute()
+        return {"status": "LATERAL_MOVEMENT_SCENARIO_COMPLETED", "result": res.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 76: SCN-BEACON-001 SIMULATION API ====================
 

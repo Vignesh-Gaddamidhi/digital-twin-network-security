@@ -48,7 +48,7 @@ class IndicatorMatcher:
                     observedValue=obs_val,
                     matchedThreshold=exp.threshold,
                     direction=exp.direction,
-                    severity=exp.severity,
+                    severity=getattr(exp, "severity", "MEDIUM"),
                     confidence=exp.confidence,
                     details={"extractedMetrics": metrics}
                 ))

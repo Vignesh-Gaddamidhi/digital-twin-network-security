@@ -106,7 +106,11 @@ class IndicatorEvaluator:
                 max([len([x for x in events if x.destinationDevice == e.destinationDevice and x.destinationPort == e.destinationPort]) for e in events] or [1.0])
                 if events else 0.0
             ),
-            "periodic_connection_frequency": float(conn_attempts / effective_duration),
+                        "periodic_connection_frequency": float(conn_attempts / effective_duration),
+            "traversed_host_chain_length": float(len(set([e.sourceDevice for e in events] + [e.destinationDevice for e in events if e.destinationDevice]))),
+            "internal_connections_count": float(sum(1 for e in events if e.details and e.details.get("lateral_step") is not None)),
+            "reaches_database_tier": 1.0 if any(e.destinationDevice and ("db" in e.destinationDevice.lower() or e.destinationPort == 5432) for e in events) else 0.0,
+            "multi_host_hop_count": float(len(set(e.sourceDevice for e in events if e.details and e.details.get("lateral_step")))),
             "auth_failures_total": float(auth_failures),
             "auth_failure_rate_per_sec": float(auth_failures / effective_duration),
             "auth_failure_ratio": float(auth_failure_ratio),
