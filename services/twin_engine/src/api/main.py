@@ -84,6 +84,8 @@ from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenari
 from services.digital_twin.ids.processor.ids_processor import ids_processor
 from services.digital_twin.ids.suricata.collector.eve_collector import suricata_collector
 from services.digital_twin.ids.zeek.collector.zeek_collector import zeek_collector
+from services.digital_twin.ids.processor.multi_source_processor import multi_source_processor
+from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
 from services.digital_twin.ids.schemas.eve_pipeline_types import EvePipelineIngestResult
@@ -488,6 +490,28 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 83: MULTI-SOURCE PROCESSOR & CORRELATION API ====================
+
+@app.get("/api/v1/twin/ids/correlations")
+def api_get_ids_correlations():
+    contexts = ids_correlation_engine.list_contexts()
+    return {
+        "count": len(contexts),
+        "contexts": [c.model_dump() for c in contexts]
+    }
+
+@app.get("/api/v1/twin/ids/processor/multi-source/history")
+def api_get_multi_source_history():
+    return {
+        "count": len(multi_source_processor.summary_history),
+        "history": [s.model_dump() for s in multi_source_processor.summary_history]
+    }
+
+@app.post("/api/v1/twin/ids/processor/multi-source/clear")
+def api_clear_multi_source():
+    multi_source_processor.clear()
+    return {"status": "MULTI_SOURCE_CLEARED"}
 
 # ==================== DAY 82: ZEEK LOG INGESTION PIPELINE API ====================
 

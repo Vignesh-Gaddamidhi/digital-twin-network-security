@@ -10,6 +10,7 @@ from services.digital_twin.ids.zeek.parser.zeek_validator import zeek_validator
 from services.digital_twin.ids.zeek.normalizer.zeek_normalizer import zeek_normalizer
 from services.digital_twin.ids.processor.ids_processor import ids_processor
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
+from services.digital_twin.ids.processor.multi_source_processor import multi_source_processor
 
 class ZeekCollector:
     """Production Zeek log ingestion collector supporting conn, dns, http, ssl, and ssh streams."""
@@ -43,6 +44,7 @@ class ZeekCollector:
                 ids_processor.processed_events.append(norm_evt)
                 ids_processor._apply_event_to_twin(norm_evt)
                 suricata_twin_processor.processEvent(norm_evt)
+                multi_source_processor.process(norm_evt)
 
                 result.validCount += 1
                 result.normalizedEventIds.append(norm_evt.eventId)

@@ -139,6 +139,15 @@ class ZeekNormalizer:
             signature = f"Zeek {log_type.upper()} Transaction"
             category = "General Network Telemetry"
 
+        # Compute root bytes, packets, and application
+        b_in = int(record.get("orig_bytes") or 0) if record.get("orig_bytes") not in (None, "-") else 0
+        b_out = int(record.get("resp_bytes") or 0) if record.get("resp_bytes") not in (None, "-") else 0
+        total_b = b_in + b_out
+        p_in = int(record.get("orig_pkts") or 0) if record.get("orig_pkts") not in (None, "-") else 0
+        p_out = int(record.get("resp_pkts") or 0) if record.get("resp_pkts") not in (None, "-") else 0
+        total_p = p_in + p_out
+        service_app = record.get("service") or log_type.upper()
+
         return NormalizedSecurityEvent(
             source=EventSourceEnum.ZEEK,
             eventType=event_type,
@@ -150,6 +159,9 @@ class ZeekNormalizer:
             sourcePort=src_p,
             destinationPort=dest_p,
             protocol=proto,
+            bytes=total_b,
+            packets=total_p,
+            application=service_app,
             severity=severity,
             signature=signature,
             category=category,

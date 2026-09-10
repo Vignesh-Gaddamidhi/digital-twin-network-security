@@ -1,0 +1,29 @@
+{
+  "scenarioId": "SCN-PORTSCAN-001",
+  "runId": "run-atk-6422a91c",
+  "startTime": "2026-09-10T16:36:47.089787+00:00",
+  "endTime": "2026-09-10T16:36:47.109057+00:00",
+  "durationSeconds": 5.0,
+  "eventsGenerated": 7,
+  "bytesGenerated": 448,
+  "indicatorsObserved": [
+    "UNUSUAL_PORT_ACTIVITY"
+  ],
+  "alertsGenerated": [
+    "ALERT-UNUSUAL_PORT_ACTIVITY"
+  ],
+  "riskScore": 34.0,
+  "riskLevel": "MEDIUM",
+  "affectedDevices": [
+    "web-01"
+  ],
+  "stateChanges": {
+    "cpu": "25% -> 85%",
+    "utilisation": "20% -> 90%",
+    "active_sockets": "+7"
+  },
+  "recoveryStatus": "VERIFIED_RESTORED",
+  "recoveryVerified": true,
+  "finalState": "COMPLETED",
+  "details": {}
+}

@@ -160,10 +160,16 @@ class SuricataAdapter:
             category = "General Telemetry"
             confidence = 0.50
 
+        # Compute root bytes, packets, and application
+        flow_sub = eve_record.get("flow", {})
+        bytes_val = int(flow_sub.get("bytes_toserver", 0)) + int(flow_sub.get("bytes_toclient", 0))
+        pkts_val = int(flow_sub.get("pkts_toserver", 0)) + int(flow_sub.get("pkts_toclient", 0))
+        app_proto = eve_record.get("app_proto") or raw_event_type.upper()
+
         return NormalizedSecurityEvent(
             source=EventSourceEnum.SURICATA,
             eventType=norm_event_type,
-            timestamp=ts,
+            timestamp=ts or None,
             sourceDevice=src_dev,
             destinationDevice=dest_dev,
             sourceIP=src_ip,
@@ -171,6 +177,9 @@ class SuricataAdapter:
             sourcePort=src_port,
             destinationPort=dest_port,
             protocol=proto,
+            bytes=bytes_val,
+            packets=pkts_val,
+            application=app_proto,
             severity=severity,
             signature=signature,
             category=category,
