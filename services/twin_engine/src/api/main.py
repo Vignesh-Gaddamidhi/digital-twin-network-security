@@ -83,6 +83,7 @@ from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario
 from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenario import DataExfiltrationScenario
 from services.digital_twin.ids.processor.ids_processor import ids_processor
 from services.digital_twin.ids.suricata.collector.eve_collector import suricata_collector
+from services.digital_twin.ids.zeek.collector.zeek_collector import zeek_collector
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
 from services.digital_twin.ids.schemas.eve_pipeline_types import EvePipelineIngestResult
@@ -487,6 +488,32 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 82: ZEEK LOG INGESTION PIPELINE API ====================
+
+class ZeekIngestPayload(BaseModel):
+    logText: str
+    streamHint: Optional[str] = None
+
+@app.post("/api/v1/twin/ids/zeek/ingest")
+def api_ingest_zeek_logs(payload: ZeekIngestPayload):
+    res = zeek_collector.collect_from_string(payload.logText, stream_hint=payload.streamHint)
+    return {
+        "status": "ZEEK_INGEST_COMPLETED",
+        "result": res.model_dump()
+    }
+
+@app.get("/api/v1/twin/ids/zeek/errors")
+def api_get_zeek_errors():
+    return {
+        "errorCount": len(zeek_collector.malformed_queue),
+        "errors": [e.model_dump() for e in zeek_collector.malformed_queue]
+    }
+
+@app.post("/api/v1/twin/ids/zeek/clear")
+def api_clear_zeek_collector():
+    zeek_collector.clear()
+    return {"status": "ZEEK_CLEARED"}
 
 # ==================== DAY 81: SURICATA -> DIGITAL TWIN INTEGRATION API ====================
 

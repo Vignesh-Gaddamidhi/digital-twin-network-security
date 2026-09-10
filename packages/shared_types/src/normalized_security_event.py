@@ -16,6 +16,8 @@ class SecurityEventTypeEnum(str, Enum):
     DNS = "DNS"
     HTTP = "HTTP"
     TLS = "TLS"
+    SSH = "SSH"
+    PROTOCOL = "PROTOCOL"
     ANOMALY = "ANOMALY"
 
 class NormalizedSecuritySeverityEnum(str, Enum):
