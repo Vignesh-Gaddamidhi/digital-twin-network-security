@@ -41,16 +41,17 @@ class SuricataAdapter:
             if dev.id.lower() in ip.lower() or dev.hostname.lower() in ip.lower():
                 return dev.id
 
-        if ip.endswith(".10") or "client" in ip.lower():
-            return "CLIENT-01"
-        if ip.endswith(".20") or "web" in ip.lower():
-            return "WEB-01"
-        if ip.endswith(".22") or "server" in ip.lower():
-            return "SERVER-01"
-        if ip.endswith(".53") or "dns" in ip.lower():
-            return "DNS-01"
-        if ip.endswith(".100") or "db" in ip.lower():
-            return "DB-01"
+        if ip.startswith("192.168.1.") or ip.startswith("10.0.0."):
+            if ip.endswith(".10") or "client" in ip.lower():
+                return "CLIENT-01"
+            if ip.endswith(".20") or "web" in ip.lower():
+                return "WEB-01"
+            if ip.endswith(".22") or "server" in ip.lower():
+                return "SERVER-01"
+            if ip.endswith(".53") or "dns" in ip.lower():
+                return "DNS-01"
+            if ip.endswith(".100") or "db" in ip.lower():
+                return "DB-01"
         return None
 
     def normalize(self, eve_record: Dict[str, Any]) -> NormalizedSecurityEvent:
