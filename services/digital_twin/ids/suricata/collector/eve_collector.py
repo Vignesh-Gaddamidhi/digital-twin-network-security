@@ -9,6 +9,7 @@ from services.digital_twin.ids.schemas.eve_pipeline_types import (
 from services.digital_twin.ids.suricata.parser.eve_validator import eve_validator
 from services.digital_twin.ids.suricata.normalizer.suricata_adapter import suricata_adapter
 from services.digital_twin.ids.processor.ids_processor import ids_processor
+from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 
 class SuricataEveCollector:
     """
@@ -64,6 +65,7 @@ class SuricataEveCollector:
                 self.normalized_events.append(norm_evt)
                 ids_processor.processed_events.append(norm_evt)
                 ids_processor._apply_event_to_twin(norm_evt)
+                suricata_twin_processor.processEvent(norm_evt)
 
                 result.validCount += 1
                 result.normalizedEventIds.append(norm_evt.eventId)
@@ -92,5 +94,6 @@ class SuricataEveCollector:
     def clear(self):
         self.malformed_queue.clear()
         self.normalized_events.clear()
+        suricata_twin_processor.clear()
 
 suricata_collector = SuricataEveCollector()

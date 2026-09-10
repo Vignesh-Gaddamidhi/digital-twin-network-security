@@ -83,6 +83,8 @@ from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario
 from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenario import DataExfiltrationScenario
 from services.digital_twin.ids.processor.ids_processor import ids_processor
 from services.digital_twin.ids.suricata.collector.eve_collector import suricata_collector
+from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
+from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
 from services.digital_twin.ids.schemas.eve_pipeline_types import EvePipelineIngestResult
 from packages.shared_types.src.normalized_security_event import NormalizedSecurityEvent
 from packages.shared_types.src.attack_scenario import (
@@ -485,6 +487,22 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 81: SURICATA -> DIGITAL TWIN INTEGRATION API ====================
+
+@app.get("/api/v1/twin/ids/processor/history")
+def api_get_suricata_twin_processing_history():
+    return {
+        "count": len(suricata_twin_processor.history),
+        "history": [r.model_dump() for r in suricata_twin_processor.history]
+    }
+
+@app.get("/api/v1/twin/ids/devices/unknown")
+def api_get_unknown_devices():
+    return {
+        "count": len(twin_device_resolver.unknown_devices),
+        "devices": [d.model_dump() for d in twin_device_resolver.unknown_devices.values()]
+    }
 
 # ==================== DAY 80: SURICATA EVE INGESTION PIPELINE API ====================
 
