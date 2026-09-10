@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException
+from fastapi import Body, FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import asyncio
@@ -82,6 +82,8 @@ from services.digital_twin.simulation.attack.scenarios.beaconing_scenario import
 from services.digital_twin.simulation.attack.scenarios.lateral_movement_scenario import LateralMovementScenario
 from services.digital_twin.simulation.attack.scenarios.data_exfiltration_scenario import DataExfiltrationScenario
 from services.digital_twin.ids.processor.ids_processor import ids_processor
+from services.digital_twin.ids.suricata.collector.eve_collector import suricata_collector
+from services.digital_twin.ids.schemas.eve_pipeline_types import EvePipelineIngestResult
 from packages.shared_types.src.normalized_security_event import NormalizedSecurityEvent
 from packages.shared_types.src.attack_scenario import (
     AttackScenarioModel, AttackScenarioExecutionStatus, AttackScenarioStateEnum
@@ -481,10 +483,34 @@ def bootstrap_security_grounding():
         connectionType=ConnectionTypeEnum.PHYSICAL, latency=0.8, bandwidth=10000.0
     ))
 
-# ==================== DAY 79: IDS INTEGRATION & SURICATA TELEMETRY API ====================
-
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 80: SURICATA EVE INGESTION PIPELINE API ====================
+
+@app.post("/api/v1/twin/ids/suricata/collector/ingest")
+def api_ingest_suricata_collector(payload: SuricataIngestPayload):
+    res = suricata_collector.collect_from_string(payload.eveJson)
+    return {
+        "status": "COLLECTOR_INGEST_COMPLETED",
+        "result": res.model_dump()
+    }
+
+@app.get("/api/v1/twin/ids/suricata/collector/errors")
+def api_get_suricata_collector_errors():
+    return {
+        "errorCount": len(suricata_collector.malformed_queue),
+        "errors": [e.model_dump() for e in suricata_collector.malformed_queue]
+    }
+
+@app.post("/api/v1/twin/ids/suricata/collector/clear")
+def api_clear_suricata_collector():
+    suricata_collector.clear()
+    return {"status": "COLLECTOR_CLEARED"}
+
+# ==================== DAY 79: IDS INTEGRATION & SURICATA TELEMETRY API ====================
+
+
 
 @app.post("/api/v1/twin/ids/suricata/ingest")
 def api_ingest_suricata_eve(payload: SuricataIngestPayload):
