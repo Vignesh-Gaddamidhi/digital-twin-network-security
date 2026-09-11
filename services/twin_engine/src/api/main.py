@@ -92,6 +92,9 @@ from services.digital_twin.security.pipeline.events.network_event import (
 from services.digital_twin.security.pipeline.events.network_event_factory import network_event_factory
 from services.digital_twin.security.pipeline.normalization.unified_normalizer import unified_normalizer
 from services.digital_twin.security.pipeline.normalization.canonical_event import CanonicalEvent
+from services.digital_twin.security.pipeline.features.feature_definitions import SecurityFeatureVector, FeatureWindowEnum
+from services.digital_twin.security.pipeline.features.feature_registry import feature_registry
+from services.digital_twin.security.pipeline.features.feature_extractor import feature_extraction_engine
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -497,6 +500,42 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 88: FEATURE EXTRACTION API ====================
+
+class FeatureExtractRequest(BaseModel):
+    event: Dict[str, Any]
+    window: Optional[str] = "5s"
+
+@app.post("/api/v1/twin/security/features/extract")
+def api_extract_features(req: FeatureExtractRequest):
+    try:
+        from services.digital_twin.security.pipeline.normalization.canonical_event import CanonicalEvent
+        canon = CanonicalEvent(**req.event)
+        win_enum = FeatureWindowEnum.WINDOW_5S
+        if req.window == "30s":
+            win_enum = FeatureWindowEnum.WINDOW_30S
+        elif req.window == "60s":
+            win_enum = FeatureWindowEnum.WINDOW_60S
+
+        vec = feature_extraction_engine.ingest_and_extract(canon, window=win_enum)
+        return {
+            "status": "FEATURE_EXTRACTION_SUCCESS",
+            "vector": vec.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/security/features/descriptors")
+def api_get_feature_descriptors():
+    return {
+        "descriptors": [d.model_dump() for d in feature_registry.list_descriptors()]
+    }
+
+@app.post("/api/v1/twin/security/features/clear")
+def api_clear_features():
+    feature_extraction_engine.clear()
+    return {"status": "FEATURES_CLEARED"}
 
 # ==================== DAY 87: EVENT NORMALIZATION API ====================
 
