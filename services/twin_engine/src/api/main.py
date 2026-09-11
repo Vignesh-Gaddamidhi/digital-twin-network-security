@@ -95,6 +95,8 @@ from services.digital_twin.security.pipeline.normalization.canonical_event impor
 from services.digital_twin.security.pipeline.features.feature_definitions import SecurityFeatureVector, FeatureWindowEnum
 from services.digital_twin.security.pipeline.features.feature_registry import feature_registry
 from services.digital_twin.security.pipeline.features.feature_extractor import feature_extraction_engine
+from services.digital_twin.security.pipeline.detection.detection_models import DetectionResult, DetectionTypeEnum
+from services.digital_twin.security.pipeline.detection.detection_engine import pipeline_detection_engine
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -500,6 +502,40 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 89: DETECTION ENGINE API ====================
+
+class DetectionEvaluateRequest(BaseModel):
+    featureVector: Dict[str, Any]
+    canonicalEvent: Optional[Dict[str, Any]] = None
+
+@app.post("/api/v1/twin/security/detection/evaluate")
+def api_evaluate_detection(req: DetectionEvaluateRequest):
+    try:
+        from services.digital_twin.security.pipeline.features.feature_definitions import SecurityFeatureVector
+        from services.digital_twin.security.pipeline.normalization.canonical_event import CanonicalEvent
+        
+        vec = SecurityFeatureVector(**req.featureVector)
+        evt = CanonicalEvent(**req.canonicalEvent) if req.canonicalEvent else None
+        res = pipeline_detection_engine.detect(vec, evt)
+        return {
+            "status": "DETECTION_EVALUATION_SUCCESS",
+            "detection": res.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/security/detection/history")
+def api_get_detection_history():
+    return {
+        "count": len(pipeline_detection_engine.detection_history),
+        "history": [d.model_dump() for d in pipeline_detection_engine.detection_history]
+    }
+
+@app.post("/api/v1/twin/security/detection/clear")
+def api_clear_detections():
+    pipeline_detection_engine.clear()
+    return {"status": "DETECTIONS_CLEARED"}
 
 # ==================== DAY 88: FEATURE EXTRACTION API ====================
 
