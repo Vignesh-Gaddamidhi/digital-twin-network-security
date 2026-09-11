@@ -86,6 +86,10 @@ from services.digital_twin.ids.suricata.collector.eve_collector import suricata_
 from services.digital_twin.ids.zeek.collector.zeek_collector import zeek_collector
 from services.digital_twin.ids.processor.multi_source_processor import multi_source_processor
 from services.digital_twin.security.pipeline.pipeline_orchestrator import security_event_pipeline
+from services.digital_twin.security.pipeline.events.network_event import (
+    NetworkEvent, NetworkEventTypeEnum, DetectionSourceEnum, EventSeverityEnum, event_id_generator
+)
+from services.digital_twin.security.pipeline.events.network_event_factory import network_event_factory
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -491,6 +495,36 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 86: PACKET -> EVENT CREATION API ====================
+
+class CreateNetworkEventRequest(BaseModel):
+    sourceType: str = "packet"  # packet | suricata | zeek | simulation
+    payload: Dict[str, Any]
+
+@app.post("/api/v1/twin/security/events/create")
+def api_create_network_event(req: CreateNetworkEventRequest):
+    try:
+        st = req.sourceType.lower()
+        if st == "suricata":
+            evt = network_event_factory.from_suricata(req.payload)
+        elif st == "zeek":
+            evt = network_event_factory.from_zeek(req.payload)
+        elif st == "simulation":
+            evt = network_event_factory.from_simulation(req.payload)
+        else:
+            evt = network_event_factory.from_packet(req.payload)
+        return {"status": "NETWORK_EVENT_CREATED", "event": evt.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/security/events/types")
+def api_get_network_event_types():
+    return {
+        "eventTypes": [e.value for e in NetworkEventTypeEnum],
+        "detectionSources": [s.value for s in DetectionSourceEnum],
+        "severities": [v.value for v in EventSeverityEnum]
+    }
 
 # ==================== DAY 85: SECURITY EVENT PIPELINE API ====================
 
