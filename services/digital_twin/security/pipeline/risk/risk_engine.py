@@ -42,7 +42,7 @@ class RiskScoringEngine:
                 description="Repeated/persistent connection attempts observed across window"
             ))
 
-        likelihood = min(1.0, round((confidence * 0.6) + (sev_weight * 0.3) + persistence_bonus, 2))
+        likelihood = min(1.0, round((confidence * 0.7) + (sev_weight * 0.3) + persistence_bonus, 2))
         factors.append(ContributingFactor(
             category="LIKELIHOOD",
             factor=f"Detection Confidence ({confidence}) & Severity ({detection.severity.value})",
@@ -143,8 +143,14 @@ class RiskScoringEngine:
                 weightEffect="+2.5 Impact",
                 description="Threat pattern indicates data exfiltration or explicit exploit execution"
             ))
-        elif det_type in ("TRAFFIC_SPIKE", "AUTHENTICATION_ANOMALY"):
-            harm_penalty += 1.0
+        elif det_type in ("TRAFFIC_SPIKE", "AUTHENTICATION_ANOMALY", "BEACONING_PATTERN"):
+            harm_penalty += 2.0
+            factors.append(ContributingFactor(
+                category="IMPACT",
+                factor=f"Service Disruption Potential ({det_type})",
+                weightEffect="+2.0 Impact",
+                description="Threat pattern indicates volumetric saturation or credential exhaustion"
+            ))
 
         raw_impact = (base_criticality * exposure_mult) + vuln_penalty + harm_penalty
         impact = min(10.0, round(raw_impact, 2))

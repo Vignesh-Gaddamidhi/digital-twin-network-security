@@ -99,6 +99,8 @@ from services.digital_twin.security.pipeline.detection.detection_models import D
 from services.digital_twin.security.pipeline.detection.detection_engine import pipeline_detection_engine
 from services.digital_twin.security.pipeline.risk.risk_models import RiskAssessment, RiskLevelEnum
 from services.digital_twin.security.pipeline.risk.risk_engine import risk_scoring_engine
+from services.digital_twin.security.pipeline.complete_pipeline import complete_security_pipeline
+from services.digital_twin.security.pipeline.alerts.alert_models import alert_store, AlertStatusEnum
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -504,6 +506,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 91: COMPLETE SECURITY EVENT PIPELINE API ====================
+
+class CompletePipelineRunRequest(BaseModel):
+    payload: Dict[str, Any]
+    sourceType: Optional[str] = None
+    window: Optional[str] = "5s"
+
+class UpdateAlertStatusRequest(BaseModel):
+    status: AlertStatusEnum
+
+@app.post("/api/v1/twin/security/pipeline/run")
+def api_run_complete_pipeline(req: CompletePipelineRunRequest):
+    win = FeatureWindowEnum.WINDOW_5S
+    if req.window == "30s":
+        win = FeatureWindowEnum.WINDOW_30S
+    elif req.window == "60s":
+        win = FeatureWindowEnum.WINDOW_60S
+
+    res = complete_security_pipeline.process(req.payload, source_type=req.sourceType, window=win)
+    return {
+        "status": res.status,
+        "runId": res.pipelineRunId,
+        "durations": res.durations.model_dump(),
+        "alert": res.alert.model_dump() if res.alert else None,
+        "twinUpdated": res.twinPostureUpdated,
+        "newPosture": res.newTwinPosture,
+        "errorCode": res.errorCode,
+        "errorMessage": res.errorMessage
+    }
+
+@app.get("/api/v1/twin/security/pipeline/alerts/all")
+def api_get_all_security_alerts(status: Optional[AlertStatusEnum] = None, device: Optional[str] = None):
+    alerts = alert_store.list_alerts(status=status, affected_device=device)
+    return {
+        "count": len(alerts),
+        "alerts": [a.model_dump() for a in alerts]
+    }
+
+@app.patch("/api/v1/twin/security/pipeline/alerts/{alert_id}/status")
+def api_update_security_alert_status(alert_id: str, req: UpdateAlertStatusRequest):
+    updated = alert_store.update_status(alert_id, req.status)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Alert ID not found")
+    return {"status": "ALERT_STATUS_UPDATED", "alertId": alert_id, "newStatus": req.status.value}
 
 # ==================== DAY 90: RISK SCORING ENGINE API ====================
 

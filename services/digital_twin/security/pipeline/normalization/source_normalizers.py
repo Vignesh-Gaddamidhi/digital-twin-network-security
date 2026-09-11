@@ -133,8 +133,16 @@ class SuricataNormalizer(BaseSourceNormalizer):
             event_type = "NETWORK_CONNECTION"
 
         flow_b = eve.get("flow", {})
-        bytes_val = int(flow_b.get("bytes_toserver", 0)) + int(flow_b.get("bytes_toclient", 0))
-        pkts_val = int(flow_b.get("pkts_toserver", 0)) + int(flow_b.get("pkts_toclient", 0))
+        flow_bytes = int(flow_b.get("bytes_toserver", 0)) + int(flow_b.get("bytes_toclient", 0))
+        flow_pkts = int(flow_b.get("pkts_toserver", 0)) + int(flow_b.get("pkts_toclient", 0))
+        bytes_val = int(eve.get("bytes") or flow_bytes or 0)
+        pkts_val = int(eve.get("packets") or flow_pkts or 1)
+
+        suri_meta = {"raw_eve_type": raw_type, "flow_id": eve.get("flow_id")}
+        if isinstance(eve.get("metadata"), dict):
+            suri_meta.update(eve.get("metadata"))
+        if "direction" in eve:
+            suri_meta["direction"] = eve.get("direction")
 
         return CanonicalEvent(
             eventTimestamp=event_ts,
@@ -149,7 +157,7 @@ class SuricataNormalizer(BaseSourceNormalizer):
             bytes=bytes_val,
             packets=max(1, pkts_val),
             signature=signature,
-            metadata={"raw_eve_type": raw_type, "flow_id": eve.get("flow_id")}
+            metadata=suri_meta
         )
 
 
@@ -160,7 +168,7 @@ class ZeekNormalizer(BaseSourceNormalizer):
         if not isinstance(zeek_rec, dict):
             raise NormalizationError("Zeek record must be a dictionary")
 
-        raw_ts = zeek_rec.get("ts")
+        raw_ts = zeek_rec.get("ts") if zeek_rec.get("ts") is not None else zeek_rec.get("timestamp")
         event_ts = self.parse_timestamp(raw_ts)
 
         proto = self.parse_protocol(zeek_rec.get("proto", "tcp"))
@@ -186,6 +194,12 @@ class ZeekNormalizer(BaseSourceNormalizer):
         b_orig = int(zeek_rec.get("orig_bytes") or 0) if zeek_rec.get("orig_bytes") not in (None, "-") else 0
         b_resp = int(zeek_rec.get("resp_bytes") or 0) if zeek_rec.get("resp_bytes") not in (None, "-") else 0
 
+        zeek_meta = {"uid": zeek_rec.get("uid"), "conn_state": zeek_rec.get("conn_state")}
+        if isinstance(zeek_rec.get("metadata"), dict):
+            zeek_meta.update(zeek_rec.get("metadata"))
+        if "direction" in zeek_rec:
+            zeek_meta["direction"] = zeek_rec.get("direction")
+
         return CanonicalEvent(
             eventTimestamp=event_ts,
             source=resolved_src,
@@ -198,7 +212,7 @@ class ZeekNormalizer(BaseSourceNormalizer):
             detectionSource=CanonicalDetectionSourceEnum.ZEEK,
             bytes=b_orig + b_resp,
             packets=1,
-            metadata={"uid": zeek_rec.get("uid"), "conn_state": zeek_rec.get("conn_state")}
+            metadata=zeek_meta
         )
 
 
@@ -234,6 +248,12 @@ class SimulationNormalizer(BaseSourceNormalizer):
         raw_sev = str(sim.get("severity", "INFO")).upper()
         severity = getattr(CanonicalSeverityEnum, raw_sev, CanonicalSeverityEnum.INFO)
 
+        sim_meta = {"sim_id": sim.get("simulationId")}
+        if isinstance(sim.get("metadata"), dict):
+            sim_meta.update(sim.get("metadata"))
+        if "direction" in sim:
+            sim_meta["direction"] = sim.get("direction")
+
         return CanonicalEvent(
             eventTimestamp=event_ts,
             source=resolved_src,
@@ -247,7 +267,7 @@ class SimulationNormalizer(BaseSourceNormalizer):
             bytes=int(sim.get("bytes") or 0),
             packets=int(sim.get("packets") or 1),
             signature=sim.get("signature"),
-            metadata={"sim_id": sim.get("simulationId")}
+            metadata=sim_meta
         )
 
 suricata_normalizer = SuricataNormalizer()

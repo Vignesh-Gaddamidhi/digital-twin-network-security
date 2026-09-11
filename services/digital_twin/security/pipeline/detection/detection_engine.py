@@ -16,7 +16,7 @@ class PipelineDetectionEngine:
         src = vector.sourceDevice
         target = vector.targetDevice
 
-        # 1. Check for Suricata explicit signature alert passthrough
+        # 1. Direct High-Fidelity IDS Alert Signature Match
         if event and event.eventType == "IDS_ALERT" and event.signature:
             det = DetectionResult(
                 detected=True,
@@ -41,34 +41,41 @@ class PipelineDetectionEngine:
             self.detection_history.append(det)
             return det
 
-        # 2. Port Reconnaissance / Sweep Detection
-        z_ports = baseline_store.calculate_z_score(target, "uniqueDestinationPorts", float(vector.uniqueDestinationPorts))
-        if vector.uniqueDestinationPorts >= 4 or z_ports >= 3.0:
-            b_ports = baseline_store.get_baseline(target, "uniqueDestinationPorts")
-            confidence = min(0.98, round(0.65 + (vector.uniqueDestinationPorts * 0.05), 2))
+        # Determine directional intent
+        meta_dir = ""
+        if event and isinstance(event.metadata, dict):
+            meta_dir = str(event.metadata.get("direction", "")).upper()
+
+        is_external_endpoint = any(k in target.upper() for k in ("EXTERNAL", "C2", "EXT")) or any(k in src.upper() for k in ("EXTERNAL", "C2", "EXT"))
+        is_explicit_exfil = (meta_dir == "OUTBOUND") or is_external_endpoint
+
+        # 2. Outbound Data Exfiltration Anomaly (Explicit Egress or External Endpoint)
+        if is_explicit_exfil and vector.outboundBytes >= 100000 and vector.bytesDirectionRatio >= 10.0:
+            z_out = baseline_store.calculate_z_score(target, "outboundBytes", float(vector.outboundBytes))
+            confidence = min(0.99, round(0.80 + (vector.outboundBytes / 500000.0) * 0.15, 2))
             det = DetectionResult(
                 detected=True,
-                detectionType=DetectionTypeEnum.PORT_ANOMALY,
+                detectionType=DetectionTypeEnum.OUTBOUND_VOLUME_ANOMALY,
                 confidence=confidence,
-                severity=DetectionSeverityEnum.MEDIUM if vector.uniqueDestinationPorts < 10 else DetectionSeverityEnum.HIGH,
+                severity=DetectionSeverityEnum.CRITICAL if vector.outboundBytes >= 250000 else DetectionSeverityEnum.HIGH,
                 targetDevice=target,
                 sourceDevice=src,
                 evidence=[
                     ExplainableEvidence(
-                        metric="uniqueDestinationPorts",
-                        observedValue=float(vector.uniqueDestinationPorts),
-                        expectedBaseline=b_ports.mean,
-                        deviationScore=round(z_ports, 2),
-                        reason=f"Observed {vector.uniqueDestinationPorts} unique destination ports probed (Z-score: {z_ports:.1f})"
+                        metric="outboundBytes",
+                        observedValue=float(vector.outboundBytes),
+                        expectedBaseline=5000.0,
+                        deviationScore=round(z_out, 2),
+                        reason=f"Massive asymmetric egress: {vector.outboundBytes} bytes (ratio: {vector.bytesDirectionRatio}x)"
                     )
                 ],
-                features={"uniqueDestinationPorts": vector.uniqueDestinationPorts, "portAttemptCount": vector.portAttemptCount},
-                summary="Potential suspicious behaviour detected: unusual horizontal/vertical port discovery pattern"
+                features={"outboundBytes": vector.outboundBytes, "bytesDirectionRatio": vector.bytesDirectionRatio},
+                summary="Potential suspicious behaviour detected: anomalous outbound data transfer volume"
             )
             self.detection_history.append(det)
             return det
 
-        # 3. Volumetric Traffic Saturation Spike
+        # 3. Volumetric Traffic Saturation Spike (DoS Flood)
         z_bytes = baseline_store.calculate_z_score(target, "byteRate", vector.byteRate)
         z_pkts = baseline_store.calculate_z_score(target, "packetRate", vector.packetRate)
         if z_bytes >= 3.0 or z_pkts >= 3.0:
@@ -96,7 +103,34 @@ class PipelineDetectionEngine:
             self.detection_history.append(det)
             return det
 
-        # 4. Low-Jitter C2 Beaconing Pattern
+        # 4. Port Reconnaissance / Sweep Anomaly
+        z_ports = baseline_store.calculate_z_score(target, "uniqueDestinationPorts", float(vector.uniqueDestinationPorts))
+        if vector.uniqueDestinationPorts >= 4 or z_ports >= 3.0:
+            b_ports = baseline_store.get_baseline(target, "uniqueDestinationPorts")
+            confidence = min(0.98, round(0.65 + (vector.uniqueDestinationPorts * 0.05), 2))
+            det = DetectionResult(
+                detected=True,
+                detectionType=DetectionTypeEnum.PORT_ANOMALY,
+                confidence=confidence,
+                severity=DetectionSeverityEnum.MEDIUM if vector.uniqueDestinationPorts < 10 else DetectionSeverityEnum.HIGH,
+                targetDevice=target,
+                sourceDevice=src,
+                evidence=[
+                    ExplainableEvidence(
+                        metric="uniqueDestinationPorts",
+                        observedValue=float(vector.uniqueDestinationPorts),
+                        expectedBaseline=b_ports.mean,
+                        deviationScore=round(z_ports, 2),
+                        reason=f"Observed {vector.uniqueDestinationPorts} unique destination ports probed (Z-score: {z_ports:.1f})"
+                    )
+                ],
+                features={"uniqueDestinationPorts": vector.uniqueDestinationPorts, "portAttemptCount": vector.portAttemptCount},
+                summary="Potential suspicious behaviour detected: unusual horizontal/vertical port discovery pattern"
+            )
+            self.detection_history.append(det)
+            return det
+
+        # 5. Low-Jitter C2 Beaconing Pattern
         if vector.connectionCount >= 4 and vector.averageInterval >= 0.5 and vector.intervalVariance <= 0.05:
             confidence = min(0.96, round(0.85 + (1.0 / (vector.intervalVariance + 1.0)) * 0.1, 2))
             det = DetectionResult(
@@ -117,32 +151,6 @@ class PipelineDetectionEngine:
                 ],
                 features={"averageInterval": vector.averageInterval, "intervalVariance": vector.intervalVariance, "connectionCount": vector.connectionCount},
                 summary="Potential suspicious behaviour detected: high-regularity periodic C2 beaconing pattern"
-            )
-            self.detection_history.append(det)
-            return det
-
-        # 5. Outbound Data Exfiltration
-        z_out = baseline_store.calculate_z_score(target, "outboundBytes", float(vector.outboundBytes))
-        if vector.outboundBytes >= 100000 and vector.bytesDirectionRatio >= 10.0:
-            confidence = min(0.99, round(0.80 + (vector.outboundBytes / 500000.0) * 0.15, 2))
-            det = DetectionResult(
-                detected=True,
-                detectionType=DetectionTypeEnum.OUTBOUND_VOLUME_ANOMALY,
-                confidence=confidence,
-                severity=DetectionSeverityEnum.CRITICAL if vector.outboundBytes >= 250000 else DetectionSeverityEnum.HIGH,
-                targetDevice=target,
-                sourceDevice=src,
-                evidence=[
-                    ExplainableEvidence(
-                        metric="outboundBytes",
-                        observedValue=float(vector.outboundBytes),
-                        expectedBaseline=5000.0,
-                        deviationScore=round(z_out, 2),
-                        reason=f"Massive asymmetric egress: {vector.outboundBytes} bytes (ratio: {vector.bytesDirectionRatio}x)"
-                    )
-                ],
-                features={"outboundBytes": vector.outboundBytes, "bytesDirectionRatio": vector.bytesDirectionRatio},
-                summary="Potential suspicious behaviour detected: anomalous outbound data transfer volume"
             )
             self.detection_history.append(det)
             return det
