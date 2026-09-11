@@ -100,6 +100,12 @@ from services.digital_twin.security.pipeline.detection.detection_engine import p
 from services.digital_twin.security.pipeline.risk.risk_models import RiskAssessment, RiskLevelEnum
 from services.digital_twin.security.pipeline.risk.risk_engine import risk_scoring_engine
 from services.digital_twin.security.pipeline.complete_pipeline import complete_security_pipeline
+from services.digital_twin.ml.dataset.schemas.dataset_models import (
+    DatasetSample, BinaryLabelEnum, MulticlassLabelEnum, DatasetMetadata
+)
+from services.digital_twin.ml.dataset.inventory.source_inventory import (
+    SourceInventoryAdapter, dataset_inventory
+)
 from services.digital_twin.security.pipeline.alerts.alert_models import alert_store, AlertStatusEnum
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
@@ -507,7 +513,45 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
-# ==================== DAY 91: COMPLETE SECURITY EVENT PIPELINE API ====================
+# ==================== DAY 92: ML DATASET ARCHITECTURE API ====================
+
+class IngestDatasetSampleRequest(BaseModel):
+    canonicalEvent: Dict[str, Any]
+    featureVector: Optional[Dict[str, Any]] = None
+    scenarioId: Optional[str] = None
+
+@app.post("/api/v1/twin/ml/dataset/sample")
+def api_create_dataset_sample(req: IngestDatasetSampleRequest):
+    try:
+        from services.digital_twin.security.pipeline.normalization.canonical_event import CanonicalEvent
+        from services.digital_twin.security.pipeline.features.feature_definitions import SecurityFeatureVector
+        
+        canon = CanonicalEvent(**req.canonicalEvent)
+        vec = SecurityFeatureVector(**req.featureVector) if req.featureVector else None
+        sample = SourceInventoryAdapter.from_canonical_event(canon, feature_vector=vec, scenario_id=req.scenarioId)
+        dataset_inventory.add_sample(sample)
+        return {
+            "status": "DATASET_SAMPLE_CREATED",
+            "sample": sample.model_dump(),
+            "featureVectorDict": sample.to_feature_dict()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/dataset/metadata")
+def api_get_dataset_metadata(version: str = "1.0.0"):
+    meta = dataset_inventory.generate_metadata(version=version)
+    return {
+        "status": "DATASET_METADATA_GENERATED",
+        "metadata": meta.model_dump()
+    }
+
+@app.post("/api/v1/twin/ml/dataset/clear")
+def api_clear_dataset():
+    dataset_inventory.clear()
+    return {"status": "DATASET_CLEARED"}
+
+# ==================== DAY 91: COMPLETE SECURITY EVENT PIPELINE API ===================="
 
 class CompletePipelineRunRequest(BaseModel):
     payload: Dict[str, Any]
