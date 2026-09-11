@@ -85,6 +85,7 @@ from services.digital_twin.ids.processor.ids_processor import ids_processor
 from services.digital_twin.ids.suricata.collector.eve_collector import suricata_collector
 from services.digital_twin.ids.zeek.collector.zeek_collector import zeek_collector
 from services.digital_twin.ids.processor.multi_source_processor import multi_source_processor
+from services.digital_twin.security.pipeline.pipeline_orchestrator import security_event_pipeline
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -490,6 +491,37 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 85: SECURITY EVENT PIPELINE API ====================
+
+class PipelineProcessRequest(BaseModel):
+    payload: Dict[str, Any]
+
+@app.post("/api/v1/twin/security/pipeline/process")
+def api_process_security_pipeline(req: PipelineProcessRequest):
+    ctx = security_event_pipeline.process(req.payload)
+    return {
+        "status": "PIPELINE_RUN_COMPLETED",
+        "runId": ctx.pipelineRunId,
+        "finalState": ctx.currentState.value,
+        "stateHistory": [s.value for s in ctx.history],
+        "failedAt": ctx.failedAtStage,
+        "failureReason": ctx.failureReason,
+        "alertGenerated": ctx.createdAlert is not None,
+        "alert": ctx.createdAlert.model_dump() if ctx.createdAlert else None
+    }
+
+@app.get("/api/v1/twin/security/pipeline/alerts")
+def api_get_pipeline_alerts():
+    return {
+        "count": len(security_event_pipeline.alert_store),
+        "alerts": [a.model_dump() for a in security_event_pipeline.alert_store]
+    }
+
+@app.post("/api/v1/twin/security/pipeline/clear")
+def api_clear_pipeline():
+    security_event_pipeline.clear()
+    return {"status": "PIPELINE_CLEARED"}
 
 # ==================== DAY 83: MULTI-SOURCE PROCESSOR & CORRELATION API ====================
 
