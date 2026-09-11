@@ -90,6 +90,8 @@ from services.digital_twin.security.pipeline.events.network_event import (
     NetworkEvent, NetworkEventTypeEnum, DetectionSourceEnum, EventSeverityEnum, event_id_generator
 )
 from services.digital_twin.security.pipeline.events.network_event_factory import network_event_factory
+from services.digital_twin.security.pipeline.normalization.unified_normalizer import unified_normalizer
+from services.digital_twin.security.pipeline.normalization.canonical_event import CanonicalEvent
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -495,6 +497,37 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 87: EVENT NORMALIZATION API ====================
+
+class NormalizeEventRequest(BaseModel):
+    sourceType: Optional[str] = None
+    payload: Dict[str, Any]
+
+@app.post("/api/v1/twin/security/pipeline/normalize")
+def api_normalize_event(req: NormalizeEventRequest):
+    event, err = unified_normalizer.normalize(req.payload, source_type=req.sourceType)
+    if err:
+        return {
+            "status": "NORMALIZATION_REJECTED",
+            "reason": err
+        }
+    return {
+        "status": "NORMALIZATION_SUCCESS",
+        "canonicalEvent": event.model_dump()
+    }
+
+@app.get("/api/v1/twin/security/pipeline/quarantine")
+def api_get_quarantined_events():
+    return {
+        "count": len(unified_normalizer.quarantine_store),
+        "quarantined": [q.model_dump() for q in unified_normalizer.quarantine_store]
+    }
+
+@app.post("/api/v1/twin/security/pipeline/quarantine/clear")
+def api_clear_quarantine():
+    unified_normalizer.clear()
+    return {"status": "QUARANTINE_CLEARED"}
 
 # ==================== DAY 86: PACKET -> EVENT CREATION API ====================
 
