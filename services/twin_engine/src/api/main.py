@@ -97,6 +97,8 @@ from services.digital_twin.security.pipeline.features.feature_registry import fe
 from services.digital_twin.security.pipeline.features.feature_extractor import feature_extraction_engine
 from services.digital_twin.security.pipeline.detection.detection_models import DetectionResult, DetectionTypeEnum
 from services.digital_twin.security.pipeline.detection.detection_engine import pipeline_detection_engine
+from services.digital_twin.security.pipeline.risk.risk_models import RiskAssessment, RiskLevelEnum
+from services.digital_twin.security.pipeline.risk.risk_engine import risk_scoring_engine
 from services.digital_twin.ids.processor.correlation_engine import ids_correlation_engine
 from services.digital_twin.ids.processor.twin_event_processor import suricata_twin_processor
 from services.digital_twin.ids.processor.device_resolver import twin_device_resolver
@@ -502,6 +504,24 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 90: RISK SCORING ENGINE API ====================
+
+class RiskAssessRequest(BaseModel):
+    detection: Dict[str, Any]
+
+@app.post("/api/v1/twin/security/risk/assess")
+def api_assess_risk(req: RiskAssessRequest):
+    try:
+        from services.digital_twin.security.pipeline.detection.detection_models import DetectionResult
+        det = DetectionResult(**req.detection)
+        assessment = risk_scoring_engine.assess_risk(det)
+        return {
+            "status": "RISK_ASSESSMENT_SUCCESS",
+            "assessment": assessment.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 89: DETECTION ENGINE API ====================
 
