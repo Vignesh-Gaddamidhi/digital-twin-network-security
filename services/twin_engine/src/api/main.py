@@ -121,6 +121,8 @@ from services.digital_twin.ml.dataset.normalization.normalization_models import 
     NormalizationMethodEnum, ScalerArtifact, FinalDatasetQualityReport
 )
 from services.digital_twin.ml.dataset.normalization.normalization_engine import feature_normalization_engine
+from services.digital_twin.ml.training.dataset_loader import dataset_loader
+from services.digital_twin.ml.models.baseline_mock_classifier import BaselineVerificationClassifier
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -530,6 +532,47 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 99: ML ENVIRONMENT & BASELINE MODEL API ====================
+
+@app.get("/api/v1/twin/ml/environment/status")
+def api_get_ml_environment_status():
+    import numpy as np
+    import sklearn
+    import xgboost as xgb
+    import pandas as pd
+
+    X_tr, y_tr, X_te, y_te, feats = dataset_loader.load_train_test()
+    return {
+        "status": "ML_ENVIRONMENT_READY",
+        "versions": {
+            "numpy": np.__version__,
+            "pandas": pd.__version__,
+            "sklearn": sklearn.__version__,
+            "xgboost": xgb.__version__
+        },
+        "datasetStatus": {
+            "trainSamples": int(X_tr.shape[0]),
+            "testSamples": int(X_te.shape[0]),
+            "featureCount": len(feats),
+            "features": feats
+        }
+    }
+
+@app.post("/api/v1/twin/ml/models/baseline/test")
+def api_test_baseline_model():
+    X_tr, y_tr, X_te, y_te, feats = dataset_loader.load_train_test()
+    clf = BaselineVerificationClassifier(random_seed=42)
+    meta = clf.train(X_tr, y_tr, feature_names=feats)
+    metrics = clf.evaluate(X_te, y_te)
+    saved_path = clf.save()
+
+    return {
+        "status": "BASELINE_TRAINED_AND_EVALUATED",
+        "experiment": meta.model_dump(),
+        "metrics": metrics.model_dump(),
+        "artifact": str(saved_path.name)
+    }
 
 # ==================== DAY 98: FEATURE NORMALIZATION & FINAL DATASET API ====================
 
