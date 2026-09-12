@@ -106,6 +106,8 @@ from services.digital_twin.ml.dataset.schemas.dataset_models import (
 from services.digital_twin.ml.dataset.schemas.raw_record_models import RawSourceEnum
 from services.digital_twin.ml.dataset.storage.raw_storage_manager import raw_storage_manager
 from services.digital_twin.ml.dataset.ingestion.raw_ingestion_engine import raw_ingestion_engine
+from services.digital_twin.ml.dataset.cleaning.cleaning_models import CleaningReport
+from services.digital_twin.ml.dataset.cleaning.cleaning_engine import data_cleaning_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -515,6 +517,29 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 94: DATA CLEANING & PREPROCESSING API ====================
+
+@app.post("/api/v1/twin/ml/dataset/cleaning/clean")
+def api_clean_raw_records():
+    recs = raw_storage_manager.list_records()
+    report = data_cleaning_engine.clean_batch(recs)
+    return {
+        "status": "DATA_CLEANING_COMPLETED",
+        "report": report.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/dataset/cleaning/samples")
+def api_get_cleaned_samples():
+    return {
+        "count": len(data_cleaning_engine.cleaned_samples),
+        "samples": [s.model_dump() for s in data_cleaning_engine.cleaned_samples]
+    }
+
+@app.post("/api/v1/twin/ml/dataset/cleaning/clear")
+def api_clear_cleaned_samples():
+    data_cleaning_engine.clear()
+    return {"status": "CLEANED_DATASET_CLEARED"}
 
 # ==================== DAY 93: RAW TRAFFIC COLLECTION API ====================
 
