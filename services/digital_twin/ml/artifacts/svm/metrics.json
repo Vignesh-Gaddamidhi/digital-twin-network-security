@@ -1,0 +1,31 @@
+{
+  "standardEvaluation": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1Score": 1.0,
+    "rocAuc": 1.0,
+    "confusionMatrix": [
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        5
+      ]
+    ],
+    "truePositives": 5,
+    "falsePositives": 0,
+    "trueNegatives": 5,
+    "falseNegatives": 0
+  },
+  "supportVectorStats": {
+    "totalSupportVectors": 4,
+    "supportVectorsPerClass": [
+      2,
+      2
+    ],
+    "trainingDurationMs": 32.555
+  }
+}

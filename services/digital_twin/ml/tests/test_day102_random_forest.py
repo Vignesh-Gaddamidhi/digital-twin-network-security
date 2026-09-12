@@ -114,7 +114,7 @@ def run_day102_suite():
         auc_str = f"{row['rocAuc']:.4f}" if row.get("rocAuc") is not None else "N/A"
         print(f"    | {row['model']:<19} | {row['accuracy']:<8.4f} | {row['precision']:<9.4f} | {row['recall']:<6.4f} | {row['f1Score']:<8.4f} | {auc_str:<7} |")
 
-    assert len(table) == 3
+    assert len(table) >= 3
     assert any(r["model"] == "Logistic Regression" for r in table)
     assert any(r["model"] == "Decision Tree" for r in table)
     assert any(r["model"] == "Random Forest" for r in table)

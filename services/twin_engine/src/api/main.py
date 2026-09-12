@@ -126,6 +126,7 @@ from services.digital_twin.ml.models.baseline_mock_classifier import BaselineVer
 from services.digital_twin.ml.training.train_logistic_regression import run_logistic_regression_training
 from services.digital_twin.ml.training.train_decision_tree import run_decision_tree_training
 from services.digital_twin.ml.training.train_random_forest import run_random_forest_training
+from services.digital_twin.ml.training.train_svm import run_svm_training
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -536,6 +537,30 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 103: SUPPORT VECTOR MACHINE API ====================
+
+@app.post("/api/v1/twin/ml/models/svm/train")
+def api_train_svm():
+    try:
+        res = run_svm_training()
+        return {
+            "status": "SVM_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "artifactsPath": res["artifactsPath"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/models/svm/metrics")
+def api_get_svm_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/svm/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="SVM model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 102: RANDOM FOREST & COMPARISON API ====================
 

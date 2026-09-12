@@ -11,7 +11,8 @@ class ModelComparator:
     MODEL_DIRS = {
         "Logistic Regression": ARTIFACTS_ROOT / "logistic_regression",
         "Decision Tree": ARTIFACTS_ROOT / "decision_tree",
-        "Random Forest": ARTIFACTS_ROOT / "random_forest"
+        "Random Forest": ARTIFACTS_ROOT / "random_forest",
+        "Support Vector Machine": ARTIFACTS_ROOT / "svm"
     }
 
     def generate_comparison(self) -> Dict[str, Any]:

@@ -1,0 +1,25 @@
+{
+  "experimentId": "EXP-98050885",
+  "modelName": "svm",
+  "datasetVersion": "dataset-v1.0",
+  "featureVersion": "feat-v1",
+  "trainingSamples": 40,
+  "testingSamples": 10,
+  "featureCount": 20,
+  "hyperparameters": {
+    "C": 1.0,
+    "kernel": "rbf",
+    "gamma": "scale",
+    "class_weight": "balanced",
+    "probability": true
+  },
+  "randomSeed": 42,
+  "supportVectorStats": {
+    "totalSupportVectors": 4,
+    "supportVectorsPerClass": [
+      2,
+      2
+    ],
+    "trainingDurationMs": 32.555
+  }
+}
