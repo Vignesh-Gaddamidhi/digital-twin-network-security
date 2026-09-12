@@ -129,6 +129,10 @@ from services.digital_twin.ml.training.train_random_forest import run_random_for
 from services.digital_twin.ml.training.train_svm import run_svm_training
 from services.digital_twin.ml.training.train_xgboost import run_xgboost_training
 from services.digital_twin.ml.evaluation.master_evaluation_engine import master_evaluation_engine
+from services.digital_twin.ml.prediction.prediction_models import (
+    AttackPrediction, ThreatClassEnum, PredictedAttackCategory, RiskLevelEnum, PredictionStatusEnum
+)
+from services.digital_twin.ml.prediction.attack_prediction_engine import attack_prediction_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -539,6 +543,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 106: ADVANCED ATTACK PREDICTION API ====================
+
+class AttackPredictionRequest(BaseModel):
+    features: Dict[str, float]
+    source: str = "192.168.1.50"
+    destination: str = "192.168.1.10"
+    deviceId: str = "WEB-SERVER-01"
+    deviceCriticality: float = 0.8
+    networkExposure: float = 0.7
+    binaryThreatProb: Optional[float] = None
+    multiclassProbabilities: Optional[Dict[str, float]] = None
+
+@app.post("/api/v1/twin/ml/prediction/predict")
+def api_generate_attack_prediction(req: AttackPredictionRequest):
+    try:
+        pred = attack_prediction_engine.generate_prediction(
+            features=req.features,
+            source=req.source,
+            destination=req.destination,
+            device_id=req.deviceId,
+            device_criticality=req.deviceCriticality,
+            network_exposure=req.networkExposure,
+            binary_threat_prob=req.binaryThreatProb,
+            multiclass_probabilities=req.multiclassProbabilities
+        )
+        return {
+            "status": "ATTACK_PREDICTION_GENERATED",
+            "prediction": pred.model_dump(),
+            "summary": pred.to_summary_dict()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/prediction/history")
+def api_get_prediction_history():
+    return {
+        "count": len(attack_prediction_engine.prediction_history),
+        "history": [p.model_dump() for p in attack_prediction_engine.prediction_history]
+    }
+
+@app.post("/api/v1/twin/ml/prediction/clear")
+def api_clear_prediction_history():
+    attack_prediction_engine.clear()
+    return {"status": "PREDICTION_HISTORY_CLEARED"}
 
 # ==================== DAY 105: MASTER EVALUATION & COMPARISON API ====================
 
