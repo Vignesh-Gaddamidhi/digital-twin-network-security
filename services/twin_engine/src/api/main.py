@@ -117,6 +117,10 @@ from services.digital_twin.ml.dataset.labeling.label_models import (
 from services.digital_twin.ml.dataset.labeling.labeling_engine import ground_truth_labeling_engine
 from services.digital_twin.ml.dataset.splitting.split_models import SplitStrategyEnum, SplitMetadata
 from services.digital_twin.ml.dataset.splitting.splitting_engine import dataset_splitting_engine
+from services.digital_twin.ml.dataset.normalization.normalization_models import (
+    NormalizationMethodEnum, ScalerArtifact, FinalDatasetQualityReport
+)
+from services.digital_twin.ml.dataset.normalization.normalization_engine import feature_normalization_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -526,6 +530,48 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 98: FEATURE NORMALIZATION & FINAL DATASET API ====================
+
+@app.post("/api/v1/twin/ml/dataset/normalize/execute")
+def api_execute_normalization():
+    train_recs = dataset_splitting_engine.train_records
+    test_recs = dataset_splitting_engine.test_records
+    if not train_recs:
+        raise HTTPException(status_code=400, detail="No train records available; run train/test split first")
+
+    train_norm, test_norm, report = feature_normalization_engine.process_and_persist_dataset(
+        train_recs, test_recs
+    )
+    return {
+        "status": "DATASET_NORMALIZATION_COMPLETED",
+        "trainCount": len(train_norm),
+        "testCount": len(test_norm),
+        "qualityReport": report.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/dataset/normalize/scaler")
+def api_get_scaler_parameters():
+    if not feature_normalization_engine.scaler:
+        raise HTTPException(status_code=404, detail="No scaler fitted yet")
+    return {
+        "status": "SCALER_ARTIFACT_RETRIEVED",
+        "scaler": feature_normalization_engine.scaler.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/dataset/normalize/report")
+def api_get_final_quality_report():
+    if not feature_normalization_engine.last_quality_report:
+        raise HTTPException(status_code=404, detail="No dataset report generated yet")
+    return {
+        "status": "QUALITY_REPORT_RETRIEVED",
+        "report": feature_normalization_engine.last_quality_report.model_dump()
+    }
+
+@app.post("/api/v1/twin/ml/dataset/normalize/clear")
+def api_clear_normalization():
+    feature_normalization_engine.clear()
+    return {"status": "NORMALIZATION_CLEARED"}
 
 # ==================== DAY 97: TRAIN/TEST SPLIT API ====================
 

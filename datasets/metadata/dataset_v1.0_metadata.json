@@ -1,0 +1,19 @@
+{
+  "datasetVersion": "1.0.0",
+  "generatedAt": "2026-09-12T04:00:48.180862+00:00",
+  "trainSamplesCount": 40,
+  "testSamplesCount": 10,
+  "featureCount": 20,
+  "classDistributionTrain": {
+    "NORMAL": 20,
+    "DOS_LIKE": 20
+  },
+  "classDistributionTest": {
+    "NORMAL": 5,
+    "DOS_LIKE": 5
+  },
+  "zeroLeakageVerified": true,
+  "varianceFlooringAppliedCount": 14,
+  "scalerFittedExclusivelyOnTrain": true,
+  "overallQualityStatus": "PASSED_PRODUCTION_GRADE"
+}

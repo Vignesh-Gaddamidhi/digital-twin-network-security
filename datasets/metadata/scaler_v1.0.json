@@ -1,0 +1,171 @@
+{
+  "scalerId": "SCL-88A208A6",
+  "version": "1.0.0",
+  "method": "STANDARD_SCALER",
+  "fittedOnSamplesCount": 40,
+  "fittedAt": "2026-09-12T04:00:48.168489+00:00",
+  "featureOrder": [
+    "packet_rate",
+    "bytes",
+    "bytes_per_second",
+    "connection_frequency",
+    "port_22_ratio",
+    "port_53_ratio",
+    "port_80_ratio",
+    "port_443_ratio",
+    "port_other_ratio",
+    "unique_destination_ports",
+    "flow_duration",
+    "tcp_ratio",
+    "udp_ratio",
+    "icmp_ratio",
+    "failed_connections",
+    "failed_connection_rate",
+    "dns_queries",
+    "dns_frequency",
+    "destination_diversity",
+    "unique_destination_ratio"
+  ],
+  "parameters": {
+    "packet_rate": {
+      "featureName": "packet_rate",
+      "mean": 255.0,
+      "stdDev": 245.0,
+      "minVal": 10.0,
+      "maxVal": 500.0
+    },
+    "bytes": {
+      "featureName": "bytes",
+      "mean": 125600.0,
+      "stdDev": 124400.0,
+      "minVal": 1200.0,
+      "maxVal": 250000.0
+    },
+    "bytes_per_second": {
+      "featureName": "bytes_per_second",
+      "mean": 125600.0,
+      "stdDev": 124400.0,
+      "minVal": 1200.0,
+      "maxVal": 250000.0
+    },
+    "connection_frequency": {
+      "featureName": "connection_frequency",
+      "mean": 1.25,
+      "stdDev": 0.75,
+      "minVal": 0.5,
+      "maxVal": 2.0
+    },
+    "port_22_ratio": {
+      "featureName": "port_22_ratio",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "port_53_ratio": {
+      "featureName": "port_53_ratio",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "port_80_ratio": {
+      "featureName": "port_80_ratio",
+      "mean": 0.5,
+      "stdDev": 0.5,
+      "minVal": 0.0,
+      "maxVal": 1.0
+    },
+    "port_443_ratio": {
+      "featureName": "port_443_ratio",
+      "mean": 0.5,
+      "stdDev": 0.5,
+      "minVal": 0.0,
+      "maxVal": 1.0
+    },
+    "port_other_ratio": {
+      "featureName": "port_other_ratio",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "unique_destination_ports": {
+      "featureName": "unique_destination_ports",
+      "mean": 1.0,
+      "stdDev": 1e-6,
+      "minVal": 1.0,
+      "maxVal": 1.0
+    },
+    "flow_duration": {
+      "featureName": "flow_duration",
+      "mean": 1.0,
+      "stdDev": 1e-6,
+      "minVal": 1.0,
+      "maxVal": 1.0
+    },
+    "tcp_ratio": {
+      "featureName": "tcp_ratio",
+      "mean": 1.0,
+      "stdDev": 1e-6,
+      "minVal": 1.0,
+      "maxVal": 1.0
+    },
+    "udp_ratio": {
+      "featureName": "udp_ratio",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "icmp_ratio": {
+      "featureName": "icmp_ratio",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "failed_connections": {
+      "featureName": "failed_connections",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "failed_connection_rate": {
+      "featureName": "failed_connection_rate",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "dns_queries": {
+      "featureName": "dns_queries",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "dns_frequency": {
+      "featureName": "dns_frequency",
+      "mean": 0.0,
+      "stdDev": 1e-6,
+      "minVal": 0.0,
+      "maxVal": 0.0
+    },
+    "destination_diversity": {
+      "featureName": "destination_diversity",
+      "mean": 1.0,
+      "stdDev": 1e-6,
+      "minVal": 1.0,
+      "maxVal": 1.0
+    },
+    "unique_destination_ratio": {
+      "featureName": "unique_destination_ratio",
+      "mean": 1.0,
+      "stdDev": 1e-6,
+      "minVal": 1.0,
+      "maxVal": 1.0
+    }
+  }
+}
