@@ -111,6 +111,10 @@ from services.digital_twin.ml.dataset.cleaning.cleaning_engine import data_clean
 from services.digital_twin.ml.dataset.features.engineered_feature_vector import EngineeredFeatureVector
 from services.digital_twin.ml.dataset.features.feature_registry_meta import feature_registry_meta
 from services.digital_twin.ml.dataset.features.feature_engineering_engine import feature_engineering_engine
+from services.digital_twin.ml.dataset.labeling.label_models import (
+    LabeledDatasetSample, ModelBinaryLabel, ModelMulticlassLabel, LabelMethodEnum, LabelReport
+)
+from services.digital_twin.ml.dataset.labeling.labeling_engine import ground_truth_labeling_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -520,6 +524,57 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 96: GROUND-TRUTH LABELING API ====================
+
+class LabelSampleRequest(BaseModel):
+    sample: Dict[str, Any]
+
+@app.post("/api/v1/twin/ml/dataset/labeling/label")
+def api_label_dataset_sample(req: LabelSampleRequest):
+    try:
+        from services.digital_twin.ml.dataset.schemas.dataset_models import DatasetSample
+        samp = DatasetSample(**req.sample)
+        labeled = ground_truth_labeling_engine.assign_labels(samp)
+        return {
+            "status": "SAMPLE_LABELED",
+            "labeledSample": labeled.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/dataset/labeling/report")
+def api_get_label_report():
+    samples = [DatasetSample(**s.metadata.get("rawSample", {})) for s in ground_truth_labeling_engine.labeled_samples if s.metadata.get("rawSample")]
+    # Generate report over existing in-memory labeled records
+    report = LabelReport(totalSamples=len(ground_truth_labeling_engine.labeled_samples))
+    for l in ground_truth_labeling_engine.labeled_samples:
+        if l.binary_label == ModelBinaryLabel.NORMAL:
+            report.normalSamples += 1
+        else:
+            report.anomalousSamples += 1
+        mc = l.multiclass_label.value
+        report.multiclassCounts[mc] = report.multiclassCounts.get(mc, 0) + 1
+        src = l.label_method.value
+        report.labelSources[src] = report.labelSources.get(src, 0) + 1
+    if report.totalSamples > 0:
+        report.averageConfidence = round(sum(l.label_confidence for l in ground_truth_labeling_engine.labeled_samples) / report.totalSamples, 3)
+    return {
+        "status": "LABEL_REPORT_GENERATED",
+        "report": report.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/dataset/labeling/samples")
+def api_get_labeled_samples():
+    return {
+        "count": len(ground_truth_labeling_engine.labeled_samples),
+        "samples": [s.model_dump() for s in ground_truth_labeling_engine.labeled_samples]
+    }
+
+@app.post("/api/v1/twin/ml/dataset/labeling/clear")
+def api_clear_labeled_dataset():
+    ground_truth_labeling_engine.clear()
+    return {"status": "LABELED_DATASET_CLEARED"}
 
 # ==================== DAY 95: ML FEATURE ENGINEERING API ====================
 
