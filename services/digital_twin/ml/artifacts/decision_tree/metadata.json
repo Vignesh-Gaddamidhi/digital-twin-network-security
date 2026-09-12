@@ -1,15 +1,16 @@
 {
-  "experimentId": "EXP-71F4C8B8",
-  "modelName": "logistic_regression",
+  "experimentId": "EXP-6E2B4596",
+  "modelName": "decision_tree",
   "datasetVersion": "dataset-v1.0",
   "featureVersion": "feat-v1",
   "trainingSamples": 40,
   "testingSamples": 10,
   "featureCount": 20,
   "hyperparameters": {
-    "solver": "lbfgs",
-    "C": 1.0,
-    "max_iter": 500,
+    "criterion": "gini",
+    "max_depth": 6,
+    "min_samples_split": 4,
+    "min_samples_leaf": 2,
     "class_weight": "balanced"
   },
   "randomSeed": 42

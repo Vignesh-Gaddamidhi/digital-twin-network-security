@@ -124,6 +124,7 @@ from services.digital_twin.ml.dataset.normalization.normalization_engine import 
 from services.digital_twin.ml.training.dataset_loader import dataset_loader
 from services.digital_twin.ml.models.baseline_mock_classifier import BaselineVerificationClassifier
 from services.digital_twin.ml.training.train_logistic_regression import run_logistic_regression_training
+from services.digital_twin.ml.training.train_decision_tree import run_decision_tree_training
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -533,6 +534,30 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 101: DECISION TREE API ====================
+
+@app.post("/api/v1/twin/ml/models/decision-tree/train")
+def api_train_decision_tree():
+    try:
+        res = run_decision_tree_training()
+        return {
+            "status": "DECISION_TREE_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "artifactsPath": res["artifactsPath"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/models/decision-tree/metrics")
+def api_get_decision_tree_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/decision_tree/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="Decision Tree model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 100: LOGISTIC REGRESSION API ====================
 

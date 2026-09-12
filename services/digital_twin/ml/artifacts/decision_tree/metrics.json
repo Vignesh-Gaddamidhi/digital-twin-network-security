@@ -1,0 +1,45 @@
+{
+  "standardEvaluation": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1Score": 1.0,
+    "rocAuc": 1.0,
+    "confusionMatrix": [
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        5
+      ]
+    ],
+    "truePositives": 5,
+    "falsePositives": 0,
+    "trueNegatives": 5,
+    "falseNegatives": 0
+  },
+  "featureImportances": {
+    "bytes_per_second": 1.0,
+    "packet_rate": 0.0,
+    "bytes": 0.0,
+    "connection_frequency": 0.0,
+    "port_22_ratio": 0.0,
+    "port_53_ratio": 0.0,
+    "port_80_ratio": 0.0,
+    "port_443_ratio": 0.0,
+    "port_other_ratio": 0.0,
+    "unique_destination_ports": 0.0,
+    "flow_duration": 0.0,
+    "tcp_ratio": 0.0,
+    "udp_ratio": 0.0,
+    "icmp_ratio": 0.0,
+    "failed_connections": 0.0,
+    "failed_connection_rate": 0.0,
+    "dns_queries": 0.0,
+    "dns_frequency": 0.0,
+    "destination_diversity": 0.0,
+    "unique_destination_ratio": 0.0
+  }
+}
