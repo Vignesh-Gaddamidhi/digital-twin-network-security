@@ -127,6 +127,7 @@ from services.digital_twin.ml.training.train_logistic_regression import run_logi
 from services.digital_twin.ml.training.train_decision_tree import run_decision_tree_training
 from services.digital_twin.ml.training.train_random_forest import run_random_forest_training
 from services.digital_twin.ml.training.train_svm import run_svm_training
+from services.digital_twin.ml.training.train_xgboost import run_xgboost_training
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -537,6 +538,30 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 104: XGBOOST API ====================
+
+@app.post("/api/v1/twin/ml/models/xgboost/train")
+def api_train_xgboost():
+    try:
+        res = run_xgboost_training()
+        return {
+            "status": "XGBOOST_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "artifactsPath": res["artifactsPath"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/models/xgboost/metrics")
+def api_get_xgboost_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/xgboost/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="XGBoost model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 103: SUPPORT VECTOR MACHINE API ====================
 

@@ -1,0 +1,19 @@
+{
+  "experimentId": "EXP-F66AFBC4",
+  "modelName": "xgboost",
+  "datasetVersion": "dataset-v1.0",
+  "featureVersion": "feat-v1",
+  "trainingSamples": 40,
+  "testingSamples": 10,
+  "featureCount": 20,
+  "hyperparameters": {
+    "n_estimators": 100,
+    "max_depth": 4,
+    "learning_rate": 0.1,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "objective": "binary:logistic",
+    "eval_metric": "logloss"
+  },
+  "randomSeed": 42
+}

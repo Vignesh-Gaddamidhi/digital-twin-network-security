@@ -12,7 +12,8 @@ class ModelComparator:
         "Logistic Regression": ARTIFACTS_ROOT / "logistic_regression",
         "Decision Tree": ARTIFACTS_ROOT / "decision_tree",
         "Random Forest": ARTIFACTS_ROOT / "random_forest",
-        "Support Vector Machine": ARTIFACTS_ROOT / "svm"
+        "Support Vector Machine": ARTIFACTS_ROOT / "svm",
+        "XGBoost": ARTIFACTS_ROOT / "xgboost"
     }
 
     def generate_comparison(self) -> Dict[str, Any]:
