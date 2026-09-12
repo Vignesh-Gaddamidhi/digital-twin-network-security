@@ -108,6 +108,9 @@ from services.digital_twin.ml.dataset.storage.raw_storage_manager import raw_sto
 from services.digital_twin.ml.dataset.ingestion.raw_ingestion_engine import raw_ingestion_engine
 from services.digital_twin.ml.dataset.cleaning.cleaning_models import CleaningReport
 from services.digital_twin.ml.dataset.cleaning.cleaning_engine import data_cleaning_engine
+from services.digital_twin.ml.dataset.features.engineered_feature_vector import EngineeredFeatureVector
+from services.digital_twin.ml.dataset.features.feature_registry_meta import feature_registry_meta
+from services.digital_twin.ml.dataset.features.feature_engineering_engine import feature_engineering_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -517,6 +520,45 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 95: ML FEATURE ENGINEERING API ====================
+
+class EngineerFeaturesRequest(BaseModel):
+    sample: Dict[str, Any]
+
+@app.post("/api/v1/twin/ml/dataset/features/engineer")
+def api_engineer_sample_features(req: EngineerFeaturesRequest):
+    try:
+        from services.digital_twin.ml.dataset.schemas.dataset_models import DatasetSample
+        samp = DatasetSample(**req.sample)
+        vec = feature_engineering_engine.engineer_features(samp)
+        return {
+            "status": "FEATURES_ENGINEERED",
+            "vector": vec.model_dump(),
+            "numericalVector": vec.to_numerical_vector(),
+            "featureDict": vec.to_feature_dict()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/dataset/features/specs")
+def api_get_feature_specs():
+    return {
+        "count": len(feature_registry_meta.list_specs()),
+        "specs": [s.model_dump() for s in feature_registry_meta.list_specs()]
+    }
+
+@app.get("/api/v1/twin/ml/dataset/features/vectors")
+def api_get_feature_vectors():
+    return {
+        "count": len(feature_engineering_engine.engineered_vectors),
+        "vectors": [v.model_dump() for v in feature_engineering_engine.engineered_vectors]
+    }
+
+@app.post("/api/v1/twin/ml/dataset/features/clear")
+def api_clear_engineered_features():
+    feature_engineering_engine.clear()
+    return {"status": "ENGINEERED_FEATURES_CLEARED"}
 
 # ==================== DAY 94: DATA CLEANING & PREPROCESSING API ====================
 
