@@ -103,6 +103,9 @@ from services.digital_twin.security.pipeline.complete_pipeline import complete_s
 from services.digital_twin.ml.dataset.schemas.dataset_models import (
     DatasetSample, BinaryLabelEnum, MulticlassLabelEnum, DatasetMetadata
 )
+from services.digital_twin.ml.dataset.schemas.raw_record_models import RawSourceEnum
+from services.digital_twin.ml.dataset.storage.raw_storage_manager import raw_storage_manager
+from services.digital_twin.ml.dataset.ingestion.raw_ingestion_engine import raw_ingestion_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -512,6 +515,42 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 93: RAW TRAFFIC COLLECTION API ====================
+
+class IngestRawBatchRequest(BaseModel):
+    source: RawSourceEnum
+    sourceFile: Optional[str] = None
+    records: List[Dict[str, Any]]
+
+@app.post("/api/v1/twin/ml/dataset/raw/ingest")
+def api_ingest_raw_records(req: IngestRawBatchRequest):
+    if req.source == RawSourceEnum.SIMULATION:
+        summary = raw_ingestion_engine.load_simulation_events(req.records, source_file=req.sourceFile or "sim.jsonl")
+    elif req.source == RawSourceEnum.SURICATA:
+        summary = raw_ingestion_engine.load_suricata_events(req.records, source_file=req.sourceFile or "eve.json")
+    elif req.source == RawSourceEnum.ZEEK:
+        summary = raw_ingestion_engine.load_zeek_events(req.records, source_file=req.sourceFile or "conn.log")
+    else:
+        summary = raw_ingestion_engine.load_security_events(req.records, source_file=req.sourceFile or "sec_events.json")
+
+    return {
+        "status": "RAW_INGESTION_COMPLETED",
+        "summary": summary.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/dataset/raw/records")
+def api_get_raw_records(source: Optional[RawSourceEnum] = None, excludeDuplicates: bool = False):
+    recs = raw_storage_manager.list_records(source=source, exclude_duplicates=excludeDuplicates)
+    return {
+        "count": len(recs),
+        "records": [r.model_dump() for r in recs]
+    }
+
+@app.post("/api/v1/twin/ml/dataset/raw/clear")
+def api_clear_raw_records():
+    raw_storage_manager.clear()
+    return {"status": "RAW_STORAGE_CLEARED"}
 
 # ==================== DAY 92: ML DATASET ARCHITECTURE API ====================
 
