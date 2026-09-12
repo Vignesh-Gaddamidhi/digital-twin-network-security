@@ -115,6 +115,8 @@ from services.digital_twin.ml.dataset.labeling.label_models import (
     LabeledDatasetSample, ModelBinaryLabel, ModelMulticlassLabel, LabelMethodEnum, LabelReport
 )
 from services.digital_twin.ml.dataset.labeling.labeling_engine import ground_truth_labeling_engine
+from services.digital_twin.ml.dataset.splitting.split_models import SplitStrategyEnum, SplitMetadata
+from services.digital_twin.ml.dataset.splitting.splitting_engine import dataset_splitting_engine
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -524,6 +526,43 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 97: TRAIN/TEST SPLIT API ====================
+
+class ExecuteSplitRequest(BaseModel):
+    strategy: SplitStrategyEnum = SplitStrategyEnum.GROUP
+    trainRatio: float = 0.80
+    randomSeed: int = 42
+
+@app.post("/api/v1/twin/ml/dataset/split/execute")
+def api_execute_dataset_split(req: ExecuteSplitRequest):
+    samples = ground_truth_labeling_engine.labeled_samples
+    train, test, meta = dataset_splitting_engine.split_dataset(
+        samples,
+        strategy=req.strategy,
+        train_ratio=req.trainRatio,
+        random_seed=req.randomSeed
+    )
+    return {
+        "status": "DATASET_SPLIT_EXECUTED",
+        "metadata": meta.model_dump(),
+        "trainCount": len(train),
+        "testCount": len(test)
+    }
+
+@app.get("/api/v1/twin/ml/dataset/split/metadata")
+def api_get_split_metadata():
+    if not dataset_splitting_engine.last_metadata:
+        return {"status": "NO_SPLIT_GENERATED", "metadata": None}
+    return {
+        "status": "SPLIT_METADATA_RETRIEVED",
+        "metadata": dataset_splitting_engine.last_metadata.model_dump()
+    }
+
+@app.post("/api/v1/twin/ml/dataset/split/clear")
+def api_clear_dataset_split():
+    dataset_splitting_engine.clear()
+    return {"status": "DATASET_SPLIT_CLEARED"}
 
 # ==================== DAY 96: GROUND-TRUTH LABELING API ====================
 
