@@ -19,13 +19,5 @@
     "falsePositives": 0,
     "trueNegatives": 5,
     "falseNegatives": 0
-  },
-  "supportVectorStats": {
-    "totalSupportVectors": 4,
-    "supportVectorsPerClass": [
-      2,
-      2
-    ],
-    "trainingDurationMs": 59.122
   }
 }

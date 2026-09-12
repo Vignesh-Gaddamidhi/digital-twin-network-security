@@ -128,6 +128,7 @@ from services.digital_twin.ml.training.train_decision_tree import run_decision_t
 from services.digital_twin.ml.training.train_random_forest import run_random_forest_training
 from services.digital_twin.ml.training.train_svm import run_svm_training
 from services.digital_twin.ml.training.train_xgboost import run_xgboost_training
+from services.digital_twin.ml.evaluation.master_evaluation_engine import master_evaluation_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -538,6 +539,36 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 105: MASTER EVALUATION & COMPARISON API ====================
+
+@app.post("/api/v1/twin/ml/evaluation/master-run")
+def api_run_master_evaluation():
+    try:
+        report = master_evaluation_engine.run_master_evaluation()
+        return {
+            "status": "MASTER_EVALUATION_COMPLETED",
+            "report": report
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/evaluation/report")
+def api_get_master_report():
+    from pathlib import Path
+    report_file = Path("services/digital_twin/ml/artifacts/comparison/report.json")
+    if not report_file.exists():
+        raise HTTPException(status_code=404, detail="Master evaluation report has not been generated yet.")
+    with open(report_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/v1/twin/ml/evaluation/reproducibility")
+def api_test_reproducibility():
+    passed = master_evaluation_engine.test_reproducibility()
+    return {
+        "status": "REPRODUCIBILITY_VERIFIED" if passed else "REPRODUCIBILITY_FAILED",
+        "deterministicParity": passed
+    }
 
 # ==================== DAY 104: XGBOOST API ====================
 
