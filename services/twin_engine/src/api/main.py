@@ -123,6 +123,7 @@ from services.digital_twin.ml.dataset.normalization.normalization_models import 
 from services.digital_twin.ml.dataset.normalization.normalization_engine import feature_normalization_engine
 from services.digital_twin.ml.training.dataset_loader import dataset_loader
 from services.digital_twin.ml.models.baseline_mock_classifier import BaselineVerificationClassifier
+from services.digital_twin.ml.training.train_logistic_regression import run_logistic_regression_training
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -532,6 +533,30 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 100: LOGISTIC REGRESSION API ====================
+
+@app.post("/api/v1/twin/ml/models/logistic-regression/train")
+def api_train_logistic_regression():
+    try:
+        res = run_logistic_regression_training()
+        return {
+            "status": "LOGISTIC_REGRESSION_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "artifactsPath": res["artifactsPath"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/models/logistic-regression/metrics")
+def api_get_logistic_regression_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/logistic_regression/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="Logistic Regression model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 99: ML ENVIRONMENT & BASELINE MODEL API ====================
 

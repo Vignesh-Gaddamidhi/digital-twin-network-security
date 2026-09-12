@@ -1,0 +1,16 @@
+{
+  "experimentId": "EXP-CD935BBB",
+  "modelName": "logistic_regression",
+  "datasetVersion": "dataset-v1.0",
+  "featureVersion": "feat-v1",
+  "trainingSamples": 40,
+  "testingSamples": 10,
+  "featureCount": 20,
+  "hyperparameters": {
+    "solver": "lbfgs",
+    "C": 1.0,
+    "max_iter": 500,
+    "class_weight": "balanced"
+  },
+  "randomSeed": 42
+}
