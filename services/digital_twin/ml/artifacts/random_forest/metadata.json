@@ -1,0 +1,20 @@
+{
+  "experimentId": "EXP-2E527F10",
+  "modelName": "random_forest",
+  "datasetVersion": "dataset-v1.0",
+  "featureVersion": "feat-v1",
+  "trainingSamples": 40,
+  "testingSamples": 10,
+  "featureCount": 20,
+  "hyperparameters": {
+    "n_estimators": 100,
+    "max_depth": 8,
+    "min_samples_split": 4,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "class_weight": "balanced",
+    "oob_score": true
+  },
+  "randomSeed": 42,
+  "oobScore": 1.0
+}

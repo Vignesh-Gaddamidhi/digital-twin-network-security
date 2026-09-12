@@ -125,6 +125,8 @@ from services.digital_twin.ml.training.dataset_loader import dataset_loader
 from services.digital_twin.ml.models.baseline_mock_classifier import BaselineVerificationClassifier
 from services.digital_twin.ml.training.train_logistic_regression import run_logistic_regression_training
 from services.digital_twin.ml.training.train_decision_tree import run_decision_tree_training
+from services.digital_twin.ml.training.train_random_forest import run_random_forest_training
+from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
 )
@@ -534,6 +536,38 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 102: RANDOM FOREST & COMPARISON API ====================
+
+@app.post("/api/v1/twin/ml/models/random-forest/train")
+def api_train_random_forest():
+    try:
+        res = run_random_forest_training()
+        return {
+            "status": "RANDOM_FOREST_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "artifactsPath": res["artifactsPath"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/models/random-forest/metrics")
+def api_get_random_forest_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/random_forest/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="Random Forest model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/v1/twin/ml/models/comparison")
+def api_get_model_comparison():
+    res = model_comparator.generate_comparison()
+    return {
+        "status": "MODEL_COMPARISON_GENERATED",
+        "data": res
+    }
 
 # ==================== DAY 101: DECISION TREE API ====================
 

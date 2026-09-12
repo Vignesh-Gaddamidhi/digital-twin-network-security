@@ -1,0 +1,148 @@
+{
+  "standardEvaluation": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1Score": 1.0,
+    "rocAuc": 1.0,
+    "confusionMatrix": [
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        5
+      ]
+    ],
+    "truePositives": 5,
+    "falsePositives": 0,
+    "trueNegatives": 5,
+    "falseNegatives": 0
+  },
+  "oobScore": 1.0,
+  "rankedFeatureTable": [
+    {
+      "rank": 1,
+      "feature": "port_80_ratio",
+      "importance": 0.22
+    },
+    {
+      "rank": 2,
+      "feature": "packet_rate",
+      "importance": 0.19
+    },
+    {
+      "rank": 3,
+      "feature": "connection_frequency",
+      "importance": 0.18
+    },
+    {
+      "rank": 4,
+      "feature": "bytes_per_second",
+      "importance": 0.16
+    },
+    {
+      "rank": 5,
+      "feature": "port_443_ratio",
+      "importance": 0.14
+    },
+    {
+      "rank": 6,
+      "feature": "bytes",
+      "importance": 0.11
+    },
+    {
+      "rank": 7,
+      "feature": "port_22_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 8,
+      "feature": "port_53_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 9,
+      "feature": "port_other_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 10,
+      "feature": "unique_destination_ports",
+      "importance": 0.0
+    },
+    {
+      "rank": 11,
+      "feature": "flow_duration",
+      "importance": 0.0
+    },
+    {
+      "rank": 12,
+      "feature": "tcp_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 13,
+      "feature": "udp_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 14,
+      "feature": "icmp_ratio",
+      "importance": 0.0
+    },
+    {
+      "rank": 15,
+      "feature": "failed_connections",
+      "importance": 0.0
+    },
+    {
+      "rank": 16,
+      "feature": "failed_connection_rate",
+      "importance": 0.0
+    },
+    {
+      "rank": 17,
+      "feature": "dns_queries",
+      "importance": 0.0
+    },
+    {
+      "rank": 18,
+      "feature": "dns_frequency",
+      "importance": 0.0
+    },
+    {
+      "rank": 19,
+      "feature": "destination_diversity",
+      "importance": 0.0
+    },
+    {
+      "rank": 20,
+      "feature": "unique_destination_ratio",
+      "importance": 0.0
+    }
+  ],
+  "featureImportances": {
+    "port_80_ratio": 0.22,
+    "packet_rate": 0.19,
+    "connection_frequency": 0.18,
+    "bytes_per_second": 0.16,
+    "port_443_ratio": 0.14,
+    "bytes": 0.11,
+    "port_22_ratio": 0.0,
+    "port_53_ratio": 0.0,
+    "port_other_ratio": 0.0,
+    "unique_destination_ports": 0.0,
+    "flow_duration": 0.0,
+    "tcp_ratio": 0.0,
+    "udp_ratio": 0.0,
+    "icmp_ratio": 0.0,
+    "failed_connections": 0.0,
+    "failed_connection_rate": 0.0,
+    "dns_queries": 0.0,
+    "dns_frequency": 0.0,
+    "destination_diversity": 0.0,
+    "unique_destination_ratio": 0.0
+  }
+}
