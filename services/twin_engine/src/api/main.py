@@ -172,6 +172,8 @@ from services.digital_twin.ml.xai.feature_importance.importance_models import (
     GlobalImportanceReport, FeatureImportanceItem, ImportanceMethodEnum
 )
 from services.digital_twin.ml.xai.feature_importance.global_importance_engine import global_feature_importance_engine
+from services.digital_twin.ml.xai.explanations.enriched_explanation_models import EnrichedPredictionExplanation
+from services.digital_twin.ml.xai.explanations.prediction_explanation_engine import prediction_explanation_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -582,6 +584,62 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 123: PREDICTION EXPLANATION ENGINE API ====================
+
+class GenerateEnrichedExplanationRequest(BaseModel):
+    predictionId: str = "PRED-ENRICHED-001"
+    threatProbability: float = 0.87
+    predictedCategory: str = "PORT_SCAN"
+    categoryConfidence: float = 0.91
+    riskLevel: str = "HIGH"
+    featureValues: Dict[str, float]
+
+@app.post("/api/v1/twin/ml/xai/explain/enriched")
+def api_generate_enriched_explanation(req: GenerateEnrichedExplanationRequest):
+    import joblib
+    from pathlib import Path
+    from services.digital_twin.ml.xai.shap.shap_engine import shap_explainer_engine
+
+    model_file = Path("services/digital_twin/ml/artifacts/random_forest/model.joblib")
+    if not model_file.exists():
+        raise HTTPException(status_code=404, detail="Random Forest model artifact not found.")
+
+    model_data = joblib.load(model_file)
+    model = model_data["model"] if isinstance(model_data, dict) and "model" in model_data else model_data
+
+    shap_exp = shap_explainer_engine.explain_instance(
+        prediction_id=req.predictionId,
+        features=req.featureValues,
+        model=model,
+        model_name="random_forest",
+        model_version="rf-v1.0"
+    )
+
+    explanation = prediction_explanation_engine.generate_explanation(
+        prediction_id=req.predictionId,
+        threat_probability=req.threatProbability,
+        predicted_category=req.predictedCategory,
+        category_confidence=req.categoryConfidence,
+        risk_level=req.riskLevel,
+        shap_items=shap_exp.features
+    )
+
+    return {
+        "status": "ENRICHED_EXPLANATION_GENERATED",
+        "explanation": explanation.model_dump(),
+        "formattedDisplay": explanation.to_formatted_display()
+    }
+
+@app.get("/api/v1/twin/ml/xai/explain/enriched/latest")
+def api_get_latest_enriched_explanation():
+    from pathlib import Path
+    exp_file = Path("services/digital_twin/ml/artifacts/xai/enriched_explanations.json")
+    if not exp_file.exists():
+        raise HTTPException(status_code=404, detail="No enriched explanation records found.")
+    with open(exp_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data[-1] if data else {}
 
 # ==================== DAY 122: GLOBAL FEATURE IMPORTANCE API ====================
 

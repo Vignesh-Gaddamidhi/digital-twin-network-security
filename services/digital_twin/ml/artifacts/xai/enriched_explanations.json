@@ -1,0 +1,166 @@
+[
+  {
+    "explanationId": "EXP-BFA69B90",
+    "predictionId": "PRED-PORT-SCAN-123",
+    "timestamp": "2026-09-13T12:33:05.886662+00:00",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency, destination diversity and unique destination ports.",
+    "detailedExplanation": "The model predicted elevated threat probability (87.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, destination diversity increased, indicating communication with a broader set of endpoints than expected, while unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased provided reinforcing positive evidence. Conversely, session duration remained within expected baseline limits and DNS request frequency showed normal query behaviour acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - connection_frequency      : +0.3100 (Value: 48.0)\n  - destination_diversity     : +0.2400 (Value: 2.4)\n  - unique_destination_ports  : +0.1800 (Value: 150.0)\n  - failed_connections        : +0.0900 (Value: 12.0)\nTop mitigating features:\n  - flow_duration             : -0.0400 (Value: 5.0)\n  - dns_frequency             : -0.0200 (Value: 0.5)",
+    "topPositiveContributors": [
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 48.0,
+        "shapValue": 0.31,
+        "shapValueFormatted": "+0.3100",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.31,
+        "rank": 1
+      },
+      {
+        "featureName": "destination_diversity",
+        "featureValue": 2.4,
+        "shapValue": 0.24,
+        "shapValueFormatted": "+0.2400",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.24,
+        "rank": 2
+      },
+      {
+        "featureName": "unique_destination_ports",
+        "featureValue": 150.0,
+        "shapValue": 0.18,
+        "shapValueFormatted": "+0.1800",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.18,
+        "rank": 3
+      },
+      {
+        "featureName": "failed_connections",
+        "featureValue": 12.0,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 4
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "flow_duration",
+        "featureValue": 5.0,
+        "shapValue": -0.04,
+        "shapValueFormatted": "-0.0400",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.04,
+        "rank": 5
+      },
+      {
+        "featureName": "dns_frequency",
+        "featureValue": 0.5,
+        "shapValue": -0.02,
+        "shapValueFormatted": "-0.0200",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.02,
+        "rank": 6
+      }
+    ],
+    "supportingEvidence": [
+      "connection frequency increased significantly relative to the learned baseline (observed: 48.00, contribution: +0.3100)",
+      "destination diversity increased, indicating communication with a broader set of endpoints than expected (observed: 2.40, contribution: +0.2400)",
+      "unusual destination-port activity was observed across multiple targets (observed: 150.00, contribution: +0.1800)",
+      "the number of failed connection attempts increased (observed: 12.00, contribution: +0.0900)",
+      "session duration remained within expected baseline limits (observed: 5.00, mitigation: -0.0400)",
+      "DNS request frequency showed normal query behaviour (observed: 0.50, mitigation: -0.0200)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-E737360A",
+    "predictionId": "PRED-LIVE-PORT-SCAN",
+    "timestamp": "2026-09-13T12:33:29.409361+00:00",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio, packet rate and connection frequency.",
+    "detailedExplanation": "The model predicted elevated threat probability (87.0%) primarily because port 80 ratio was elevated. Additionally, packet transmission rate surged beyond normal baseline parameters, while connection frequency increased significantly relative to the learned baseline, while transmitted byte volume showed an unexpected upward surge provided reinforcing positive evidence. Conversely, bytes per second was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 0.65)\n  - connection_frequency      : +0.0900 (Value: 48.0)\n  - bytes                     : +0.0555 (Value: 0.4)\nTop mitigating features:\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.65,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 48.0,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 0.4,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 0.65, contribution: +0.0935)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 48.00, contribution: +0.0900)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 0.40, contribution: +0.0555)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  }
+]
