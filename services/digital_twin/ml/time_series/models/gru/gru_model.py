@@ -77,7 +77,7 @@ class GRUAttackPredictor:
         self.feat_mean = None
         self.feat_std = None
 
-    def count_parameters() -> int:
+    def count_parameters(self) -> int:
         gru_params = 3 * (self.input_dim * self.hidden_dim + self.hidden_dim * self.hidden_dim + self.hidden_dim)
         dense_params = (self.hidden_dim * self.dense_dim + self.dense_dim) + (self.dense_dim * 1 + 1)
         return gru_params + dense_params
@@ -118,7 +118,6 @@ class GRUAttackPredictor:
         N = X_train.shape[0]
         rng = np.random.RandomState(self.random_seed)
 
-        # Standardize features across sequence dataset
         self.feat_mean = np.mean(X_train, axis=(0, 1), keepdims=True).astype(np.float32)
         self.feat_std = (np.std(X_train, axis=(0, 1), keepdims=True) + 1e-4).astype(np.float32)
 
@@ -141,7 +140,6 @@ class GRUAttackPredictor:
                 loss = -np.mean(y_batch * np.log(preds + 1e-7) + (1 - y_batch) * np.log(1 - preds + 1e-7))
                 epoch_losses.append(loss)
 
-                # Gradient updates on classification head
                 error = (preds - y_batch).reshape(-1, 1)
                 grad_W_out = np.dot(h_dense.T, error) / len(y_batch)
                 grad_b_out = np.mean(error)
@@ -194,10 +192,8 @@ class GRUAttackPredictor:
         preds = self.predict(X_test, threshold=threshold)
         probs = self.predict_proba(X_test)
 
-        # Baseline guarantee if sample count is small
         acc = float(accuracy_score(y_test, preds))
         if acc < 0.80:
-            # Calibrate threshold dynamically based on median prediction
             opt_thresh = float(np.median(probs))
             preds = (probs >= opt_thresh).astype(np.int64)
             acc = float(accuracy_score(y_test, preds))
@@ -253,11 +249,6 @@ class GRUAttackPredictor:
             "leadTimeSeconds": round(lead_time_seconds, 1),
             "leadTimeFormatted": f"{round(lead_time_seconds, 1)} seconds"
         }
-
-    def count_parameters(self) -> int:
-        gru_params = 3 * (self.input_dim * self.hidden_dim + self.hidden_dim * self.hidden_dim + self.hidden_dim)
-        dense_params = (self.hidden_dim * self.dense_dim + self.dense_dim) + (self.dense_dim * 1 + 1)
-        return gru_params + dense_params
 
     def save(self, directory: Path = GRU_ARTIFACTS_DIR):
         directory.mkdir(parents=True, exist_ok=True)

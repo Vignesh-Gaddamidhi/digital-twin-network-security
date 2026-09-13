@@ -1,0 +1,284 @@
+{
+  "reportId": "REP-XAI-731F385E",
+  "auditTrail": {
+    "auditId": "AUDIT-9BC461C7",
+    "explanationId": "SHAP-D6351E03",
+    "predictionId": "PRED-LIVE-PORT-SCAN-125",
+    "modelVersion": "rf-v1.0",
+    "datasetVersion": "dataset-v1.0",
+    "featureVersion": "feature-v1.0",
+    "timestamp": "2026-09-13T13:05:34.633770+00:00",
+    "inputHash": "18e176bba4921b35ccf1de32cc4a195ca98940c18245527a67e31fc4baadc82f",
+    "explanationMethod": "SHAP_TreeExplainer",
+    "shapVersion": "0.52.0",
+    "featureImportanceMethod": "TREE_IMPORTANCE"
+  },
+  "cardData": {
+    "cardId": "CARD-436D39CF",
+    "predictionId": "PRED-LIVE-PORT-SCAN-125",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskLevel": "HIGH",
+    "topFactorBadges": [
+      "Port 80 ratio",
+      "Packet rate",
+      "Connection frequency",
+      "Bytes"
+    ]
+  },
+  "evidencePanel": [
+    {
+      "featureName": "unique_destination_ports",
+      "featureLabel": "Unique destination ports",
+      "observedValue": 150.0,
+      "unit": "ports",
+      "severity": "HIGH",
+      "contextNote": "Observed 150.00 significantly above baseline tolerances"
+    },
+    {
+      "featureName": "connection_frequency",
+      "featureLabel": "Connection frequency",
+      "observedValue": 48.0,
+      "unit": "conns/s",
+      "severity": "HIGH",
+      "contextNote": "Observed 48.00 significantly above baseline tolerances"
+    },
+    {
+      "featureName": "failed_connections",
+      "featureLabel": "Failed connections",
+      "observedValue": 12.0,
+      "unit": "failures",
+      "severity": "HIGH",
+      "contextNote": "Observed 12.00 significantly above baseline tolerances"
+    },
+    {
+      "featureName": "flow_duration",
+      "featureLabel": "Flow duration",
+      "observedValue": 5.0,
+      "unit": "seconds",
+      "severity": "HIGH",
+      "contextNote": "Observed 5.00 significantly above baseline tolerances"
+    },
+    {
+      "featureName": "destination_diversity",
+      "featureLabel": "Destination diversity",
+      "observedValue": 2.4,
+      "unit": "ratio",
+      "severity": "ELEVATED",
+      "contextNote": "Observed 2.40 moderately higher than expected"
+    },
+    {
+      "featureName": "packet_rate",
+      "featureLabel": "Packet rate",
+      "observedValue": 0.65,
+      "unit": "pkts/s",
+      "severity": "MODERATELY_ELEVATED",
+      "contextNote": "Observed 0.65 slightly elevated"
+    },
+    {
+      "featureName": "dns_frequency",
+      "featureLabel": "Dns frequency",
+      "observedValue": 0.5,
+      "unit": "queries/s",
+      "severity": "MODERATELY_ELEVATED",
+      "contextNote": "Observed 0.50 slightly elevated"
+    },
+    {
+      "featureName": "bytes",
+      "featureLabel": "Bytes",
+      "observedValue": 0.4,
+      "unit": "bytes",
+      "severity": "NORMAL",
+      "contextNote": "Observed 0.40 conforms to learned baseline"
+    }
+  ],
+  "whyThisPredictionPanel": [
+    {
+      "featureName": "port_80_ratio",
+      "featureLabel": "Port 80 ratio",
+      "directionIndicator": "\u2191",
+      "direction": "POSITIVE",
+      "shapValue": 0.1075,
+      "shapFormatted": "+0.1075",
+      "impactDescription": "Positive contribution"
+    },
+    {
+      "featureName": "packet_rate",
+      "featureLabel": "Packet rate",
+      "directionIndicator": "\u2191",
+      "direction": "POSITIVE",
+      "shapValue": 0.0935,
+      "shapFormatted": "+0.0935",
+      "impactDescription": "Moderate positive contribution"
+    },
+    {
+      "featureName": "connection_frequency",
+      "featureLabel": "Connection frequency",
+      "directionIndicator": "\u2191",
+      "direction": "POSITIVE",
+      "shapValue": 0.09,
+      "shapFormatted": "+0.0900",
+      "impactDescription": "Moderate positive contribution"
+    },
+    {
+      "featureName": "bytes_per_second",
+      "featureLabel": "Bytes per second",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": -0.079,
+      "shapFormatted": "-0.0790",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "port_443_ratio",
+      "featureLabel": "Port 443 ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": -0.075,
+      "shapFormatted": "-0.0750",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "bytes",
+      "featureLabel": "Bytes",
+      "directionIndicator": "\u2191",
+      "direction": "POSITIVE",
+      "shapValue": 0.0555,
+      "shapFormatted": "+0.0555",
+      "impactDescription": "Moderate positive contribution"
+    },
+    {
+      "featureName": "port_22_ratio",
+      "featureLabel": "Port 22 ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "port_53_ratio",
+      "featureLabel": "Port 53 ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "port_other_ratio",
+      "featureLabel": "Port other ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "unique_destination_ports",
+      "featureLabel": "Unique destination ports",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "flow_duration",
+      "featureLabel": "Flow duration",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "tcp_ratio",
+      "featureLabel": "Tcp ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "udp_ratio",
+      "featureLabel": "Udp ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "icmp_ratio",
+      "featureLabel": "Icmp ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "failed_connections",
+      "featureLabel": "Failed connections",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "failed_connection_rate",
+      "featureLabel": "Failed connection rate",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "dns_queries",
+      "featureLabel": "Dns queries",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "dns_frequency",
+      "featureLabel": "Dns frequency",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "destination_diversity",
+      "featureLabel": "Destination diversity",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    },
+    {
+      "featureName": "unique_destination_ratio",
+      "featureLabel": "Unique destination ratio",
+      "directionIndicator": "\u2193",
+      "direction": "NEGATIVE",
+      "shapValue": 0.0,
+      "shapFormatted": "+0.0000",
+      "impactDescription": "Slight negative contribution"
+    }
+  ],
+  "localWaterfallAscii": "Individual Prediction Waterfall (Base: 50.7% -> Output: 70.0%)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nport_80_ratio              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 +0.1075\npacket_rate                \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   +0.0935\nconnection_frequency       \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588   +0.0900\nbytes_per_second           \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     -0.0790\nport_443_ratio             \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     -0.0750\nbytes                      \u2588\u2588\u2588\u2588\u2588\u2588\u2588        +0.0555",
+  "globalSummaryAscii": "Global chart not initialized.",
+  "naturalLanguageReasoning": "The model predicted PORT_SCAN with 87.0% probability because \u2191 Port 80 ratio: Positive contribution, \u2191 Packet rate: Moderate positive contribution, \u2191 Connection frequency: Moderate positive contribution, \u2193 Bytes per second: Slight negative contribution.",
+  "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+}

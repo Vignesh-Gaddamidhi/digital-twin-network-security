@@ -176,6 +176,8 @@ from services.digital_twin.ml.xai.explanations.enriched_explanation_models impor
 from services.digital_twin.ml.xai.explanations.prediction_explanation_engine import prediction_explanation_engine
 from services.digital_twin.ml.xai.evidence.alert_models import EnrichedSecurityAlert
 from services.digital_twin.ml.xai.evidence.unified_pipeline import unified_explainable_pipeline
+from services.digital_twin.ml.xai.visualization.dashboard_models import ComprehensiveXAIForensicReport
+from services.digital_twin.ml.xai.visualization.xai_dashboard_engine import xai_dashboard_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -587,7 +589,66 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
-# ==================== DAY 124: UNIFIED XAI & SECURITY ALERTING API ====================
+# ==================== DAY 125: XAI VISUALIZATION & FORENSIC REPORTS API ====================
+
+class GenerateForensicReportRequest(BaseModel):
+    predictionId: str = "PRED-DASH-125"
+    features: Dict[str, float]
+    threatProbability: float = 0.87
+    predictedCategory: str = "PORT_SCAN"
+    categoryConfidence: float = 0.91
+    riskLevel: str = "HIGH"
+    modelName: str = "random_forest"
+    modelVersion: str = "rf-v1.0"
+
+@app.post("/api/v1/twin/ml/xai/dashboard/report")
+def api_generate_xai_dashboard_report(req: GenerateForensicReportRequest):
+    import joblib
+    from pathlib import Path
+    from services.digital_twin.ml.xai.shap.shap_engine import shap_explainer_engine
+
+    model_file = Path("services/digital_twin/ml/artifacts/random_forest/model.joblib")
+    if not model_file.exists():
+        raise HTTPException(status_code=404, detail="Random Forest model artifact not found.")
+
+    model_data = joblib.load(model_file)
+    model = model_data["model"] if isinstance(model_data, dict) and "model" in model_data else model_data
+
+    shap_exp = shap_explainer_engine.explain_instance(
+        prediction_id=req.predictionId,
+        features=req.features,
+        model=model,
+        model_name=req.modelName,
+        model_version=req.modelVersion
+    )
+
+    report = xai_dashboard_engine.generate_forensic_report(
+        prediction_id=req.predictionId,
+        features=req.features,
+        shap_explanation=shap_exp,
+        threat_probability=req.threatProbability,
+        predicted_category=req.predictedCategory,
+        category_confidence=req.categoryConfidence,
+        risk_level=req.riskLevel,
+        model_name=req.modelName,
+        model_version=req.modelVersion
+    )
+
+    return {
+        "status": "FORENSIC_REPORT_GENERATED",
+        "report": report.model_dump()
+    }
+
+@app.get("/api/v1/twin/ml/xai/dashboard/report/{predictionId}")
+def api_get_forensic_report(predictionId: str):
+    from pathlib import Path
+    report_file = Path(f"services/digital_twin/ml/xai/reports/report_{predictionId}.json")
+    if not report_file.exists():
+        raise HTTPException(status_code=404, detail=f"Forensic report for prediction {predictionId} not found.")
+    with open(report_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+# ==================== DAY 124: UNIFIED XAI & SECURITY ALERTING API ===================="
 
 class ProcessUnifiedTelemetryRequest(BaseModel):
     features: Dict[str, float]
