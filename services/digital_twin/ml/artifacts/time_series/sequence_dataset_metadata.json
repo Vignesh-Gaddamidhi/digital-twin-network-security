@@ -4,18 +4,18 @@
   "stepSize": 1,
   "predictionHorizon": 3,
   "featureDim": 16,
-  "trainSequenceCount": 21,
-  "testSequenceCount": 2,
+  "trainSequenceCount": 32,
+  "testSequenceCount": 11,
   "trainTensorShape": [
-    21,
+    32,
     5,
     16
   ],
   "testTensorShape": [
-    2,
+    11,
     5,
     16
   ],
-  "positiveTrainRate": 0.2381,
-  "positiveTestRate": 0.5
+  "positiveTrainRate": 0.2812,
+  "positiveTestRate": 0.4545
 }

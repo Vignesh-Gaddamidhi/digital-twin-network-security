@@ -20,46 +20,44 @@ class SequenceDatasetBuilder:
     def generate_scenario_stream(
         self,
         scenario_type: str = "DOS_ATTACK_ESCALATION",
-        total_steps: int = 40
+        total_steps: int = 60
     ) -> List[Dict[str, Any]]:
-        """Synthesizes chronological multi-stage scenario telemetry for temporal training."""
+        """Synthesizes chronological multi-stage scenario telemetry with distinct pre-impact signatures."""
         stream = []
         rng = np.random.RandomState(42)
 
+        # 60-step cycle:
+        # Steps 0-19: NORMAL baseline
+        # Steps 20-29: EARLY_INDICATORS (ramp beginning)
+        # Steps 30-39: IMPACT (full volumetric flood)
+        # Steps 40-49: RECOVERY / NORMAL
+        # Steps 50-59: SECOND SURGE (early indicators + escalation)
         for t in range(total_steps):
-            # Lifecycle stages:
-            # 0-14: NORMAL
-            # 15-22: EARLY_INDICATORS
-            # 23-29: ESCALATION
-            # 30-36: IMPACT
-            # 37-39: RECOVERY
-            if t < 15:
+            if t < 20 or (40 <= t < 50):
                 stage = "NORMAL"
                 label = "NORMAL"
                 pkt_rate = float(rng.normal(20.0, 2.0))
                 bytes_rate = float(rng.normal(10000.0, 1000.0))
-            elif t < 23:
+                failed_conn = 0.0
+            elif (20 <= t < 30) or (50 <= t < 55):
                 stage = "EARLY_INDICATORS"
-                label = "NORMAL"  # Observation itself still below threshold, but trajectory escalating
-                ramp = (t - 14) * 8.0
+                label = "NORMAL"
+                ramp = (t - 19) * 10.0 if t < 30 else (t - 49) * 12.0
                 pkt_rate = 20.0 + ramp + float(rng.normal(0, 1.5))
-                bytes_rate = 10000.0 + (ramp * 600.0)
-            elif t < 30:
-                stage = "ESCALATION"
-                label = "ANOMALOUS"
-                ramp = (t - 22) * 20.0
-                pkt_rate = 84.0 + ramp + float(rng.normal(0, 3.0))
-                bytes_rate = 55000.0 + (ramp * 1500.0)
-            elif t < 37:
+                bytes_rate = 10000.0 + (ramp * 800.0)
+                failed_conn = 1.0
+            elif (30 <= t < 40) or (55 <= t < 60):
                 stage = "IMPACT"
                 label = "ANOMALOUS"
-                pkt_rate = float(rng.normal(300.0, 15.0))
+                pkt_rate = float(rng.normal(320.0, 15.0))
                 bytes_rate = float(rng.normal(350000.0, 20000.0))
+                failed_conn = 5.0
             else:
                 stage = "RECOVERY"
                 label = "NORMAL"
-                pkt_rate = float(rng.normal(25.0, 3.0))
-                bytes_rate = float(rng.normal(12000.0, 1500.0))
+                pkt_rate = float(rng.normal(22.0, 2.0))
+                bytes_rate = float(rng.normal(11000.0, 1200.0))
+                failed_conn = 0.0
 
             stream.append({
                 "timeStep": t,
@@ -68,7 +66,7 @@ class SequenceDatasetBuilder:
                 "bytes": round(max(0.0, bytes_rate * 5.0), 2),
                 "connection_frequency": round(max(0.0, pkt_rate / 10.0), 2),
                 "flow_duration": 5.0,
-                "failed_connections": 5.0 if stage == "IMPACT" else 0.0,
+                "failed_connections": failed_conn,
                 "dns_frequency": 0.5,
                 "destination_diversity": 0.2,
                 "label": label,
@@ -80,13 +78,13 @@ class SequenceDatasetBuilder:
 
     def build_dataset(
         self,
-        config: SlidingWindowConfig = SlidingWindowConfig(windowSize=5, stepSize=1, predictionHorizon=2)
+        config: SlidingWindowConfig = SlidingWindowConfig(windowSize=5, stepSize=1, predictionHorizon=3)
     ) -> Dict[str, Any]:
-        stream = self.generate_scenario_stream("DOS_ATTACK_ESCALATION", total_steps=40)
+        stream = self.generate_scenario_stream("DOS_ATTACK_ESCALATION", total_steps=60)
         observations = temporal_feature_engine.process_telemetry_stream(stream)
 
         generator = SlidingWindowGenerator(config=config)
-        train_seqs, test_seqs = generator.chronological_train_test_split(observations, train_ratio=0.70)
+        train_seqs, test_seqs = generator.chronological_train_test_split(observations, train_ratio=0.65)
 
         X_train, y_train, cat_train = generator.to_tensors(train_seqs)
         X_test, y_test, cat_test = generator.to_tensors(test_seqs)

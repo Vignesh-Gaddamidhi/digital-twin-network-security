@@ -1,0 +1,32 @@
+{
+  "evaluationMetrics": {
+    "accuracy": 0.9091,
+    "precision": 0.8333,
+    "recall": 1.0,
+    "f1": 0.9091,
+    "rocAuc": 1.0,
+    "confusionMatrix": [
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  "earlyWarningMetrics": {
+    "impactStepIndex": 30,
+    "firstWarningStepIndex": 27,
+    "leadSteps": 3,
+    "leadTimeSeconds": 15.0,
+    "leadTimeFormatted": "15.0 seconds"
+  },
+  "trainingSummary": {
+    "epochsTrained": 60,
+    "finalTrainLoss": 0.1621,
+    "bestValLoss": 0.48892463235692546,
+    "earlyStopped": false
+  }
+}

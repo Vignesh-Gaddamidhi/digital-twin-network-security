@@ -1,32 +1,32 @@
 {
   "evaluationMetrics": {
-    "accuracy": 0.5,
+    "accuracy": 0.5455,
     "precision": 0.0,
     "recall": 0.0,
     "f1": 0.0,
-    "rocAuc": 0.0,
+    "rocAuc": 1.0,
     "confusionMatrix": [
       [
-        1,
+        6,
         0
       ],
       [
-        1,
+        5,
         0
       ]
     ]
   },
   "earlyWarningMetrics": {
     "impactStepIndex": 30,
-    "firstWarningStepIndex": 15,
-    "leadSteps": 15,
-    "leadTimeSeconds": 75.0,
-    "leadTimeFormatted": "75.0 seconds"
+    "firstWarningStepIndex": 20,
+    "leadSteps": 10,
+    "leadTimeSeconds": 50.0,
+    "leadTimeFormatted": "50.0 seconds"
   },
   "trainingSummary": {
     "epochsTrained": 25,
-    "finalTrainLoss": 0.5537,
-    "bestValLoss": 0.6932403743267059,
+    "finalTrainLoss": 0.5984,
+    "bestValLoss": 0.6872195980765603,
     "earlyStopped": true
   }
 }

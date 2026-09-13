@@ -1,20 +1,22 @@
 {
-  "modelName": "lstm",
-  "modelVersion": "lstm-v1.0",
+  "modelName": "gru",
+  "modelVersion": "gru-v1.0",
   "datasetVersion": "seq-v1.0",
   "featureVersion": "ts-feat-v1.0",
+  "parameterCount": 5249,
   "trainingControls": {
     "sequenceLength": 5,
     "featureCount": 16,
     "predictionHorizon": 3,
     "hiddenUnits": 32,
     "dropout": 0.2,
-    "learningRate": 0.01,
+    "learningRate": 0.05,
     "optimizer": "Adam",
     "loss": "binary_crossentropy",
-    "epochsTrained": 25,
-    "earlyStopped": true,
-    "trainingDurationMs": 44.96,
-    "randomSeed": 42
+    "epochsTrained": 60,
+    "earlyStopped": false,
+    "trainingDurationMs": 99.07,
+    "inferenceLatencyMsPerSeq": 2.035,
+    "diskSizeBytes": 23651
   }
 }

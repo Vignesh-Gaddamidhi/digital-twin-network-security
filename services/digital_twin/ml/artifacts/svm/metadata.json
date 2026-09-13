@@ -1,5 +1,5 @@
 {
-  "experimentId": "EXP-AA0AC1A7",
+  "experimentId": "EXP-B79EE107",
   "modelName": "svm",
   "datasetVersion": "dataset-v1.0",
   "featureVersion": "feat-v1",
@@ -20,6 +20,6 @@
       2,
       2
     ],
-    "trainingDurationMs": 25.624
+    "trainingDurationMs": 17.666
   }
 }

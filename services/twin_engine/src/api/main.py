@@ -1,3 +1,4 @@
+import numpy as np
 import sys
 from pathlib import Path
 
@@ -154,6 +155,8 @@ from services.digital_twin.ml.time_series.features.feature_registry import tempo
 from services.digital_twin.ml.time_series.features.temporal_feature_extractor import temporal_feature_extractor
 from services.digital_twin.ml.time_series.models.train_lstm import run_lstm_training
 from services.digital_twin.ml.time_series.models.lstm_model import LSTMAttackPredictor
+from services.digital_twin.ml.time_series.models.gru.train_gru import run_gru_training_and_comparison
+from services.digital_twin.ml.time_series.models.gru.gru_model import GRUAttackPredictor
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -564,6 +567,65 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 117: GRU ATTACK PREDICTION & COMPARISON API ====================
+
+class GRUPredictRequest(BaseModel):
+    sequence: List[List[float]]
+    threshold: float = 0.50
+
+@app.post("/api/v1/twin/ml/time-series/models/gru/train")
+def api_train_gru_and_compare():
+    try:
+        res = run_gru_training_and_comparison()
+        return {
+            "status": "GRU_TRAINED_AND_COMPARED",
+            "metadata": res["gruMetadata"],
+            "metrics": res["gruMetrics"],
+            "comparison": res["comparisonReport"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/models/gru/metrics")
+def api_get_gru_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/time_series/gru/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="GRU model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.post("/api/v1/twin/ml/time-series/models/gru/predict")
+def api_predict_gru_sequence(req: GRUPredictRequest):
+    import joblib
+    from pathlib import Path
+    model_file = Path("services/digital_twin/ml/artifacts/time_series/gru/model.joblib")
+    if not model_file.exists():
+        raise HTTPException(status_code=404, detail="GRU model artifact not found.")
+
+    model = joblib.load(model_file)
+    X = np.array([req.sequence], dtype=np.float32)
+    prob = float(model.predict_proba(X)[0])
+    pred_class = "THREAT" if prob >= req.threshold else "NORMAL"
+
+    return {
+        "futureThreatProbability": round(prob, 4),
+        "futureThreatProbabilityFormatted": f"{round(prob * 100, 1)}%",
+        "predictedFutureClass": pred_class,
+        "decisionThreshold": req.threshold,
+        "model": "gru",
+        "modelVersion": "gru-v1.0"
+    }
+
+@app.get("/api/v1/twin/ml/time-series/models/comparison")
+def api_get_temporal_model_comparison():
+    from pathlib import Path
+    comp_file = Path("services/digital_twin/ml/artifacts/time_series/comparison/comparison_report.json")
+    if not comp_file.exists():
+        raise HTTPException(status_code=404, detail="Comparison report has not been generated yet.")
+    with open(comp_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 116: LSTM ATTACK PREDICTION API ====================
 
