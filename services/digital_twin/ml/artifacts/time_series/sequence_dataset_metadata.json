@@ -1,0 +1,21 @@
+{
+  "datasetVersion": "seq-v1.0",
+  "windowSize": 5,
+  "stepSize": 1,
+  "predictionHorizon": 2,
+  "featureDim": 16,
+  "trainSequenceCount": 22,
+  "testSequenceCount": 4,
+  "trainTensorShape": [
+    22,
+    5,
+    16
+  ],
+  "testTensorShape": [
+    4,
+    5,
+    16
+  ],
+  "positiveTrainRate": 0.2273,
+  "positiveTestRate": 0.5
+}

@@ -147,6 +147,9 @@ from services.digital_twin.ml.prediction.end_to_end_prediction_pipeline import e
 from services.digital_twin.ml.evaluation.master_validation_engine import master_validation_engine
 from services.digital_twin.ml.time_series.features.temporal_feature_engine import temporal_feature_engine
 from services.digital_twin.ml.time_series.features.time_series_models import TimeSeriesObservation
+from services.digital_twin.ml.time_series.windows.window_models import SlidingWindowConfig
+from services.digital_twin.ml.time_series.windows.sliding_window_generator import sliding_window_generator, SlidingWindowGenerator
+from services.digital_twin.ml.time_series.sequences.sequence_dataset_builder import sequence_dataset_builder
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -557,6 +560,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 114: SLIDING WINDOWS & SEQUENCES API ====================
+
+class GenerateWindowsRequest(BaseModel):
+    observations: List[Dict[str, Any]]
+    windowSize: int = 5
+    stepSize: int = 1
+    predictionHorizon: int = 2
+
+@app.post("/api/v1/twin/ml/time-series/windows/generate")
+def api_generate_sliding_windows(req: GenerateWindowsRequest):
+    try:
+        obs_objs = [TimeSeriesObservation(**item) for item in req.observations]
+        cfg = SlidingWindowConfig(windowSize=req.windowSize, stepSize=req.stepSize, predictionHorizon=req.predictionHorizon)
+        gen = SlidingWindowGenerator(config=cfg)
+        seqs = gen.create_sequences(obs_objs)
+        return {
+            "status": "WINDOWS_GENERATED",
+            "sequenceCount": len(seqs),
+            "windowSize": req.windowSize,
+            "predictionHorizon": req.predictionHorizon,
+            "sequences": [s.model_dump() for s in seqs[:10]]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/ml/time-series/sequences/build-dataset")
+def api_build_sequence_dataset(cfg: SlidingWindowConfig):
+    try:
+        res = sequence_dataset_builder.build_dataset(config=cfg)
+        return {
+            "status": "SEQUENCE_DATASET_BUILT",
+            "metadata": res["metadata"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/sequences/metadata")
+def api_get_sequence_metadata():
+    from pathlib import Path
+    meta_file = Path("services/digital_twin/ml/artifacts/time_series/sequence_dataset_metadata.json")
+    if not meta_file.exists():
+        raise HTTPException(status_code=404, detail="Sequence dataset has not been generated yet.")
+    with open(meta_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 113: TIME-SERIES FOUNDATIONS API ====================
 
