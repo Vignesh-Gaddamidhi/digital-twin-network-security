@@ -1,0 +1,32 @@
+[
+  {
+    "riskId": "RISK-21532F56",
+    "predictionId": "PRED-DEMO-DAY110",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "NETWORK_INTRUSION",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "contributingFactors": [
+      "Elevated threat probability (87.0%)",
+      "High category confidence (91.0%)",
+      "Heightened asset exposure (EXTERNAL_FACING)",
+      "High-impact asset criticality (HIGH)",
+      "Active open unpatched vulnerability present on target device",
+      "Abnormal high-volume connection sweep",
+      "SYN flood threshold reached"
+    ],
+    "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from NETWORK_INTRUSION prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
+    "modelVersion": "1.0.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "timestamp": "2026-09-13T04:39:30.408349+00:00",
+    "contextSnapshot": {
+      "deviceCriticality": "HIGH",
+      "networkExposure": "EXTERNAL_FACING",
+      "vulnerabilityStatus": "OPEN_UNPATCHED",
+      "environmentalMultiplier": 1.8
+    }
+  }
+]

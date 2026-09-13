@@ -138,6 +138,11 @@ from services.digital_twin.ml.prediction.classification.attack_category_engine i
 from services.digital_twin.ml.prediction.classification.classification_models import CanonicalAttackCategory
 from services.digital_twin.ml.prediction.confidence.confidence_engine import prediction_confidence_engine
 from services.digital_twin.ml.prediction.calibration.calibration_engine import probability_calibration_engine
+from services.digital_twin.ml.risk.risk_models import (
+    DeviceCriticalityEnum, NetworkExposureEnum, VulnerabilityStatusEnum,
+    OperationalRiskLevel, PredictionRiskAssessment
+)
+from services.digital_twin.ml.risk.prediction_risk_engine import prediction_risk_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -548,6 +553,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 110: CONTEXTUAL RISK PREDICTION API ====================
+
+class AssessRiskRequest(BaseModel):
+    predictionId: str = "PRED-LIVE-001"
+    threatProbability: float = 0.87
+    predictedCategory: str = "NETWORK_INTRUSION"
+    categoryConfidence: float = 0.91
+    deviceCriticality: DeviceCriticalityEnum = DeviceCriticalityEnum.HIGH
+    networkExposure: NetworkExposureEnum = NetworkExposureEnum.EXTERNAL_FACING
+    vulnerabilityStatus: VulnerabilityStatusEnum = VulnerabilityStatusEnum.OPEN_UNPATCHED
+    observedAnomalies: Optional[List[str]] = None
+
+@app.post("/api/v1/twin/ml/risk/assess")
+def api_assess_prediction_risk(req: AssessRiskRequest):
+    try:
+        assessment = prediction_risk_engine.assess_risk(
+            prediction_id=req.predictionId,
+            threat_probability=req.threatProbability,
+            predicted_category=req.predictedCategory,
+            category_confidence=req.categoryConfidence,
+            device_criticality=req.deviceCriticality,
+            network_exposure=req.networkExposure,
+            vulnerability_status=req.vulnerabilityStatus,
+            observed_anomalies=req.observedAnomalies
+        )
+        return {
+            "status": "RISK_ASSESSED",
+            "assessment": assessment.model_dump(),
+            "summaryString": assessment.to_summary_string()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/risk/history")
+def api_get_risk_history():
+    return {
+        "count": len(prediction_risk_engine.history),
+        "history": [a.model_dump() for a in prediction_risk_engine.history]
+    }
+
+@app.post("/api/v1/twin/ml/risk/clear")
+def api_clear_risk_history():
+    prediction_risk_engine.clear()
+    return {"status": "RISK_HISTORY_CLEARED"}
 
 # ==================== DAY 109: CONFIDENCE & CALIBRATION API ====================
 
