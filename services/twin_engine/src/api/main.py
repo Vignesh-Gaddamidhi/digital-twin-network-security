@@ -178,6 +178,7 @@ from services.digital_twin.ml.xai.evidence.alert_models import EnrichedSecurityA
 from services.digital_twin.ml.xai.evidence.unified_pipeline import unified_explainable_pipeline
 from services.digital_twin.ml.xai.visualization.dashboard_models import ComprehensiveXAIForensicReport
 from services.digital_twin.ml.xai.visualization.xai_dashboard_engine import xai_dashboard_engine
+from services.digital_twin.ml.xai.master_xai_validator import master_xai_validator
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -588,6 +589,33 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 126: MASTER XAI VALIDATION & BENCHMARK API ====================
+
+@app.post("/api/v1/twin/ml/xai/master/benchmark")
+def api_run_master_xai_benchmark():
+    try:
+        results = master_xai_validator.benchmark_all_models_xai()
+        return {
+            "status": "MASTER_XAI_BENCHMARK_COMPLETED",
+            "modelsEvaluated": len(results),
+            "benchmarkLeaderboard": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/ml/xai/master/validate-failures")
+def api_validate_xai_failure_handlers():
+    try:
+        failures = master_xai_validator.validate_failure_conditions()
+        all_passed = all(failures.values())
+        return {
+            "status": "DEFENSIVE_FAILURE_AUDIT_COMPLETED",
+            "allDefensiveHandlersPassed": all_passed,
+            "failureChecklist": failures
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== DAY 125: XAI VISUALIZATION & FORENSIC REPORTS API ====================
 
