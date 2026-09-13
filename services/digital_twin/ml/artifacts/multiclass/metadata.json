@@ -1,0 +1,28 @@
+{
+  "modelName": "multiclass_xgboost",
+  "trainingSamples": 80,
+  "testSamples": 32,
+  "featureCount": 20,
+  "classes": [
+    "NORMAL",
+    "PORT_SCAN",
+    "BRUTE_FORCE_LIKE",
+    "DOS_LIKE",
+    "DNS_ANOMALY",
+    "BEACONING",
+    "LATERAL_MOVEMENT_LIKE",
+    "EXFILTRATION_LIKE"
+  ],
+  "trainingDistribution": {
+    "NORMAL": 10,
+    "PORT_SCAN": 10,
+    "BRUTE_FORCE_LIKE": 10,
+    "DOS_LIKE": 10,
+    "DNS_ANOMALY": 10,
+    "BEACONING": 10,
+    "LATERAL_MOVEMENT_LIKE": 10,
+    "EXFILTRATION_LIKE": 10
+  },
+  "testAccuracy": 0.9062,
+  "artifactPath": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\multiclass\\multiclass_xgboost.joblib"
+}

@@ -134,6 +134,8 @@ from services.digital_twin.ml.prediction.prediction_models import (
 )
 from services.digital_twin.ml.prediction.attack_prediction_engine import attack_prediction_engine
 from services.digital_twin.ml.prediction.probability.threat_probability_engine import threat_probability_engine
+from services.digital_twin.ml.prediction.classification.attack_category_engine import attack_category_engine
+from services.digital_twin.ml.prediction.classification.classification_models import CanonicalAttackCategory
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -544,6 +546,39 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 108: ATTACK CATEGORY CLASSIFICATION API ====================
+
+class TrainMultiClassRequest(BaseModel):
+    modelType: str = "random_forest"  # random_forest | xgboost | logistic_regression
+
+class ClassifyAttackRequest(BaseModel):
+    features: List[float]
+
+@app.post("/api/v1/twin/ml/prediction/classification/train")
+def api_train_multiclass_model(req: TrainMultiClassRequest):
+    try:
+        meta = attack_category_engine.train_baseline_model(req.modelType)
+        return {
+            "status": "MULTICLASS_MODEL_TRAINED",
+            "metadata": meta
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/ml/prediction/classification/classify")
+def api_classify_attack_category(req: ClassifyAttackRequest):
+    import numpy as np
+    try:
+        vec = np.array(req.features, dtype=np.float32)
+        out = attack_category_engine.classify_behavior(vec)
+        return {
+            "status": "ATTACK_CATEGORY_CLASSIFIED",
+            "result": out.model_dump(),
+            "displayString": out.to_display_string()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== DAY 107: THREAT PROBABILITY API ====================
 
