@@ -1,0 +1,34 @@
+[
+  {
+    "warningId": "WARN-57C7D8F7",
+    "deviceId": "CORE-ROUTER",
+    "targetService": "TCP/443",
+    "state": "HIGH_CONFIDENCE_WARNING",
+    "currentStage": "ESCALATION",
+    "currentThreatProbability": 0.91,
+    "peakThreatProbability": 0.91,
+    "firstDetectedAt": "2026-09-13T12:08:23.717396+00:00",
+    "lastUpdatedAt": "2026-09-13T12:08:23.796548+00:00",
+    "consecutiveDetections": 6,
+    "predictedCategory": "DOS_LIKE",
+    "leadTimeEstimateSeconds": 35.0,
+    "status": "ACTIVE",
+    "rationale": "Updated warning: 6 consecutive detections. State=HIGH_CONFIDENCE_WARNING."
+  },
+  {
+    "warningId": "WARN-9C336E2A",
+    "deviceId": "CORE-SWITCH-01",
+    "targetService": "TCP/443",
+    "state": "EARLY_WARNING",
+    "currentStage": "EARLY_INDICATORS",
+    "currentThreatProbability": 0.74,
+    "peakThreatProbability": 0.74,
+    "firstDetectedAt": "2026-09-13T12:08:27.394604+00:00",
+    "lastUpdatedAt": "2026-09-13T12:08:27.403483+00:00",
+    "consecutiveDetections": 2,
+    "predictedCategory": "DOS_LIKE",
+    "leadTimeEstimateSeconds": 30.0,
+    "status": "ACTIVE",
+    "rationale": "Updated warning: 2 consecutive detections. State=EARLY_WARNING."
+  }
+]

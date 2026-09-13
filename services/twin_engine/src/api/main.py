@@ -157,6 +157,8 @@ from services.digital_twin.ml.time_series.models.train_lstm import run_lstm_trai
 from services.digital_twin.ml.time_series.models.lstm_model import LSTMAttackPredictor
 from services.digital_twin.ml.time_series.models.gru.train_gru import run_gru_training_and_comparison
 from services.digital_twin.ml.time_series.models.gru.gru_model import GRUAttackPredictor
+from services.digital_twin.ml.time_series.models.temporal.tcn_model import temporal_conv_predictor, TemporalConvPredictor
+from services.digital_twin.ml.time_series.early_warning.early_warning_engine import early_warning_engine, EarlyWarningState
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -567,6 +569,60 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 118: TEMPORAL CONVOLUTION & EARLY-WARNING API ====================
+
+class ProcessWarningRequest(BaseModel):
+    deviceId: str = "GATEWAY-01"
+    threatProbability: float = 0.72
+    currentStage: str = "EARLY_INDICATORS"
+    predictedCategory: str = "DOS_LIKE"
+    leadTimeSeconds: float = 35.0
+
+@app.post("/api/v1/twin/ml/time-series/models/temporal/train")
+def api_train_temporal_conv():
+    from services.digital_twin.ml.time_series.sequences.sequence_dataset_builder import sequence_dataset_builder
+    from services.digital_twin.ml.time_series.windows.window_models import SlidingWindowConfig
+    try:
+        cfg = SlidingWindowConfig(windowSize=5, stepSize=1, predictionHorizon=3, featureDim=16)
+        dataset = sequence_dataset_builder.build_dataset(config=cfg)
+        model = TemporalConvPredictor(input_dim=16, filters=32, random_seed=42)
+        train_res = model.fit(dataset["X_train"], dataset["y_train"])
+        eval_metrics = model.evaluate(dataset["X_test"], dataset["y_test"])
+        model.save()
+        return {
+            "status": "TEMPORAL_CONV_TRAINED",
+            "parameters": model.count_parameters(),
+            "training": train_res,
+            "metrics": eval_metrics
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/ml/time-series/early-warning/process")
+def api_process_early_warning(req: ProcessWarningRequest):
+    try:
+        record, is_new = early_warning_engine.process_prediction(
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            current_stage=req.currentStage,
+            predicted_category=req.predictedCategory,
+            lead_time_seconds=req.leadTimeSeconds
+        )
+        return {
+            "status": "WARNING_PROCESSED",
+            "isNewAlert": is_new,
+            "record": record.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/early-warning/active")
+def api_get_active_warnings():
+    return {
+        "count": len(early_warning_engine.active_warnings),
+        "activeWarnings": {k: v.model_dump() for k, v in early_warning_engine.active_warnings.items()}
+    }
 
 # ==================== DAY 117: GRU ATTACK PREDICTION & COMPARISON API ====================
 
