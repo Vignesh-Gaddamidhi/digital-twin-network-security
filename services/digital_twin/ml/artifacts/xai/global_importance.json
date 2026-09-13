@@ -1,0 +1,637 @@
+{
+  "reportId": "GIMP-91B1BF85",
+  "modelName": "random_forest",
+  "modelVersion": "rf-v1.0",
+  "datasetVersion": "dataset-v1.0",
+  "featureVersion": "feature-v1.0",
+  "generatedAt": "2026-09-13T12:29:05.766077+00:00",
+  "nativeMethod": "TREE_IMPORTANCE",
+  "nativeImportances": [
+    {
+      "featureName": "port_80_ratio",
+      "importance": 0.22,
+      "importanceFormatted": "0.2200",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 1,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "packet_rate",
+      "importance": 0.19,
+      "importanceFormatted": "0.1900",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 2,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "connection_frequency",
+      "importance": 0.18,
+      "importanceFormatted": "0.1800",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 3,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "bytes_per_second",
+      "importance": 0.16,
+      "importanceFormatted": "0.1600",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 4,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_443_ratio",
+      "importance": 0.14,
+      "importanceFormatted": "0.1400",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 5,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "bytes",
+      "importance": 0.11,
+      "importanceFormatted": "0.1100",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 6,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_22_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 7,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_53_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 8,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_other_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 9,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "unique_destination_ports",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 10,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "flow_duration",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 11,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "tcp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 12,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "udp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 13,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "icmp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 14,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "failed_connections",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 15,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "failed_connection_rate",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 16,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "dns_queries",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 17,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "dns_frequency",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 18,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "destination_diversity",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 19,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "unique_destination_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "TREE_IMPORTANCE",
+      "rank": 20,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    }
+  ],
+  "shapImportances": [
+    {
+      "featureName": "port_80_ratio",
+      "importance": 0.22,
+      "importanceFormatted": "0.2200",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 1,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "packet_rate",
+      "importance": 0.19,
+      "importanceFormatted": "0.1900",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 2,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "connection_frequency",
+      "importance": 0.18,
+      "importanceFormatted": "0.1800",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 3,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "bytes_per_second",
+      "importance": 0.16,
+      "importanceFormatted": "0.1600",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 4,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_443_ratio",
+      "importance": 0.14,
+      "importanceFormatted": "0.1400",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 5,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "bytes",
+      "importance": 0.11,
+      "importanceFormatted": "0.1100",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 6,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_22_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 7,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_53_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 8,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "port_other_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 9,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "unique_destination_ports",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 10,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "flow_duration",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 11,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "tcp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 12,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "udp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 13,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "icmp_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 14,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "failed_connections",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 15,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "failed_connection_rate",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 16,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "dns_queries",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 17,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "dns_frequency",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 18,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "destination_diversity",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 19,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    },
+    {
+      "featureName": "unique_destination_ratio",
+      "importance": 0.0,
+      "importanceFormatted": "0.0000",
+      "importanceMethod": "SHAP_GLOBAL_IMPORTANCE",
+      "rank": 20,
+      "modelName": "random_forest",
+      "modelVersion": "rf-v1.0",
+      "datasetVersion": "dataset-v1.0",
+      "featureVersion": "feature-v1.0"
+    }
+  ],
+  "comparisonTable": [
+    {
+      "featureName": "port_80_ratio",
+      "nativeImportance": 0.22,
+      "nativeRank": 1,
+      "shapImportance": 0.22,
+      "shapRank": 1,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "packet_rate",
+      "nativeImportance": 0.19,
+      "nativeRank": 2,
+      "shapImportance": 0.19,
+      "shapRank": 2,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "connection_frequency",
+      "nativeImportance": 0.18,
+      "nativeRank": 3,
+      "shapImportance": 0.18,
+      "shapRank": 3,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "bytes_per_second",
+      "nativeImportance": 0.16,
+      "nativeRank": 4,
+      "shapImportance": 0.16,
+      "shapRank": 4,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "port_443_ratio",
+      "nativeImportance": 0.14,
+      "nativeRank": 5,
+      "shapImportance": 0.14,
+      "shapRank": 5,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "bytes",
+      "nativeImportance": 0.11,
+      "nativeRank": 6,
+      "shapImportance": 0.11,
+      "shapRank": 6,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "port_22_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 7,
+      "shapImportance": 0.0,
+      "shapRank": 7,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "port_53_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 8,
+      "shapImportance": 0.0,
+      "shapRank": 8,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "port_other_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 9,
+      "shapImportance": 0.0,
+      "shapRank": 9,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "unique_destination_ports",
+      "nativeImportance": 0.0,
+      "nativeRank": 10,
+      "shapImportance": 0.0,
+      "shapRank": 10,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "flow_duration",
+      "nativeImportance": 0.0,
+      "nativeRank": 11,
+      "shapImportance": 0.0,
+      "shapRank": 11,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "tcp_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 12,
+      "shapImportance": 0.0,
+      "shapRank": 12,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "udp_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 13,
+      "shapImportance": 0.0,
+      "shapRank": 13,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "icmp_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 14,
+      "shapImportance": 0.0,
+      "shapRank": 14,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "failed_connections",
+      "nativeImportance": 0.0,
+      "nativeRank": 15,
+      "shapImportance": 0.0,
+      "shapRank": 15,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "failed_connection_rate",
+      "nativeImportance": 0.0,
+      "nativeRank": 16,
+      "shapImportance": 0.0,
+      "shapRank": 16,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "dns_queries",
+      "nativeImportance": 0.0,
+      "nativeRank": 17,
+      "shapImportance": 0.0,
+      "shapRank": 17,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "dns_frequency",
+      "nativeImportance": 0.0,
+      "nativeRank": 18,
+      "shapImportance": 0.0,
+      "shapRank": 18,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "destination_diversity",
+      "nativeImportance": 0.0,
+      "nativeRank": 19,
+      "shapImportance": 0.0,
+      "shapRank": 19,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    },
+    {
+      "featureName": "unique_destination_ratio",
+      "nativeImportance": 0.0,
+      "nativeRank": 20,
+      "shapImportance": 0.0,
+      "shapRank": 20,
+      "rankDelta": 0,
+      "interpretation": "Concordant ranking between Native and SHAP."
+    }
+  ],
+  "nativeAsciiBarChart": "Native Feature Importance (TREE_IMPORTANCE)\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nport_80_ratio              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 0.2200\npacket_rate                \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    0.1900\nconnection_frequency       \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     0.1800\nbytes_per_second           \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588        0.1600\nport_443_ratio             \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588          0.1400\nbytes                      \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588             0.1100\nport_22_ratio                                       0.0000\nport_53_ratio                                       0.0000",
+  "shapAsciiBarChart": "Global SHAP Feature Importance (mean(|SHAP|))\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nport_80_ratio              \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 0.2200\npacket_rate                \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588    0.1900\nconnection_frequency       \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588     0.1800\nbytes_per_second           \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588        0.1600\nport_443_ratio             \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588          0.1400\nbytes                      \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588             0.1100\nport_22_ratio                                       0.0000\nport_53_ratio                                       0.0000"
+}

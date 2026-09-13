@@ -168,6 +168,10 @@ from services.digital_twin.ml.xai.explanations.xai_models import (
 from services.digital_twin.ml.xai.xai_engine import base_xai_engine
 from services.digital_twin.ml.xai.shap.shap_models import SHAPExplanation, FeatureSHAPItem, ContributionDirection
 from services.digital_twin.ml.xai.shap.shap_engine import shap_explainer_engine
+from services.digital_twin.ml.xai.feature_importance.importance_models import (
+    GlobalImportanceReport, FeatureImportanceItem, ImportanceMethodEnum
+)
+from services.digital_twin.ml.xai.feature_importance.global_importance_engine import global_feature_importance_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -578,6 +582,47 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 122: GLOBAL FEATURE IMPORTANCE API ====================
+
+class EvaluateImportanceRequest(BaseModel):
+    modelName: str = "random_forest"
+    modelVersion: str = "rf-v1.0"
+
+@app.post("/api/v1/twin/ml/xai/importance/evaluate")
+def api_evaluate_global_importance(req: EvaluateImportanceRequest):
+    import joblib
+    from pathlib import Path
+
+    model_file = Path(f"services/digital_twin/ml/artifacts/{req.modelName}/model.joblib")
+    if not model_file.exists():
+        model_file = Path("services/digital_twin/ml/artifacts/random_forest/model.joblib")
+        if not model_file.exists():
+            raise HTTPException(status_code=404, detail="Model artifact not found for global importance evaluation.")
+
+    data = joblib.load(model_file)
+    model = data["model"] if isinstance(data, dict) and "model" in data else data
+
+    report = global_feature_importance_engine.generate_global_importance_report(
+        model=model,
+        model_name=req.modelName,
+        model_version=req.modelVersion
+    )
+
+    return {
+        "status": "GLOBAL_IMPORTANCE_EVALUATED",
+        "report": report.model_dump(),
+        "summaryDisplay": report.to_summary_string()
+    }
+
+@app.get("/api/v1/twin/ml/xai/importance/latest")
+def api_get_latest_global_importance():
+    from pathlib import Path
+    report_file = Path("services/digital_twin/ml/artifacts/xai/global_importance.json")
+    if not report_file.exists():
+        raise HTTPException(status_code=404, detail="No global importance report has been generated yet.")
+    with open(report_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 121: SHAP INTEGRATION API ====================
 
