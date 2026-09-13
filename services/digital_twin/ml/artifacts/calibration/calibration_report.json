@@ -1,0 +1,18 @@
+{
+  "method": "sigmoid",
+  "samplesEvaluated": 10,
+  "rawMetrics": {
+    "brierScore": 0.0,
+    "expectedCalibrationError": 0.0
+  },
+  "calibratedMetrics": {
+    "brierScore": 0.0983,
+    "expectedCalibrationError": 0.3135
+  },
+  "improvement": {
+    "brierReduction": -0.0983,
+    "eceReduction": -0.3135
+  },
+  "isReliabilityImproved": false,
+  "artifactPath": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\calibration\\calibrator_sigmoid.joblib"
+}

@@ -136,6 +136,8 @@ from services.digital_twin.ml.prediction.attack_prediction_engine import attack_
 from services.digital_twin.ml.prediction.probability.threat_probability_engine import threat_probability_engine
 from services.digital_twin.ml.prediction.classification.attack_category_engine import attack_category_engine
 from services.digital_twin.ml.prediction.classification.classification_models import CanonicalAttackCategory
+from services.digital_twin.ml.prediction.confidence.confidence_engine import prediction_confidence_engine
+from services.digital_twin.ml.prediction.calibration.calibration_engine import probability_calibration_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -546,6 +548,43 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 109: CONFIDENCE & CALIBRATION API ====================
+
+class ConfidenceAuditRequest(BaseModel):
+    classDistribution: Dict[str, float]
+
+@app.post("/api/v1/twin/ml/prediction/confidence/audit")
+def api_audit_prediction_confidence(req: ConfidenceAuditRequest):
+    try:
+        report = prediction_confidence_engine.evaluate_confidence(req.classDistribution)
+        return {
+            "status": "CONFIDENCE_AUDITED",
+            "report": report.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/ml/prediction/calibration/evaluate")
+def api_evaluate_probability_calibration():
+    import joblib
+    from pathlib import Path
+    from services.digital_twin.ml.training.dataset_loader import dataset_loader
+
+    model_path = Path("services/digital_twin/ml/artifacts/random_forest/model.joblib")
+    if not model_path.exists():
+        raise HTTPException(status_code=404, detail="Random Forest baseline artifact not found for calibration evaluation.")
+
+    data = joblib.load(model_path)
+    base_model = data["model"] if isinstance(data, dict) and "model" in data else data
+
+    X_tr, y_tr, X_te, y_te, feats = dataset_loader.load_train_test()
+    report = probability_calibration_engine.fit_and_audit_calibration(base_model, X_te, y_te)
+
+    return {
+        "status": "CALIBRATION_AUDITED",
+        "report": report
+    }
 
 # ==================== DAY 108: ATTACK CATEGORY CLASSIFICATION API ====================
 
