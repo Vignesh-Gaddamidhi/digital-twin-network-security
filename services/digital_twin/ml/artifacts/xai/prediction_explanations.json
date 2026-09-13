@@ -1,0 +1,146 @@
+[
+  {
+    "explanationId": "XAI-DFF4AB6D",
+    "predictionId": "PRED-LIVE-PORT-SCAN",
+    "timestamp": "2026-09-13T12:22:08.355813+00:00",
+    "modelName": "random_forest",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "prediction": "THREAT",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskScore": 78.4,
+    "riskLevel": "HIGH",
+    "globalFeatureImportance": {
+      "packet_rate": 0.05,
+      "bytes": 0.05,
+      "bytes_per_second": 0.05,
+      "connection_frequency": 0.05,
+      "port_22_ratio": 0.05,
+      "port_53_ratio": 0.05,
+      "port_80_ratio": 0.05,
+      "port_443_ratio": 0.05,
+      "port_other_ratio": 0.05,
+      "unique_destination_ports": 0.05,
+      "flow_duration": 0.05,
+      "tcp_ratio": 0.05,
+      "udp_ratio": 0.05,
+      "icmp_ratio": 0.05,
+      "failed_connections": 0.05,
+      "failed_connection_rate": 0.05,
+      "dns_queries": 0.05,
+      "dns_frequency": 0.05,
+      "destination_diversity": 0.05,
+      "unique_destination_ratio": 0.05
+    },
+    "baseValue": 0.5,
+    "featureValues": {
+      "packet_rate": 0.8,
+      "bytes": 0.4,
+      "bytes_per_second": 0.0,
+      "connection_frequency": 3.5,
+      "port_22_ratio": 0.0,
+      "port_53_ratio": 0.0,
+      "port_80_ratio": 0.0,
+      "port_443_ratio": 0.0,
+      "port_other_ratio": 0.0,
+      "unique_destination_ports": 3.2,
+      "flow_duration": -0.6,
+      "tcp_ratio": 0.0,
+      "udp_ratio": 0.0,
+      "icmp_ratio": 0.0,
+      "failed_connections": 2.1,
+      "failed_connection_rate": 0.0,
+      "dns_queries": 0.0,
+      "dns_frequency": 0.0,
+      "destination_diversity": 2.9,
+      "unique_destination_ratio": 0.0
+    },
+    "featureContributions": {
+      "packet_rate": 0.0185,
+      "bytes": 0.0185,
+      "bytes_per_second": 0.0185,
+      "connection_frequency": 0.0185,
+      "port_22_ratio": 0.0185,
+      "port_53_ratio": 0.0185,
+      "port_80_ratio": 0.0185,
+      "port_443_ratio": 0.0185,
+      "port_other_ratio": 0.0185,
+      "unique_destination_ports": 0.0185,
+      "flow_duration": -0.0185,
+      "tcp_ratio": 0.0185,
+      "udp_ratio": 0.0185,
+      "icmp_ratio": 0.0185,
+      "failed_connections": 0.0185,
+      "failed_connection_rate": 0.0185,
+      "dns_queries": 0.0185,
+      "dns_frequency": 0.0185,
+      "destination_diversity": 0.0185,
+      "unique_destination_ratio": 0.0185
+    },
+    "topPositiveFeatures": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.8,
+        "contribution": 0.0185,
+        "contributionFormatted": "+0.0185",
+        "direction": "ESCALATING",
+        "rank": 1
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 0.4,
+        "contribution": 0.0185,
+        "contributionFormatted": "+0.0185",
+        "direction": "ESCALATING",
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "contribution": 0.0185,
+        "contributionFormatted": "+0.0185",
+        "direction": "ESCALATING",
+        "rank": 3
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 3.5,
+        "contribution": 0.0185,
+        "contributionFormatted": "+0.0185",
+        "direction": "ESCALATING",
+        "rank": 4
+      },
+      {
+        "featureName": "port_22_ratio",
+        "featureValue": 0.0,
+        "contribution": 0.0185,
+        "contributionFormatted": "+0.0185",
+        "direction": "ESCALATING",
+        "rank": 5
+      }
+    ],
+    "topNegativeFeatures": [
+      {
+        "featureName": "flow_duration",
+        "featureValue": -0.6,
+        "contribution": -0.0185,
+        "contributionFormatted": "-0.0185",
+        "direction": "MITIGATING",
+        "rank": 11
+      }
+    ],
+    "evidence": [
+      "Packet rate contributed positively (+0.0185) with observed value 0.80.",
+      "Bytes contributed positively (+0.0185) with observed value 0.40.",
+      "Bytes per second contributed positively (+0.0185) with observed value 0.00.",
+      "Connection frequency contributed positively (+0.0185) with observed value 3.50.",
+      "Flow duration acted as mitigating baseline evidence (-0.0185)."
+    ],
+    "naturalLanguageExplanation": "Threat probability increased to 87.0% (PORT_SCAN) primarily because packet rate, bytes, bytes per second exhibited elevated divergence from the learned normal pattern.",
+    "explanationStatus": "GENERATED"
+  }
+]

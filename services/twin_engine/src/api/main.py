@@ -162,6 +162,10 @@ from services.digital_twin.ml.time_series.early_warning.early_warning_engine imp
 from services.digital_twin.ml.time_series.prediction.temporal_prediction_models import TemporalPrediction
 from services.digital_twin.ml.time_series.prediction.integrated_time_series_pipeline import integrated_time_series_pipeline
 from services.digital_twin.ml.time_series.evaluation.master_temporal_evaluator import master_temporal_evaluator
+from services.digital_twin.ml.xai.explanations.xai_models import (
+    ExplanationStatusEnum, FeatureAttribution, PredictionExplanation
+)
+from services.digital_twin.ml.xai.xai_engine import base_xai_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -572,6 +576,55 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 120: EXPLAINABLE AI (XAI) ARCHITECTURE API ====================
+
+class ExplainPredictionRequest(BaseModel):
+    predictionId: str = "PRED-LIVE-120"
+    featureValues: Dict[str, float]
+    threatProbability: float = 0.87
+    predictedCategory: str = "PORT_SCAN"
+    categoryConfidence: float = 0.91
+    riskScore: float = 78.4
+    riskLevel: str = "HIGH"
+    modelName: str = "random_forest"
+    modelVersion: str = "rf-v1.0"
+    featureVersion: str = "feature-v1.0"
+
+@app.post("/api/v1/twin/ml/xai/explain")
+def api_explain_prediction(req: ExplainPredictionRequest):
+    try:
+        explanation = base_xai_engine.explain_prediction(
+            prediction_id=req.predictionId,
+            feature_values=req.featureValues,
+            threat_probability=req.threatProbability,
+            predicted_category=req.predictedCategory,
+            category_confidence=req.categoryConfidence,
+            risk_score=req.riskScore,
+            risk_level=req.riskLevel,
+            model_name=req.modelName,
+            model_version=req.modelVersion,
+            feature_version=req.featureVersion
+        )
+        return {
+            "status": "EXPLANATION_GENERATED",
+            "explanation": explanation.model_dump(),
+            "summaryString": explanation.to_summary_string()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/xai/history")
+def api_get_xai_history():
+    return {
+        "count": len(base_xai_engine.history),
+        "history": [exp.model_dump() for exp in base_xai_engine.history]
+    }
+
+@app.post("/api/v1/twin/ml/xai/clear")
+def api_clear_xai_history():
+    base_xai_engine.clear()
+    return {"status": "XAI_HISTORY_CLEARED"}
 
 # ==================== DAY 119: COMPLETE TIME-SERIES EVALUATION & TWIN INTEGRATION API ====================
 
