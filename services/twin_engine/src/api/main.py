@@ -150,6 +150,8 @@ from services.digital_twin.ml.time_series.features.time_series_models import Tim
 from services.digital_twin.ml.time_series.windows.window_models import SlidingWindowConfig
 from services.digital_twin.ml.time_series.windows.sliding_window_generator import sliding_window_generator, SlidingWindowGenerator
 from services.digital_twin.ml.time_series.sequences.sequence_dataset_builder import sequence_dataset_builder
+from services.digital_twin.ml.time_series.features.feature_registry import temporal_feature_registry
+from services.digital_twin.ml.time_series.features.temporal_feature_extractor import temporal_feature_extractor
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -560,6 +562,34 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 115: TIME-SERIES FEATURE ENGINEERING API ====================
+
+class ExtractTemporalBatchRequest(BaseModel):
+    records: List[Dict[str, Any]]
+    lagDepth: int = 3
+    windowSize: int = 3
+
+@app.post("/api/v1/twin/ml/time-series/features/extract-batch")
+def api_extract_temporal_features_batch(req: ExtractTemporalBatchRequest):
+    try:
+        extractor = temporal_feature_extractor.__class__(lag_depth=req.lagDepth, window_size=req.windowSize)
+        extracted = extractor.extract_features(req.records)
+        return {
+            "status": "TEMPORAL_FEATURES_EXTRACTED",
+            "recordCount": len(extracted),
+            "features": extracted
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/features/registry")
+def api_get_temporal_feature_registry():
+    return {
+        "status": "REGISTRY_RETRIEVED",
+        "featureCount": len(temporal_feature_registry.registry),
+        "registry": {k: v.model_dump() for k, v in temporal_feature_registry.registry.items()}
+    }
 
 # ==================== DAY 114: SLIDING WINDOWS & SEQUENCES API ====================
 

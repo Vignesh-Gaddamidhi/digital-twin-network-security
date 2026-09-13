@@ -1,5 +1,5 @@
 {
-  "evaluationTimestamp": "2026-09-13T05:22:02Z",
+  "evaluationTimestamp": "2026-09-13T05:31:15Z",
   "datasetVersion": "dataset-v1.0",
   "trainSamples": 40,
   "testSamples": 10,
@@ -51,8 +51,8 @@
       "falsePositives": 0,
       "trueNegatives": 5,
       "falseNegatives": 0,
-      "trainTimeMs": 5.21,
-      "inferenceTimeMs": 13.34,
+      "trainTimeMs": 5.363,
+      "inferenceTimeMs": 13.06,
       "cyberScore": 1.0,
       "confusionMatrixPng": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\comparison\\confusion_matrices\\logistic_regression.png",
       "rank": 1
@@ -79,8 +79,8 @@
       "falsePositives": 0,
       "trueNegatives": 5,
       "falseNegatives": 0,
-      "trainTimeMs": 3.96,
-      "inferenceTimeMs": 22.045,
+      "trainTimeMs": 1.92,
+      "inferenceTimeMs": 10.264,
       "cyberScore": 1.0,
       "confusionMatrixPng": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\comparison\\confusion_matrices\\decision_tree.png",
       "rank": 2
@@ -107,8 +107,8 @@
       "falsePositives": 0,
       "trueNegatives": 5,
       "falseNegatives": 0,
-      "trainTimeMs": 385.804,
-      "inferenceTimeMs": 128.647,
+      "trainTimeMs": 402.176,
+      "inferenceTimeMs": 193.133,
       "cyberScore": 1.0,
       "confusionMatrixPng": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\comparison\\confusion_matrices\\random_forest.png",
       "rank": 3
@@ -135,8 +135,8 @@
       "falsePositives": 0,
       "trueNegatives": 5,
       "falseNegatives": 0,
-      "trainTimeMs": 31.379,
-      "inferenceTimeMs": 23.243,
+      "trainTimeMs": 20.864,
+      "inferenceTimeMs": 15.995,
       "cyberScore": 1.0,
       "confusionMatrixPng": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\comparison\\confusion_matrices\\svm.png",
       "rank": 4
@@ -163,8 +163,8 @@
       "falsePositives": 0,
       "trueNegatives": 5,
       "falseNegatives": 0,
-      "trainTimeMs": 283.605,
-      "inferenceTimeMs": 27.436,
+      "trainTimeMs": 269.319,
+      "inferenceTimeMs": 27.332,
       "cyberScore": 1.0,
       "confusionMatrixPng": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\comparison\\confusion_matrices\\xgboost.png",
       "rank": 5
@@ -173,6 +173,6 @@
   "operationalRecommendations": {
     "highestRecall": "Logistic Regression",
     "lowestFalseAlerts": "Logistic Regression",
-    "fastestInference": "Logistic Regression"
+    "fastestInference": "Decision Tree"
   }
 }

@@ -1,0 +1,287 @@
+{
+  "packet_rate": {
+    "featureName": "packet_rate",
+    "baseFeature": "packet_rate",
+    "calculationType": "RAW_VALUE",
+    "unit": "pkts/s",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      10000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Instantaneous packet rate per observation window."
+  },
+  "packet_rate_lag_1": {
+    "featureName": "packet_rate_lag_1",
+    "baseFeature": "packet_rate",
+    "calculationType": "LAG",
+    "unit": "pkts/s",
+    "windowSize": null,
+    "lagDepth": 1,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      10000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Packet rate observed at step t-1."
+  },
+  "packet_rate_lag_2": {
+    "featureName": "packet_rate_lag_2",
+    "baseFeature": "packet_rate",
+    "calculationType": "LAG",
+    "unit": "pkts/s",
+    "windowSize": null,
+    "lagDepth": 2,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      10000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Packet rate observed at step t-2."
+  },
+  "packet_rate_rolling_mean_w3": {
+    "featureName": "packet_rate_rolling_mean_w3",
+    "baseFeature": "packet_rate",
+    "calculationType": "ROLLING_MEAN",
+    "unit": "pkts/s",
+    "windowSize": 3,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      10000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Rolling average of packet rate over 3 steps."
+  },
+  "packet_rate_rolling_std_w3": {
+    "featureName": "packet_rate_rolling_std_w3",
+    "baseFeature": "packet_rate",
+    "calculationType": "ROLLING_STD",
+    "unit": "pkts/s",
+    "windowSize": 3,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      5000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Rolling standard deviation of packet rate over 3 steps."
+  },
+  "packet_rate_rate_of_change": {
+    "featureName": "packet_rate_rate_of_change",
+    "baseFeature": "packet_rate",
+    "calculationType": "RATE_OF_CHANGE",
+    "unit": "pkts/s/step",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      -5000.0,
+      5000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "First difference: x(t) - x(t-1)."
+  },
+  "packet_rate_percentage_change": {
+    "featureName": "packet_rate_percentage_change",
+    "baseFeature": "packet_rate",
+    "calculationType": "PERCENT_CHANGE",
+    "unit": "percent",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      -100.0,
+      10000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Relative percentage increase or decrease relative to t-1."
+  },
+  "packet_rate_trend": {
+    "featureName": "packet_rate_trend",
+    "baseFeature": "packet_rate",
+    "calculationType": "TREND",
+    "unit": "categorical_code",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      3.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Trend direction: 0=STABLE, 1=INCREASING, 2=DECREASING, 3=VOLATILE."
+  },
+  "bytes_val": {
+    "featureName": "bytes_val",
+    "baseFeature": "bytes",
+    "calculationType": "RAW_VALUE",
+    "unit": "bytes",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      100000000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Raw byte volume in window."
+  },
+  "bytes_lag_1": {
+    "featureName": "bytes_lag_1",
+    "baseFeature": "bytes",
+    "calculationType": "LAG",
+    "unit": "bytes",
+    "windowSize": null,
+    "lagDepth": 1,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      100000000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Byte volume observed at step t-1."
+  },
+  "bytes_rolling_mean_w3": {
+    "featureName": "bytes_rolling_mean_w3",
+    "baseFeature": "bytes",
+    "calculationType": "ROLLING_MEAN",
+    "unit": "bytes",
+    "windowSize": 3,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      100000000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Rolling average of byte volume over 3 steps."
+  },
+  "bytes_rate_of_change": {
+    "featureName": "bytes_rate_of_change",
+    "baseFeature": "bytes",
+    "calculationType": "RATE_OF_CHANGE",
+    "unit": "bytes/step",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      -50000000.0,
+      50000000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Byte volume rate of change: bytes(t) - bytes(t-1)."
+  },
+  "failed_connections_val": {
+    "featureName": "failed_connections_val",
+    "baseFeature": "failed_connections",
+    "calculationType": "RAW_VALUE",
+    "unit": "count",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      1000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Failed connection attempts in window."
+  },
+  "failed_connections_rolling_mean_w3": {
+    "featureName": "failed_connections_rolling_mean_w3",
+    "baseFeature": "failed_connections",
+    "calculationType": "ROLLING_MEAN",
+    "unit": "count",
+    "windowSize": 3,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      1000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Rolling mean failed connections over 3 steps."
+  },
+  "failed_connections_rate_of_change": {
+    "featureName": "failed_connections_rate_of_change",
+    "baseFeature": "failed_connections",
+    "calculationType": "RATE_OF_CHANGE",
+    "unit": "count/step",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      -500.0,
+      500.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Failed connection surge rate."
+  },
+  "dns_frequency_val": {
+    "featureName": "dns_frequency_val",
+    "baseFeature": "dns_frequency",
+    "calculationType": "RAW_VALUE",
+    "unit": "queries/s",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      1000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "DNS queries per second."
+  },
+  "dns_frequency_rolling_mean_w3": {
+    "featureName": "dns_frequency_rolling_mean_w3",
+    "baseFeature": "dns_frequency",
+    "calculationType": "ROLLING_MEAN",
+    "unit": "queries/s",
+    "windowSize": 3,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      1000.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Rolling mean DNS query frequency over 3 steps."
+  },
+  "destination_diversity_val": {
+    "featureName": "destination_diversity_val",
+    "baseFeature": "destination_diversity",
+    "calculationType": "RAW_VALUE",
+    "unit": "unique_ratio",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      1.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Ratio of unique destinations to total connections."
+  },
+  "destination_diversity_trend": {
+    "featureName": "destination_diversity_trend",
+    "baseFeature": "destination_diversity",
+    "calculationType": "TREND",
+    "unit": "categorical_code",
+    "windowSize": null,
+    "lagDepth": null,
+    "missingValuePolicy": "BACKFILL_INITIAL_VALUE",
+    "expectedRange": [
+      0.0,
+      3.0
+    ],
+    "featureVersion": "ts-feat-v1.0",
+    "description": "Trend in destination diversity (flags sweeps and lateral scans)."
+  }
+}
