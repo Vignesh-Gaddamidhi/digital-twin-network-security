@@ -1,6 +1,6 @@
 rank,modelName,accuracy,precision,recall,f1Score,rocAuc,falsePositives,falseNegatives,trainTimeMs,inferenceTimeMs,cyberScore
-1,Logistic Regression,1.0,1.0,1.0,1.0,1.0,0,0,9.469,23.191,1.0
-2,Decision Tree,1.0,1.0,1.0,1.0,1.0,0,0,3.28,20.222,1.0
-3,Random Forest,1.0,1.0,1.0,1.0,1.0,0,0,436.706,150.215,1.0
-4,Support Vector Machine,1.0,1.0,1.0,1.0,1.0,0,0,47.182,29.529,1.0
-5,XGBoost,1.0,1.0,1.0,1.0,1.0,0,0,276.84,31.179,1.0
+1,Logistic Regression,1.0,1.0,1.0,1.0,1.0,0,0,5.762,14.806,1.0
+2,Decision Tree,1.0,1.0,1.0,1.0,1.0,0,0,2.244,11.259,1.0
+3,Random Forest,1.0,1.0,1.0,1.0,1.0,0,0,246.074,94.824,1.0
+4,Support Vector Machine,1.0,1.0,1.0,1.0,1.0,0,0,24.309,19.053,1.0
+5,XGBoost,1.0,1.0,1.0,1.0,1.0,0,0,271.968,27.282,1.0

@@ -145,6 +145,8 @@ from services.digital_twin.ml.risk.risk_models import (
 from services.digital_twin.ml.risk.prediction_risk_engine import prediction_risk_engine
 from services.digital_twin.ml.prediction.end_to_end_prediction_pipeline import end_to_end_prediction_pipeline
 from services.digital_twin.ml.evaluation.master_validation_engine import master_validation_engine
+from services.digital_twin.ml.time_series.features.temporal_feature_engine import temporal_feature_engine
+from services.digital_twin.ml.time_series.features.time_series_models import TimeSeriesObservation
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -555,6 +557,45 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 113: TIME-SERIES FOUNDATIONS API ====================
+
+class TransformStreamRequest(BaseModel):
+    stream: List[Dict[str, Any]]
+    deviceId: str = "SERVER-01"
+    source: str = "CLIENT-01"
+    destination: str = "SERVER-01"
+    intervalSeconds: float = 5.0
+
+@app.post("/api/v1/twin/ml/time-series/features/transform")
+def api_transform_time_series_stream(req: TransformStreamRequest):
+    try:
+        engine = temporal_feature_engine.__class__(interval_seconds=req.intervalSeconds)
+        observations = engine.process_telemetry_stream(
+            raw_stream=req.stream,
+            device_id=req.deviceId,
+            source=req.source,
+            destination=req.destination
+        )
+        return {
+            "status": "STREAM_TRANSFORMED_SUCCESSFULLY",
+            "observationCount": len(observations),
+            "observations": [obs.model_dump() for obs in observations]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/features/history")
+def api_get_time_series_history():
+    return {
+        "count": len(temporal_feature_engine.history),
+        "history": [obs.model_dump() for obs in temporal_feature_engine.history]
+    }
+
+@app.post("/api/v1/twin/ml/time-series/features/clear")
+def api_clear_time_series_history():
+    temporal_feature_engine.clear()
+    return {"status": "TIME_SERIES_HISTORY_CLEARED"}
 
 # ==================== DAY 112: MASTER VALIDATION & BENCHMARK API ====================
 
