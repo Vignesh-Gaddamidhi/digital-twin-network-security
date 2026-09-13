@@ -159,6 +159,9 @@ from services.digital_twin.ml.time_series.models.gru.train_gru import run_gru_tr
 from services.digital_twin.ml.time_series.models.gru.gru_model import GRUAttackPredictor
 from services.digital_twin.ml.time_series.models.temporal.tcn_model import temporal_conv_predictor, TemporalConvPredictor
 from services.digital_twin.ml.time_series.early_warning.early_warning_engine import early_warning_engine, EarlyWarningState
+from services.digital_twin.ml.time_series.prediction.temporal_prediction_models import TemporalPrediction
+from services.digital_twin.ml.time_series.prediction.integrated_time_series_pipeline import integrated_time_series_pipeline
+from services.digital_twin.ml.time_series.evaluation.master_temporal_evaluator import master_temporal_evaluator
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -569,6 +572,53 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 119: COMPLETE TIME-SERIES EVALUATION & TWIN INTEGRATION API ====================
+
+class SequencePredictRequest(BaseModel):
+    sequenceMatrix: List[List[float]]
+    currentFeatures: Dict[str, float]
+    deviceId: str = "CLIENT-01"
+    targetDevice: str = "SERVER-01"
+    modelName: str = "lstm"
+    currentStage: str = "EARLY_INDICATORS"
+
+@app.post("/api/v1/twin/ml/time-series/pipeline/predict")
+def api_predict_integrated_sequence(req: SequencePredictRequest):
+    try:
+        pred = integrated_time_series_pipeline.predict_sequence(
+            sequence_matrix=req.sequenceMatrix,
+            current_features=req.currentFeatures,
+            device_id=req.deviceId,
+            target_device=req.targetDevice,
+            model_name=req.modelName,
+            current_stage=req.currentStage
+        )
+        return {
+            "status": "TEMPORAL_PREDICTION_GENERATED",
+            "prediction": pred.model_dump(),
+            "dashboardDisplay": pred.to_dashboard_display()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/pipeline/device-states")
+def api_get_temporal_device_states():
+    return {
+        "count": len(integrated_time_series_pipeline.device_states),
+        "states": integrated_time_series_pipeline.device_states
+    }
+
+@app.post("/api/v1/twin/ml/time-series/evaluation/master-benchmark")
+def api_run_temporal_master_benchmark():
+    try:
+        res = master_temporal_evaluator.run_master_benchmark()
+        return {
+            "status": "MASTER_TEMPORAL_BENCHMARK_COMPLETED",
+            "report": res
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== DAY 118: TEMPORAL CONVOLUTION & EARLY-WARNING API ====================
 

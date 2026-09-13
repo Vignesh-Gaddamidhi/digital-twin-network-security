@@ -535,5 +535,112 @@
       "vulnerabilityStatus": "NONE_KNOWN",
       "environmentalMultiplier": 1.4
     }
+  },
+  {
+    "riskId": "RISK-1F59C9FE",
+    "predictionId": "PRED-TS-c4c916",
+    "threatProbability": 0.3419,
+    "threatProbabilityFormatted": "34.2%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.95,
+    "categoryConfidenceFormatted": "95.0%",
+    "riskScore": 72.8,
+    "riskLevel": "HIGH",
+    "contributingFactors": [
+      "High category confidence (95.0%)",
+      "Heightened asset exposure (EXTERNAL_FACING)",
+      "High-impact asset criticality (HIGH)"
+    ],
+    "explanation": "Assigned HIGH risk (score: 72.8) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
+    "modelVersion": "1.0.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "timestamp": "2026-09-13T12:16:38.556771+00:00",
+    "contextSnapshot": {
+      "deviceCriticality": "HIGH",
+      "networkExposure": "EXTERNAL_FACING",
+      "vulnerabilityStatus": "NONE_KNOWN",
+      "environmentalMultiplier": 1.4
+    }
+  },
+  {
+    "riskId": "RISK-59780032",
+    "predictionId": "PRED-TS-076425",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "contributingFactors": [
+      "Elevated threat probability (87.0%)",
+      "High category confidence (91.0%)",
+      "Heightened asset exposure (EXTERNAL_FACING)",
+      "High-impact asset criticality (HIGH)"
+    ],
+    "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
+    "modelVersion": "1.0.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "timestamp": "2026-09-13T12:17:33.332644+00:00",
+    "contextSnapshot": {
+      "deviceCriticality": "HIGH",
+      "networkExposure": "EXTERNAL_FACING",
+      "vulnerabilityStatus": "NONE_KNOWN",
+      "environmentalMultiplier": 1.4
+    }
+  },
+  {
+    "riskId": "RISK-EDF22C5D",
+    "predictionId": "PRED-TS-6f2d2b",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "contributingFactors": [
+      "Elevated threat probability (87.0%)",
+      "High category confidence (91.0%)",
+      "Heightened asset exposure (EXTERNAL_FACING)",
+      "High-impact asset criticality (HIGH)"
+    ],
+    "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
+    "modelVersion": "1.0.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "timestamp": "2026-09-13T12:18:59.966787+00:00",
+    "contextSnapshot": {
+      "deviceCriticality": "HIGH",
+      "networkExposure": "EXTERNAL_FACING",
+      "vulnerabilityStatus": "NONE_KNOWN",
+      "environmentalMultiplier": 1.4
+    }
+  },
+  {
+    "riskId": "RISK-AF9954BB",
+    "predictionId": "PRED-TS-096ad8",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "contributingFactors": [
+      "Elevated threat probability (87.0%)",
+      "High category confidence (91.0%)",
+      "Heightened asset exposure (EXTERNAL_FACING)",
+      "High-impact asset criticality (HIGH)"
+    ],
+    "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
+    "modelVersion": "1.0.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "timestamp": "2026-09-13T12:19:17.481637+00:00",
+    "contextSnapshot": {
+      "deviceCriticality": "HIGH",
+      "networkExposure": "EXTERNAL_FACING",
+      "vulnerabilityStatus": "NONE_KNOWN",
+      "environmentalMultiplier": 1.4
+    }
   }
 ]
