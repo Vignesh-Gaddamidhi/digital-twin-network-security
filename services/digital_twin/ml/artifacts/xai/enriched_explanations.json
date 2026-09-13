@@ -162,5 +162,1929 @@
     ],
     "confidence": "HIGH",
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-BCAB8CC2",
+    "predictionId": "PRED-9C810262",
+    "timestamp": "2026-09-13T12:36:48.045321+00:00",
+    "threatProbability": 0.28,
+    "threatProbabilityFormatted": "28.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.72,
+    "categoryConfidenceFormatted": "72.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with learned benign baselines.",
+    "detailedExplanation": "Conversely, port 80 ratio was normal and packet rate remained within calm baseline bounds acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\nTop mitigating features:\n  - port_80_ratio             : -0.1125 (Value: 1.0)\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)",
+    "topPositiveContributors": [],
+    "topNegativeContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 1.0,
+        "shapValue": -0.1125,
+        "shapValueFormatted": "-0.1125",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.1125,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio remained within expected tolerances (observed: 1.00, mitigation: -0.1125)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-0F735E5E",
+    "predictionId": "PRED-0FD78566",
+    "timestamp": "2026-09-13T12:38:49.573881+00:00",
+    "threatProbability": 0.28,
+    "threatProbabilityFormatted": "28.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.72,
+    "categoryConfidenceFormatted": "72.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "Conversely, port 80 ratio was normal and packet rate remained within calm baseline bounds acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\nTop mitigating features:\n  - port_80_ratio             : -0.1125 (Value: 1.0)\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)",
+    "topPositiveContributors": [],
+    "topNegativeContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 1.0,
+        "shapValue": -0.1125,
+        "shapValueFormatted": "-0.1125",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.1125,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio remained within expected tolerances (observed: 1.00, mitigation: -0.1125)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-86FEA823",
+    "predictionId": "PRED-D753E738",
+    "timestamp": "2026-09-13T12:38:49.776089+00:00",
+    "threatProbability": 0.44,
+    "threatProbabilityFormatted": "44.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.56,
+    "categoryConfidenceFormatted": "56.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (44.0%) primarily because port 80 ratio was elevated. Additionally, port 443 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - port_443_ratio            : +0.0650 (Value: 1.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.6)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 1.0,
+        "shapValue": 0.065,
+        "shapValueFormatted": "+0.0650",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.065,
+        "rank": 5
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.6,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "port 443 ratio showed elevated activity (observed: 1.00, contribution: +0.0650)",
+      "packet rate remained within calm baseline bounds (observed: -0.60, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-8D74CE5F",
+    "predictionId": "PRED-0229F271",
+    "timestamp": "2026-09-13T12:38:49.970583+00:00",
+    "threatProbability": 0.67,
+    "threatProbabilityFormatted": "67.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.33,
+    "categoryConfidenceFormatted": "33.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (67.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-A0407747",
+    "predictionId": "PRED-06FCDA48",
+    "timestamp": "2026-09-13T12:38:50.146667+00:00",
+    "threatProbability": 0.36,
+    "threatProbabilityFormatted": "36.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.64,
+    "categoryConfidenceFormatted": "64.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (36.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-41F5024D",
+    "predictionId": "PRED-0EF3291A",
+    "timestamp": "2026-09-13T12:38:50.315464+00:00",
+    "threatProbability": 0.1,
+    "threatProbabilityFormatted": "10.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.9,
+    "categoryConfidenceFormatted": "90.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (10.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: -0.8)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": -0.8,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: -0.80, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-DF0E279C",
+    "predictionId": "PRED-41FAC906",
+    "timestamp": "2026-09-13T12:38:50.580241+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.73,
+    "categoryConfidenceFormatted": "73.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio and connection frequency.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because port 80 ratio was elevated. Additionally, connection frequency increased significantly relative to the learned baseline provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - connection_frequency      : +0.0900 (Value: 2.8)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-3220D1AC",
+    "predictionId": "PRED-55B3BE15",
+    "timestamp": "2026-09-13T12:38:50.761014+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.79,
+    "categoryConfidenceFormatted": "79.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio, packet rate and bytes per second.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because port 80 ratio was elevated. Additionally, packet transmission rate surged beyond normal baseline parameters, while bandwidth consumption rate escalated sharply, while transmitted byte volume showed an unexpected upward surge provided reinforcing positive evidence. Conversely, connection frequency was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 4.0)\n  - bytes_per_second          : +0.0810 (Value: 3.5)\n  - bytes                     : +0.0555 (Value: 3.8)\nTop mitigating features:\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 4.0,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 3.5,
+        "shapValue": 0.081,
+        "shapValueFormatted": "+0.0810",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.081,
+        "rank": 4
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 3.8,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 4.00, contribution: +0.0935)",
+      "bandwidth consumption rate escalated sharply (observed: 3.50, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 3.80, contribution: +0.0555)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-B912A675",
+    "predictionId": "PRED-78EB1584",
+    "timestamp": "2026-09-13T12:38:51.015053+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DNS_ANOMALY",
+    "categoryConfidence": 0.99,
+    "categoryConfidenceFormatted": "99.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-E1A8D1D8",
+    "predictionId": "PRED-340F88F3",
+    "timestamp": "2026-09-13T12:41:34.857570+00:00",
+    "threatProbability": 0.28,
+    "threatProbabilityFormatted": "28.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.72,
+    "categoryConfidenceFormatted": "72.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "Conversely, port 80 ratio was normal and packet rate remained within calm baseline bounds acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\nTop mitigating features:\n  - port_80_ratio             : -0.1125 (Value: 1.0)\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)",
+    "topPositiveContributors": [],
+    "topNegativeContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 1.0,
+        "shapValue": -0.1125,
+        "shapValueFormatted": "-0.1125",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.1125,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio remained within expected tolerances (observed: 1.00, mitigation: -0.1125)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-B18D4D62",
+    "predictionId": "PRED-5277CA47",
+    "timestamp": "2026-09-13T12:41:35.023302+00:00",
+    "threatProbability": 0.44,
+    "threatProbabilityFormatted": "44.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.56,
+    "categoryConfidenceFormatted": "56.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (44.0%) primarily because port 80 ratio was elevated. Additionally, port 443 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - port_443_ratio            : +0.0650 (Value: 1.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.6)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 1.0,
+        "shapValue": 0.065,
+        "shapValueFormatted": "+0.0650",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.065,
+        "rank": 5
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.6,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "port 443 ratio showed elevated activity (observed: 1.00, contribution: +0.0650)",
+      "packet rate remained within calm baseline bounds (observed: -0.60, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-BC0E79B1",
+    "predictionId": "PRED-5021389E",
+    "timestamp": "2026-09-13T12:41:35.228859+00:00",
+    "threatProbability": 0.67,
+    "threatProbabilityFormatted": "67.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.33,
+    "categoryConfidenceFormatted": "33.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (67.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-ED6D477F",
+    "predictionId": "PRED-9A01BFE4",
+    "timestamp": "2026-09-13T12:41:35.382648+00:00",
+    "threatProbability": 0.36,
+    "threatProbabilityFormatted": "36.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.64,
+    "categoryConfidenceFormatted": "64.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (36.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-DC3194E6",
+    "predictionId": "PRED-96855937",
+    "timestamp": "2026-09-13T12:41:35.552351+00:00",
+    "threatProbability": 0.1,
+    "threatProbabilityFormatted": "10.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.9,
+    "categoryConfidenceFormatted": "90.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (10.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: -0.8)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": -0.8,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: -0.80, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-96A7DF2D",
+    "predictionId": "PRED-99927681",
+    "timestamp": "2026-09-13T12:41:35.758963+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.73,
+    "categoryConfidenceFormatted": "73.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency and port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - connection_frequency      : +0.0900 (Value: 2.8)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-B9D7D4E1",
+    "predictionId": "PRED-34EFBB32",
+    "timestamp": "2026-09-13T12:41:35.920181+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.79,
+    "categoryConfidenceFormatted": "79.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal packet rate, bytes per second and bytes.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because packet transmission rate surged beyond normal baseline parameters. Additionally, bandwidth consumption rate escalated sharply, while transmitted byte volume showed an unexpected upward surge, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, connection frequency was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 4.0)\n  - bytes_per_second          : +0.0810 (Value: 3.5)\n  - bytes                     : +0.0555 (Value: 3.8)\nTop mitigating features:\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 4.0,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 3.5,
+        "shapValue": 0.081,
+        "shapValueFormatted": "+0.0810",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.081,
+        "rank": 4
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 3.8,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 4.00, contribution: +0.0935)",
+      "bandwidth consumption rate escalated sharply (observed: 3.50, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 3.80, contribution: +0.0555)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-BB630BA7",
+    "predictionId": "PRED-CAFAFA8F",
+    "timestamp": "2026-09-13T12:41:36.139821+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DNS_ANOMALY",
+    "categoryConfidence": 0.99,
+    "categoryConfidenceFormatted": "99.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-DEE7B7D9",
+    "predictionId": "PRED-E9166519",
+    "timestamp": "2026-09-13T12:42:59.149796+00:00",
+    "threatProbability": 0.28,
+    "threatProbabilityFormatted": "28.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.72,
+    "categoryConfidenceFormatted": "72.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "Conversely, port 80 ratio was normal and packet rate remained within calm baseline bounds acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\nTop mitigating features:\n  - port_80_ratio             : -0.1125 (Value: 1.0)\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)",
+    "topPositiveContributors": [],
+    "topNegativeContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 1.0,
+        "shapValue": -0.1125,
+        "shapValueFormatted": "-0.1125",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.1125,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio remained within expected tolerances (observed: 1.00, mitigation: -0.1125)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-3811A52A",
+    "predictionId": "PRED-6152DD77",
+    "timestamp": "2026-09-13T12:42:59.371818+00:00",
+    "threatProbability": 0.44,
+    "threatProbabilityFormatted": "44.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.56,
+    "categoryConfidenceFormatted": "56.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (44.0%) primarily because port 80 ratio was elevated. Additionally, port 443 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - port_443_ratio            : +0.0650 (Value: 1.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.6)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 1.0,
+        "shapValue": 0.065,
+        "shapValueFormatted": "+0.0650",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.065,
+        "rank": 5
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.6,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "port 443 ratio showed elevated activity (observed: 1.00, contribution: +0.0650)",
+      "packet rate remained within calm baseline bounds (observed: -0.60, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-7A749971",
+    "predictionId": "PRED-CAB1A8C8",
+    "timestamp": "2026-09-13T12:42:59.551836+00:00",
+    "threatProbability": 0.67,
+    "threatProbabilityFormatted": "67.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.33,
+    "categoryConfidenceFormatted": "33.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability increased mainly due to abnormal port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (67.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-1E08DF67",
+    "predictionId": "PRED-598572A9",
+    "timestamp": "2026-09-13T12:42:59.772787+00:00",
+    "threatProbability": 0.36,
+    "threatProbabilityFormatted": "36.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.64,
+    "categoryConfidenceFormatted": "64.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (36.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.8)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.8,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.80, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-BE0E2E67",
+    "predictionId": "PRED-881C5CDB",
+    "timestamp": "2026-09-13T12:42:59.963475+00:00",
+    "threatProbability": 0.1,
+    "threatProbabilityFormatted": "10.0%",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.9,
+    "categoryConfidenceFormatted": "90.0%",
+    "riskLevel": "LOW",
+    "summary": "Threat probability remains low; network telemetry aligns with normal learned benign baselines.",
+    "detailedExplanation": "The model predicted elevated threat probability (10.0%) primarily because port 80 ratio was elevated. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: -0.9)\n  - connection_frequency      : -0.0900 (Value: -0.8)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": -0.9,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": -0.8,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: -0.90, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: -0.80, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-92525BE1",
+    "predictionId": "PRED-F1574204",
+    "timestamp": "2026-09-13T12:43:00.215522+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.73,
+    "categoryConfidenceFormatted": "73.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency, unique destination ports and failed connections.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased, while destination diversity increased, indicating communication with a broader set of endpoints than expected provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - connection_frequency      : +0.0900 (Value: 2.8)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-BB8590A7",
+    "predictionId": "PRED-97FFC6DE",
+    "timestamp": "2026-09-13T12:43:00.481011+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.79,
+    "categoryConfidenceFormatted": "79.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal packet rate, bytes per second and bytes.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because packet transmission rate surged beyond normal baseline parameters. Additionally, bandwidth consumption rate escalated sharply, while transmitted byte volume showed an unexpected upward surge, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, connection frequency was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 4.0)\n  - bytes_per_second          : +0.0810 (Value: 3.5)\n  - bytes                     : +0.0555 (Value: 3.8)\nTop mitigating features:\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 4.0,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 3.5,
+        "shapValue": 0.081,
+        "shapValueFormatted": "+0.0810",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.081,
+        "rank": 4
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 3.8,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 4.00, contribution: +0.0935)",
+      "bandwidth consumption rate escalated sharply (observed: 3.50, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 3.80, contribution: +0.0555)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-A8B0CF8A",
+    "predictionId": "PRED-D8AAED4C",
+    "timestamp": "2026-09-13T12:43:00.725764+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DNS_ANOMALY",
+    "categoryConfidence": 0.99,
+    "categoryConfidenceFormatted": "99.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal port 53 ratio, dns queries and dns frequency.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because port 53 ratio was elevated. Additionally, dns queries also increased, while DNS query activity deviated from the expected baseline pattern, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-7C95F461",
+    "predictionId": "PRED-18222262",
+    "timestamp": "2026-09-13T12:43:00.934577+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "BEACONING",
+    "categoryConfidence": 0.94,
+    "categoryConfidenceFormatted": "94.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency, flow duration and tcp ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, session duration deviated from typical flow lengths, while tcp ratio also increased, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - connection_frequency      : +0.0900 (Value: 2.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.0,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.00, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-C6C7C52B",
+    "predictionId": "PRED-4455A5D4",
+    "timestamp": "2026-09-13T12:43:01.160405+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "LATERAL_MOVEMENT_LIKE",
+    "categoryConfidence": 1.0,
+    "categoryConfidenceFormatted": "100.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal destination diversity, unique destination ratio and port 80 ratio.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because destination diversity increased, indicating communication with a broader set of endpoints than expected. Additionally, unique destination ratio also increased, while port 80 ratio also increased, while port 443 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - port_443_ratio            : +0.0650 (Value: 1.5)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 1.5,
+        "shapValue": 0.065,
+        "shapValueFormatted": "+0.0650",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.065,
+        "rank": 5
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "port 443 ratio showed elevated activity (observed: 1.50, contribution: +0.0650)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-A38B769B",
+    "predictionId": "PRED-F138D25F",
+    "timestamp": "2026-09-13T12:43:01.366756+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "EXFILTRATION_LIKE",
+    "categoryConfidence": 0.92,
+    "categoryConfidenceFormatted": "92.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal bytes per second, bytes and flow duration.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because bandwidth consumption rate escalated sharply. Additionally, transmitted byte volume showed an unexpected upward surge, while session duration deviated from typical flow lengths, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - bytes_per_second          : +0.0810 (Value: 4.0)\n  - bytes                     : +0.0555 (Value: 4.0)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - connection_frequency      : -0.0900 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 4.0,
+        "shapValue": 0.081,
+        "shapValueFormatted": "+0.0810",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.081,
+        "rank": 4
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 4.0,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 0.0,
+        "shapValue": -0.09,
+        "shapValueFormatted": "-0.0900",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "bandwidth consumption rate escalated sharply (observed: 4.00, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 4.00, contribution: +0.0555)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-2A851D8C",
+    "predictionId": "PRED-2520C795",
+    "timestamp": "2026-09-13T12:43:31.593379+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.73,
+    "categoryConfidenceFormatted": "73.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency, unique destination ports and failed connections.",
+    "detailedExplanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased, while destination diversity increased, indicating communication with a broader set of endpoints than expected provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - connection_frequency      : +0.0900 (Value: 2.8)\nTop mitigating features:\n  - packet_rate               : -0.0965 (Value: 0.0)\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.0,
+        "shapValue": -0.0965,
+        "shapValueFormatted": "-0.0965",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0965,
+        "rank": 2
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "MEDIUM",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   }
 ]

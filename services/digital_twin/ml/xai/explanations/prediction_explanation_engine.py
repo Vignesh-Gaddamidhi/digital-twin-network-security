@@ -70,25 +70,41 @@ class PredictionExplanationEngine:
         neg_items.sort(key=lambda x: abs(x.shapValue), reverse=True)
 
         # 1. Generate Short Explanation (Executive Summary)
-        top_pos_names = [it.featureName.replace("_", " ") for it in pos_items[:3]]
+        # Prioritize category-relevant features in top narrative
+        category_relevance = {
+            "DNS_ANOMALY": ["dns_frequency", "dns_queries", "port_53_ratio"],
+            "PORT_SCAN": ["connection_frequency", "destination_diversity", "unique_destination_ports", "failed_connections"],
+            "DOS_LIKE": ["packet_rate", "bytes_per_second", "bytes"],
+            "BEACONING": ["connection_frequency", "flow_duration", "tcp_ratio"],
+            "LATERAL_MOVEMENT_LIKE": ["destination_diversity", "unique_destination_ratio"],
+            "EXFILTRATION_LIKE": ["bytes", "bytes_per_second", "flow_duration"]
+        }
+        
+        target_keys = category_relevance.get(predicted_category, [])
+        # Include category items that either have positive SHAP or elevated positive telemetry
+        cat_items = [it for it in shap_items if it.featureName in target_keys and (it.direction == ContributionDirection.POSITIVE or it.featureValue >= 1.0)]
+        other_pos = [it for it in pos_items if it.featureName not in target_keys]
+        ordered_pos = cat_items + other_pos
+
+        top_pos_names = [it.featureName.replace("_", " ") for it in ordered_pos[:3]]
         if threat_probability >= 0.50:
             if top_pos_names:
                 summary = f"Threat probability increased mainly due to abnormal {', '.join(top_pos_names[:-1]) + ' and ' + top_pos_names[-1] if len(top_pos_names) > 1 else top_pos_names[0]}."
             else:
-                summary = "Threat probability elevated based on cumulative marginal deviations across telemetry."
+                summary = f"Threat probability elevated based on cumulative marginal deviations consistent with {predicted_category}."
         else:
-            summary = "Threat probability remains low; network telemetry aligns with learned benign baselines."
+            summary = "Threat probability remains low; network telemetry aligns with normal learned benign baselines."
 
         # 2. Generate Detailed Explanation (Analyst Narrative)
         supporting_evidence = []
         detailed_paragraphs = []
 
-        if pos_items:
-            primary_evidence = self.FEATURE_TEMPLATES_POSITIVE.get(pos_items[0].featureName, pos_items[0].featureName.replace("_", " ") + " was elevated")
+        if ordered_pos:
+            primary_evidence = self.FEATURE_TEMPLATES_POSITIVE.get(ordered_pos[0].featureName, ordered_pos[0].featureName.replace("_", " ") + " was elevated")
             detailed_p1 = f"The model predicted elevated threat probability ({round(threat_probability * 100, 1)}%) primarily because {primary_evidence}."
 
             secondary_clauses = []
-            for it in pos_items[1:4]:
+            for it in ordered_pos[1:4]:
                 clause = self.FEATURE_TEMPLATES_POSITIVE.get(it.featureName, it.featureName.replace("_", " ") + " also increased")
                 secondary_clauses.append(clause)
 

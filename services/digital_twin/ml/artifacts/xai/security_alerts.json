@@ -1,0 +1,47 @@
+[
+  {
+    "alertId": "ALT-XAI-9122D44D",
+    "timestamp": "2026-09-13T12:43:31.640895+00:00",
+    "source": "192.168.10.15",
+    "destination": "CORE-DC-01",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.73,
+    "categoryConfidenceFormatted": "73.0%",
+    "riskScore": 92.8,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-2A851D8C",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.8,
+        "shapValue": 0.09,
+        "contributionFormatted": "+0.0900"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased, while destination diversity increased, indicating communication with a broader set of endpoints than expected provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  }
+]

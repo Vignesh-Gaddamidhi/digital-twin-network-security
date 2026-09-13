@@ -66,7 +66,16 @@ class IntegratedTimeSeriesPipeline:
         if future_threat_override is not None:
             p_fut = float(future_threat_override)
         else:
-            X_seq = np.array([sequence_matrix], dtype=np.float32)
+            X_arr = np.array(sequence_matrix, dtype=np.float32)
+            # Ensure feature dimension matches model input_dim (16)
+            expected_dim = getattr(model, "input_dim", 16) if model is not None else 16
+            if X_arr.shape[-1] > expected_dim:
+                X_arr = X_arr[:, :expected_dim]
+            elif X_arr.shape[-1] < expected_dim:
+                pad_width = ((0, 0), (0, expected_dim - X_arr.shape[-1]))
+                X_arr = np.pad(X_arr, pad_width, mode="constant")
+            X_seq = np.expand_dims(X_arr, axis=0)
+
             if model is not None:
                 p_fut = float(model.predict_proba(X_seq)[0])
                 # If sequence exhibits clear upward escalation but falls near boundary, enforce lower bound

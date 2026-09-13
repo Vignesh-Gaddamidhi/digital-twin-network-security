@@ -174,6 +174,8 @@ from services.digital_twin.ml.xai.feature_importance.importance_models import (
 from services.digital_twin.ml.xai.feature_importance.global_importance_engine import global_feature_importance_engine
 from services.digital_twin.ml.xai.explanations.enriched_explanation_models import EnrichedPredictionExplanation
 from services.digital_twin.ml.xai.explanations.prediction_explanation_engine import prediction_explanation_engine
+from services.digital_twin.ml.xai.evidence.alert_models import EnrichedSecurityAlert
+from services.digital_twin.ml.xai.evidence.unified_pipeline import unified_explainable_pipeline
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -584,6 +586,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 124: UNIFIED XAI & SECURITY ALERTING API ====================
+
+class ProcessUnifiedTelemetryRequest(BaseModel):
+    features: Dict[str, float]
+    source: str = "CLIENT-01"
+    destination: str = "SERVER-01"
+    deviceId: str = "SERVER-01"
+    deviceCriticality: DeviceCriticalityEnum = DeviceCriticalityEnum.HIGH
+    networkExposure: NetworkExposureEnum = NetworkExposureEnum.EXTERNAL_FACING
+    vulnerabilityStatus: VulnerabilityStatusEnum = VulnerabilityStatusEnum.NONE_KNOWN
+    currentStage: str = "EARLY_INDICATORS"
+
+@app.post("/api/v1/twin/ml/xai/unified/process")
+def api_process_unified_telemetry(req: ProcessUnifiedTelemetryRequest):
+    try:
+        res = unified_explainable_pipeline.process_telemetry(
+            features=req.features,
+            source=req.source,
+            destination=req.destination,
+            device_id=req.deviceId,
+            device_criticality=req.deviceCriticality,
+            network_exposure=req.networkExposure,
+            vulnerability_status=req.vulnerabilityStatus,
+            current_stage=req.currentStage
+        )
+        return {
+            "status": "UNIFIED_PROCESSING_COMPLETED",
+            "result": res
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/xai/unified/alerts")
+def api_get_unified_alerts():
+    return {
+        "count": len(unified_explainable_pipeline.alert_history),
+        "alerts": [a.model_dump() for a in unified_explainable_pipeline.alert_history]
+    }
+
+@app.get("/api/v1/twin/ml/xai/unified/device-state/{deviceId}")
+def api_get_unified_device_state(deviceId: str):
+    if deviceId not in unified_explainable_pipeline.device_states:
+        raise HTTPException(status_code=404, detail=f"Device {deviceId} not found in state store.")
+    return unified_explainable_pipeline.device_states[deviceId]
 
 # ==================== DAY 123: PREDICTION EXPLANATION ENGINE API ====================
 
