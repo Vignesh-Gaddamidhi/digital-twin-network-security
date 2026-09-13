@@ -143,6 +143,7 @@ from services.digital_twin.ml.risk.risk_models import (
     OperationalRiskLevel, PredictionRiskAssessment
 )
 from services.digital_twin.ml.risk.prediction_risk_engine import prediction_risk_engine
+from services.digital_twin.ml.prediction.end_to_end_prediction_pipeline import end_to_end_prediction_pipeline
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -553,6 +554,57 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 111: END-TO-END PREDICTION PIPELINE API ====================
+
+class ExecutePipelineRequest(BaseModel):
+    features: Dict[str, float]
+    source: str = "CLIENT-01"
+    destination: str = "SERVER-01"
+    deviceId: str = "SERVER-01"
+    deviceCriticality: DeviceCriticalityEnum = DeviceCriticalityEnum.HIGH
+    networkExposure: NetworkExposureEnum = NetworkExposureEnum.EXTERNAL_FACING
+    vulnerabilityStatus: VulnerabilityStatusEnum = VulnerabilityStatusEnum.NONE_KNOWN
+    modelName: str = "XGBoost"
+
+@app.post("/api/v1/twin/ml/prediction/pipeline/execute")
+def api_execute_prediction_pipeline(req: ExecutePipelineRequest):
+    try:
+        res = end_to_end_prediction_pipeline.execute_pipeline(
+            features=req.features,
+            source=req.source,
+            destination=req.destination,
+            device_id=req.deviceId,
+            device_criticality=req.deviceCriticality,
+            network_exposure=req.networkExposure,
+            vulnerability_status=req.vulnerabilityStatus,
+            model_name=req.modelName
+        )
+        return {
+            "status": "PIPELINE_EXECUTION_COMPLETED",
+            "result": res
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/prediction/pipeline/devices")
+def api_get_twin_device_security_states():
+    return {
+        "count": len(end_to_end_prediction_pipeline.device_registry),
+        "devices": {k: v.to_dict() for k, v in end_to_end_prediction_pipeline.device_registry.items()}
+    }
+
+@app.get("/api/v1/twin/ml/prediction/pipeline/alerts")
+def api_get_prediction_alerts():
+    return {
+        "count": len(end_to_end_prediction_pipeline.alert_log),
+        "alerts": end_to_end_prediction_pipeline.alert_log
+    }
+
+@app.post("/api/v1/twin/ml/prediction/pipeline/clear")
+def api_clear_prediction_pipeline():
+    end_to_end_prediction_pipeline.clear()
+    return {"status": "PREDICTION_PIPELINE_CLEARED"}
 
 # ==================== DAY 110: CONTEXTUAL RISK PREDICTION API ====================
 

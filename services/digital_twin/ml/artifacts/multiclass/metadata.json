@@ -1,5 +1,5 @@
 {
-  "modelName": "multiclass_xgboost",
+  "modelName": "multiclass_random_forest",
   "trainingSamples": 80,
   "testSamples": 32,
   "featureCount": 20,
@@ -23,6 +23,6 @@
     "LATERAL_MOVEMENT_LIKE": 10,
     "EXFILTRATION_LIKE": 10
   },
-  "testAccuracy": 0.9062,
-  "artifactPath": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\multiclass\\multiclass_xgboost.joblib"
+  "testAccuracy": 1.0,
+  "artifactPath": "C:\\Users\\dell\\digital-twin-network-security\\services\\digital_twin\\ml\\artifacts\\multiclass\\multiclass_random_forest.joblib"
 }
