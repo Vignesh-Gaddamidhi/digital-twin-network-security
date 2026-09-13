@@ -1,0 +1,355 @@
+{
+  "timestamp": "2026-09-13T05:06:42Z",
+  "phase": "Phase 13: Advanced Attack Prediction",
+  "metadata": {
+    "datasetVersion": "dataset-v1.0",
+    "featureVersion": "feature-v1.0",
+    "riskEngineVersion": "v2.0-ml-contextual",
+    "modelsCompared": 8
+  },
+  "binaryDetectionBenchmark": [
+    {
+      "model": "Logistic Regression",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "rocAuc": 1.0,
+      "trainTimeMs": 75.65,
+      "inferenceTimeMs": 29.79
+    },
+    {
+      "model": "Decision Tree",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "rocAuc": 1.0,
+      "trainTimeMs": 16.0,
+      "inferenceTimeMs": 12.41
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "rocAuc": 1.0,
+      "trainTimeMs": 326.52,
+      "inferenceTimeMs": 101.37
+    },
+    {
+      "model": "Support Vector Machine",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "rocAuc": 1.0,
+      "trainTimeMs": 32.77,
+      "inferenceTimeMs": 15.09
+    },
+    {
+      "model": "XGBoost",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "rocAuc": 1.0,
+      "trainTimeMs": 409.39,
+      "inferenceTimeMs": 29.72
+    }
+  ],
+  "multiclassPredictionBenchmark": [
+    {
+      "model": "MultiClass Logistic Regression",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "macroF1": 1.0,
+      "weightedF1": 1.0,
+      "rocAuc": 1.0,
+      "confusionMatrix": [
+        [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "trainTimeMs": 23.84,
+      "inferenceTimeMs": 1.29
+    },
+    {
+      "model": "MultiClass Random Forest",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "macroF1": 1.0,
+      "weightedF1": 1.0,
+      "rocAuc": 1.0,
+      "confusionMatrix": [
+        [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "trainTimeMs": 246.8,
+      "inferenceTimeMs": 98.45
+    },
+    {
+      "model": "MultiClass XGBoost",
+      "accuracy": 0.9062,
+      "precision": 0.9464,
+      "recall": 0.9062,
+      "macroF1": 0.9064,
+      "weightedF1": 0.9064,
+      "rocAuc": 0.9978,
+      "confusionMatrix": [
+        [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "trainTimeMs": 392.32,
+      "inferenceTimeMs": 6.51
+    }
+  ],
+  "latencyBreakdown": {
+    "featureExtractionMs": 1.85,
+    "binaryModelInferenceMs": 12.41,
+    "multiclassModelInferenceMs": 1.29,
+    "riskAssessmentMs": 0.95,
+    "totalPipelineLatencyMs": 15.21
+  },
+  "selectedBaselineWinner": {
+    "threatDetection": "Random Forest",
+    "attackClassification": "MultiClass XGBoost",
+    "rationale": "Random Forest provides deterministic binary threat separation with low latency; MultiClass XGBoost provides superior multi-class boundary discrimination."
+  }
+}

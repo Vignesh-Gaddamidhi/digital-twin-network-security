@@ -144,6 +144,7 @@ from services.digital_twin.ml.risk.risk_models import (
 )
 from services.digital_twin.ml.risk.prediction_risk_engine import prediction_risk_engine
 from services.digital_twin.ml.prediction.end_to_end_prediction_pipeline import end_to_end_prediction_pipeline
+from services.digital_twin.ml.evaluation.master_validation_engine import master_validation_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -554,6 +555,28 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 112: MASTER VALIDATION & BENCHMARK API ====================
+
+@app.post("/api/v1/twin/ml/prediction/benchmark")
+def api_run_prediction_benchmark():
+    try:
+        report = master_validation_engine.benchmark_all_models()
+        return {
+            "status": "PHASE13_BENCHMARK_COMPLETED",
+            "report": report
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/prediction/benchmark/report")
+def api_get_benchmark_report():
+    from pathlib import Path
+    bench_file = Path("services/digital_twin/ml/artifacts/experiments/phase13_master_benchmark.json")
+    if not bench_file.exists():
+        raise HTTPException(status_code=404, detail="Benchmark report has not been generated yet.")
+    with open(bench_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 # ==================== DAY 111: END-TO-END PREDICTION PIPELINE API ====================
 

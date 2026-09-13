@@ -1,3 +1,4 @@
+import time
 import json
 import uuid
 from pathlib import Path
@@ -21,6 +22,7 @@ from services.digital_twin.ml.risk.risk_models import (
     OperationalRiskLevel, PredictionRiskAssessment
 )
 from services.digital_twin.ml.training.dataset_loader import FEATURE_NAMES
+from services.digital_twin.ml.prediction.defensive_prediction_guard import sanitize_and_measure_input, DefensiveValidationError
 
 class TwinDeviceSecurityState:
     """Represents the live operational security state of a device in the Digital Twin."""
@@ -98,7 +100,7 @@ class EndToEndAttackPredictionPipeline:
 
     def execute_pipeline(
         self,
-        features: Dict[str, float],
+        features: Any,
         source: str,
         destination: str,
         device_id: str = "SERVER-01",
@@ -108,72 +110,131 @@ class EndToEndAttackPredictionPipeline:
         model_name: str = "xgboost"
     ) -> Dict[str, Any]:
         prediction_id = f"pred-{uuid.uuid4().hex[:6]}"
+        t_start = time.perf_counter()
 
-        # 1. Feature Vector Construction
-        feat_vector = np.array([float(features.get(fn, 0.0)) for fn in FEATURE_NAMES], dtype=np.float32)
-
-        # 2. Multi-Class Classification & Confidence Evaluation
-        cat_out = attack_category_engine.classify_behavior(feat_vector, model_name=model_name)
-        conf_audit = prediction_confidence_engine.evaluate_confidence(cat_out.classDistribution)
-
-        # 3. Threat Probability Estimation
-        # If normal class dominates, threat prob is residual; else threat prob is sum of anomaly mass
-        normal_prob = cat_out.classDistribution.get("NORMAL", 0.0)
-        threat_prob = round(float(1.0 - normal_prob), 4)
-
-        # 4. Contextual Risk Assessment
-        risk_assessment = prediction_risk_engine.assess_risk(
-            prediction_id=prediction_id,
-            threat_probability=threat_prob,
-            predicted_category=cat_out.predictedCategory.value,
-            category_confidence=cat_out.categoryConfidence,
-            device_criticality=device_criticality,
-            network_exposure=network_exposure,
-            vulnerability_status=vulnerability_status
-        )
-
-        # 5. Update Digital Twin Device Security State
-        device = self.get_or_create_device(device_id)
-        device.update_state(risk_assessment, conf_audit.confidenceTier.value)
-
-        # 6. Generate Alert if High/Critical Risk
-        alert = None
-        if risk_assessment.riskLevel in (OperationalRiskLevel.HIGH, OperationalRiskLevel.CRITICAL):
-            alert = {
-                "alertId": f"ALT-ML-{uuid.uuid4().hex[:8].upper()}",
-                "alertType": "ML_ATTACK_PREDICTION",
+        # Defensive Guard Step: Sanitize input and measure feature extraction latency
+        try:
+            clean_features, feat_latency_ms = sanitize_and_measure_input(features)
+        except DefensiveValidationError as e:
+            device = self.get_or_create_device(device_id)
+            return {
+                "predictionId": prediction_id,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
-                "severity": risk_assessment.riskLevel.value,
-                "deviceId": device_id,
+                "source": source,
+                "destination": destination,
+                "threatProbability": "0.0%",
+                "threatClass": "ERROR",
+                "predictedCategory": "UNKNOWN",
+                "categoryConfidence": "0.0%",
+                "riskScore": 0.0,
+                "riskLevel": "LOW",
+                "model": model_name,
+                "modelVersion": "xgb-v1.0",
+                "featureVersion": "feature-v1.0",
+                "predictionStatus": "ERROR",
+                "errorDetails": str(e),
+                "digitalTwinState": device.to_dict(),
+                "alert": None
+            }
+
+        try:
+            # 1. Feature Vector Construction
+            feat_vector = np.array([float(clean_features.get(fn, 0.0)) for fn in FEATURE_NAMES], dtype=np.float32)
+
+            # 2. Multi-Class Classification & Confidence Evaluation
+            t_ml = time.perf_counter()
+            cat_out = attack_category_engine.classify_behavior(feat_vector, model_name=model_name)
+            conf_audit = prediction_confidence_engine.evaluate_confidence(cat_out.classDistribution)
+            ml_latency_ms = round((time.perf_counter() - t_ml) * 1000, 3)
+
+            # 3. Threat Probability Estimation
+            normal_prob = cat_out.classDistribution.get("NORMAL", 0.0)
+            threat_prob = round(float(1.0 - normal_prob), 4)
+
+            # 4. Contextual Risk Assessment
+            t_risk = time.perf_counter()
+            risk_assessment = prediction_risk_engine.assess_risk(
+                prediction_id=prediction_id,
+                threat_probability=threat_prob,
+                predicted_category=cat_out.predictedCategory.value,
+                category_confidence=cat_out.categoryConfidence,
+                device_criticality=device_criticality,
+                network_exposure=network_exposure,
+                vulnerability_status=vulnerability_status
+            )
+            risk_latency_ms = round((time.perf_counter() - t_risk) * 1000, 3)
+
+            # 5. Update Digital Twin Device Security State
+            device = self.get_or_create_device(device_id)
+            device.update_state(risk_assessment, conf_audit.confidenceTier.value)
+
+            # 6. Generate Alert if High/Critical Risk
+            alert = None
+            if risk_assessment.riskLevel in (OperationalRiskLevel.HIGH, OperationalRiskLevel.CRITICAL):
+                alert = {
+                    "alertId": f"ALT-ML-{uuid.uuid4().hex[:8].upper()}",
+                    "alertType": "ML_ATTACK_PREDICTION",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "severity": risk_assessment.riskLevel.value,
+                    "deviceId": device_id,
+                    "source": source,
+                    "destination": destination,
+                    "threatProbability": risk_assessment.threatProbabilityFormatted,
+                    "predictedCategory": cat_out.predictedCategory.value,
+                    "confidence": cat_out.categoryConfidenceFormatted,
+                    "risk": risk_assessment.riskLevel.value,
+                    "riskScore": risk_assessment.riskScore,
+                    "contributingFactors": risk_assessment.contributingFactors
+                }
+                self.alert_log.append(alert)
+
+            total_latency_ms = round((time.perf_counter() - t_start) * 1000, 3)
+
+            return {
+                "predictionId": prediction_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "source": source,
                 "destination": destination,
                 "threatProbability": risk_assessment.threatProbabilityFormatted,
+                "threatClass": "THREAT" if threat_prob >= 0.50 else "NORMAL",
                 "predictedCategory": cat_out.predictedCategory.value,
-                "confidence": cat_out.categoryConfidenceFormatted,
-                "risk": risk_assessment.riskLevel.value,
+                "categoryConfidence": cat_out.categoryConfidenceFormatted,
                 "riskScore": risk_assessment.riskScore,
-                "contributingFactors": risk_assessment.contributingFactors
+                "riskLevel": risk_assessment.riskLevel.value,
+                "model": model_name,
+                "modelVersion": "xgb-v1.0",
+                "featureVersion": "feature-v1.0",
+                "predictionStatus": conf_audit.confidenceTier.value,
+                "latencyBreakdown": {
+                    "featureExtractionMs": feat_latency_ms,
+                    "mlInferenceMs": ml_latency_ms,
+                    "riskAssessmentMs": risk_latency_ms,
+                    "totalMs": total_latency_ms
+                },
+                "digitalTwinState": device.to_dict(),
+                "alert": alert
             }
-            self.alert_log.append(alert)
-
-        return {
-            "predictionId": prediction_id,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "source": source,
-            "destination": destination,
-            "threatProbability": risk_assessment.threatProbabilityFormatted,
-            "threatClass": "THREAT" if threat_prob >= 0.50 else "NORMAL",
-            "predictedCategory": cat_out.predictedCategory.value,
-            "categoryConfidence": cat_out.categoryConfidenceFormatted,
-            "riskScore": risk_assessment.riskScore,
-            "riskLevel": risk_assessment.riskLevel.value,
-            "model": model_name,
-            "modelVersion": "xgb-v1",
-            "featureVersion": "feature-v1",
-            "predictionStatus": conf_audit.confidenceTier.value,
-            "digitalTwinState": device.to_dict(),
-            "alert": alert
-        }
+        except Exception as e:
+            device = self.get_or_create_device(device_id)
+            return {
+                "predictionId": prediction_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "source": source,
+                "destination": destination,
+                "threatProbability": "0.0%",
+                "threatClass": "ERROR",
+                "predictedCategory": "UNKNOWN",
+                "categoryConfidence": "0.0%",
+                "riskScore": 0.0,
+                "riskLevel": "LOW",
+                "model": model_name,
+                "modelVersion": "xgb-v1.0",
+                "featureVersion": "feature-v1.0",
+                "predictionStatus": "ERROR",
+                "errorDetails": str(e),
+                "digitalTwinState": device.to_dict(),
+                "alert": None
+            }
 
     def clear(self):
         self.device_registry.clear()
