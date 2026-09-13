@@ -1,0 +1,20 @@
+{
+  "modelName": "lstm",
+  "modelVersion": "lstm-v1.0",
+  "datasetVersion": "seq-v1.0",
+  "featureVersion": "ts-feat-v1.0",
+  "trainingControls": {
+    "sequenceLength": 5,
+    "featureCount": 16,
+    "predictionHorizon": 3,
+    "hiddenUnits": 32,
+    "dropout": 0.2,
+    "learningRate": 0.01,
+    "optimizer": "Adam",
+    "loss": "binary_crossentropy",
+    "epochsTrained": 25,
+    "earlyStopped": true,
+    "trainingDurationMs": 82.86,
+    "randomSeed": 42
+  }
+}

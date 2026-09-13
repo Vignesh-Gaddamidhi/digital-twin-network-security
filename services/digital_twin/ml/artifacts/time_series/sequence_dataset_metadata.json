@@ -2,20 +2,20 @@
   "datasetVersion": "seq-v1.0",
   "windowSize": 5,
   "stepSize": 1,
-  "predictionHorizon": 2,
+  "predictionHorizon": 3,
   "featureDim": 16,
-  "trainSequenceCount": 22,
-  "testSequenceCount": 4,
+  "trainSequenceCount": 21,
+  "testSequenceCount": 2,
   "trainTensorShape": [
-    22,
+    21,
     5,
     16
   ],
   "testTensorShape": [
-    4,
+    2,
     5,
     16
   ],
-  "positiveTrainRate": 0.2273,
+  "positiveTrainRate": 0.2381,
   "positiveTestRate": 0.5
 }

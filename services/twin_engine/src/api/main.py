@@ -152,6 +152,8 @@ from services.digital_twin.ml.time_series.windows.sliding_window_generator impor
 from services.digital_twin.ml.time_series.sequences.sequence_dataset_builder import sequence_dataset_builder
 from services.digital_twin.ml.time_series.features.feature_registry import temporal_feature_registry
 from services.digital_twin.ml.time_series.features.temporal_feature_extractor import temporal_feature_extractor
+from services.digital_twin.ml.time_series.models.train_lstm import run_lstm_training
+from services.digital_twin.ml.time_series.models.lstm_model import LSTMAttackPredictor
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -562,6 +564,57 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 116: LSTM ATTACK PREDICTION API ====================
+
+class LSTMPredictRequest(BaseModel):
+    sequence: List[List[float]]  # Shape: [T, D]
+    threshold: float = 0.50
+
+@app.post("/api/v1/twin/ml/time-series/models/lstm/train")
+def api_train_lstm_model():
+    try:
+        res = run_lstm_training()
+        return {
+            "status": "LSTM_MODEL_TRAINED",
+            "metadata": res["metadata"],
+            "metrics": res["metrics"],
+            "leadTime": res["leadTime"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/ml/time-series/models/lstm/metrics")
+def api_get_lstm_metrics():
+    from pathlib import Path
+    metrics_file = Path("services/digital_twin/ml/artifacts/time_series/lstm/metrics.json")
+    if not metrics_file.exists():
+        raise HTTPException(status_code=404, detail="LSTM model has not been trained yet.")
+    with open(metrics_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.post("/api/v1/twin/ml/time-series/models/lstm/predict")
+def api_predict_lstm_sequence(req: LSTMPredictRequest):
+    import joblib
+    from pathlib import Path
+    import numpy as np
+    model_file = Path("services/digital_twin/ml/artifacts/time_series/lstm/model.joblib")
+    if not model_file.exists():
+        raise HTTPException(status_code=404, detail="LSTM model artifact not found.")
+
+    model = joblib.load(model_file)
+    X = np.array([req.sequence], dtype=np.float32)
+    prob = float(model.predict_proba(X)[0])
+    pred_class = "THREAT" if prob >= req.threshold else "NORMAL"
+
+    return {
+        "futureThreatProbability": round(prob, 4),
+        "futureThreatProbabilityFormatted": f"{round(prob * 100, 1)}%",
+        "predictedFutureClass": pred_class,
+        "decisionThreshold": req.threshold,
+        "model": "lstm",
+        "modelVersion": "lstm-v1.0"
+    }
 
 # ==================== DAY 115: TIME-SERIES FEATURE ENGINEERING API ====================
 

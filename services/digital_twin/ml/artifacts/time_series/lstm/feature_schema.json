@@ -1,0 +1,25 @@
+{
+  "featureDim": 16,
+  "sequenceLength": 5,
+  "registeredFeatures": [
+    "packet_rate",
+    "packet_rate_lag_1",
+    "packet_rate_lag_2",
+    "packet_rate_rolling_mean_w3",
+    "packet_rate_rolling_std_w3",
+    "packet_rate_rate_of_change",
+    "packet_rate_percentage_change",
+    "packet_rate_trend",
+    "bytes_val",
+    "bytes_lag_1",
+    "bytes_rolling_mean_w3",
+    "bytes_rate_of_change",
+    "failed_connections_val",
+    "failed_connections_rolling_mean_w3",
+    "failed_connections_rate_of_change",
+    "dns_frequency_val",
+    "dns_frequency_rolling_mean_w3",
+    "destination_diversity_val",
+    "destination_diversity_trend"
+  ]
+}
