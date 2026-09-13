@@ -15,8 +15,8 @@
     "loss": "binary_crossentropy",
     "epochsTrained": 60,
     "earlyStopped": false,
-    "trainingDurationMs": 157.31,
-    "inferenceLatencyMsPerSeq": 5.176,
+    "trainingDurationMs": 133.53,
+    "inferenceLatencyMsPerSeq": 2.18,
     "diskSizeBytes": 23651
   }
 }

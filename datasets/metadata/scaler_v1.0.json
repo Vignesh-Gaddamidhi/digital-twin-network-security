@@ -1,9 +1,9 @@
 {
-  "scalerId": "SCL-66675DEA",
+  "scalerId": "SCL-28A90B18",
   "version": "1.0.0",
   "method": "STANDARD_SCALER",
   "fittedOnSamplesCount": 40,
-  "fittedAt": "2026-09-13T12:07:18.542419+00:00",
+  "fittedAt": "2026-09-13T13:09:23.648116+00:00",
   "featureOrder": [
     "packet_rate",
     "bytes",

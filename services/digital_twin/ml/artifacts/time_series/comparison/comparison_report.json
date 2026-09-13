@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T13:02:56Z",
+  "timestamp": "2026-09-13T13:10:34Z",
   "datasetVersion": "seq-v1.0",
   "featureVersion": "ts-feat-v1.0",
   "sequenceLength": 5,
@@ -7,16 +7,16 @@
   "comparisonTable": [
     {
       "model": "LSTM",
-      "accuracy": 0.5455,
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
+      "accuracy": 0.9091,
+      "precision": 0.8333,
+      "recall": 1.0,
+      "f1": 0.9091,
       "rocAuc": 1.0,
       "leadTimeSeconds": 50.0,
       "leadTimeFormatted": "50.0 seconds",
       "parameterCount": 6817,
-      "trainingTimeMs": 47.65,
-      "inferenceTimeMs": 0.042,
+      "trainingTimeMs": 73.48,
+      "inferenceTimeMs": 0.077,
       "modelSizeBytes": 28614
     },
     {
@@ -29,8 +29,8 @@
       "leadTimeSeconds": 15.0,
       "leadTimeFormatted": "15.0 seconds",
       "parameterCount": 5249,
-      "trainingTimeMs": 157.31,
-      "inferenceTimeMs": 5.176,
+      "trainingTimeMs": 133.53,
+      "inferenceTimeMs": 2.18,
       "modelSizeBytes": 23651
     }
   ],

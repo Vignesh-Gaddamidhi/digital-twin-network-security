@@ -1,9 +1,9 @@
 [
   {
-    "alertId": "ALT-XAI-9122D44D",
-    "timestamp": "2026-09-13T12:43:31.640895+00:00",
-    "source": "192.168.10.15",
-    "destination": "CORE-DC-01",
+    "alertId": "ALT-XAI-CC18CD57",
+    "timestamp": "2026-09-13T13:11:04.020322+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-PORT_SCAN",
     "eventType": "ML_ATTACK_PREDICTION",
     "severity": "CRITICAL",
     "threatProbability": 1.0,
@@ -17,7 +17,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-2A851D8C",
+    "explanationId": "EXP-2D009A70",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -38,6 +38,244 @@
       "connection frequency increased significantly relative to the learned baseline (observed: 2.80, contribution: +0.0900)",
       "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
       "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  },
+  {
+    "alertId": "ALT-XAI-B65BCC84",
+    "timestamp": "2026-09-13T13:11:04.273743+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-DOS_LIKE",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DOS_LIKE",
+    "categoryConfidence": 0.79,
+    "categoryConfidenceFormatted": "79.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-C60DA947",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 4.0,
+        "shapValue": 0.0935,
+        "contributionFormatted": "+0.0935"
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 3.5,
+        "shapValue": 0.081,
+        "contributionFormatted": "+0.0810"
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 3.8,
+        "shapValue": 0.0555,
+        "contributionFormatted": "+0.0555"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because packet transmission rate surged beyond normal baseline parameters. Additionally, bandwidth consumption rate escalated sharply, while transmitted byte volume showed an unexpected upward surge, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, connection frequency was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 4.00, contribution: +0.0935)",
+      "bandwidth consumption rate escalated sharply (observed: 3.50, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 3.80, contribution: +0.0555)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  },
+  {
+    "alertId": "ALT-XAI-278D9E51",
+    "timestamp": "2026-09-13T13:11:04.490070+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-DNS_ANOMALY",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "DNS_ANOMALY",
+    "categoryConfidence": 0.99,
+    "categoryConfidenceFormatted": "99.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-EC35131D",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because port 53 ratio was elevated. Additionally, dns queries also increased, while DNS query activity deviated from the expected baseline pattern, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  },
+  {
+    "alertId": "ALT-XAI-AD348ABE",
+    "timestamp": "2026-09-13T13:11:04.710615+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-BEACONING",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "BEACONING",
+    "categoryConfidence": 0.94,
+    "categoryConfidenceFormatted": "94.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-D058A52E",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 2.0,
+        "shapValue": 0.09,
+        "contributionFormatted": "+0.0900"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, session duration deviated from typical flow lengths, while tcp ratio also increased, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and bytes per second was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 2.00, contribution: +0.0900)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  },
+  {
+    "alertId": "ALT-XAI-3C147B88",
+    "timestamp": "2026-09-13T13:11:04.921795+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-LATERAL_MOVEMENT_LIKE",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "LATERAL_MOVEMENT_LIKE",
+    "categoryConfidence": 1.0,
+    "categoryConfidenceFormatted": "100.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-D84431FB",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 1.5,
+        "shapValue": 0.065,
+        "contributionFormatted": "+0.0650"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because destination diversity increased, indicating communication with a broader set of endpoints than expected. Additionally, unique destination ratio also increased, while port 80 ratio also increased, while port 443 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "port 443 ratio showed elevated activity (observed: 1.50, contribution: +0.0650)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)"
+    ],
+    "modelName": "Random Forest",
+    "modelVersion": "rf-v1.0",
+    "status": "ACTIVE"
+  },
+  {
+    "alertId": "ALT-XAI-F7DA493C",
+    "timestamp": "2026-09-13T13:11:05.131306+00:00",
+    "source": "ATTACKER-HOST",
+    "destination": "VICTIM-EXFILTRATION_LIKE",
+    "eventType": "ML_ATTACK_PREDICTION",
+    "severity": "CRITICAL",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "predictedCategory": "EXFILTRATION_LIKE",
+    "categoryConfidence": 0.92,
+    "categoryConfidenceFormatted": "92.0%",
+    "riskScore": 100.0,
+    "riskLevel": "CRITICAL",
+    "futureThreatProbability": 0.87,
+    "futureThreatProbabilityFormatted": "87.0%",
+    "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
+    "leadTimeFormatted": "35.0 seconds",
+    "explanationId": "EXP-F1EC786F",
+    "topContributingFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "contributionFormatted": "+0.1075"
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 4.0,
+        "shapValue": 0.081,
+        "contributionFormatted": "+0.0810"
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 4.0,
+        "shapValue": 0.0555,
+        "contributionFormatted": "+0.0555"
+      }
+    ],
+    "explanation": "The model predicted elevated threat probability (100.0%) primarily because bandwidth consumption rate escalated sharply. Additionally, transmitted byte volume showed an unexpected upward surge, while session duration deviated from typical flow lengths, while port 80 ratio also increased provided reinforcing positive evidence. Conversely, packet rate remained within calm baseline bounds and connection frequency was normal acted as mitigating baseline evidence.",
+    "evidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "bandwidth consumption rate escalated sharply (observed: 4.00, contribution: +0.0810)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 4.00, contribution: +0.0555)",
+      "packet rate remained within calm baseline bounds (observed: 0.00, mitigation: -0.0965)",
+      "connection frequency remained within expected tolerances (observed: 0.00, mitigation: -0.0900)",
       "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
     ],
     "modelName": "Random Forest",
