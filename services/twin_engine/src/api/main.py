@@ -133,6 +133,7 @@ from services.digital_twin.ml.prediction.prediction_models import (
     AttackPrediction, ThreatClassEnum, PredictedAttackCategory, RiskLevelEnum, PredictionStatusEnum
 )
 from services.digital_twin.ml.prediction.attack_prediction_engine import attack_prediction_engine
+from services.digital_twin.ml.prediction.probability.threat_probability_engine import threat_probability_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -543,6 +544,64 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 107: THREAT PROBABILITY API ====================
+
+class EvaluateProbabilityRequest(BaseModel):
+    features: List[float]
+    modelName: str = "random_forest"
+    threshold: float = 0.50
+
+@app.post("/api/v1/twin/ml/prediction/probability/evaluate")
+def api_evaluate_threat_probability(req: EvaluateProbabilityRequest):
+    import numpy as np
+    import joblib
+    from pathlib import Path
+
+    model_dir = Path("services/digital_twin/ml/artifacts") / req.modelName
+    model_file = model_dir / "model.joblib"
+    if not model_file.exists():
+        raise HTTPException(status_code=404, detail=f"Model artifact '{req.modelName}' not found.")
+
+    artifact = joblib.load(model_file)
+    model = artifact["model"] if isinstance(artifact, dict) and "model" in artifact else artifact
+
+    X = np.array(req.features, dtype=np.float32).reshape(1, -1)
+    results = threat_probability_engine.extract_threat_probability(
+        model=model,
+        X=X,
+        model_name=req.modelName,
+        threshold=req.threshold
+    )
+    return {
+        "status": "PROBABILITY_EVALUATED",
+        "result": results[0].model_dump(),
+        "displayString": results[0].to_display_string()
+    }
+
+@app.get("/api/v1/twin/ml/prediction/probability/comparison")
+def api_get_probability_comparison():
+    import joblib
+    from pathlib import Path
+    from services.digital_twin.ml.training.dataset_loader import dataset_loader
+
+    X_tr, y_tr, X_te, y_te, feats = dataset_loader.load_train_test()
+    models = {}
+    for m_name in ["logistic_regression", "decision_tree", "random_forest", "svm", "xgboost"]:
+        m_path = Path("services/digital_twin/ml/artifacts") / m_name / "model.joblib"
+        if m_path.exists():
+            art = joblib.load(m_path)
+            models[m_name] = art["model"] if isinstance(art, dict) and "model" in art else art
+
+    if not models:
+        raise HTTPException(status_code=404, detail="No trained models available for probability comparison.")
+
+    comp = threat_probability_engine.compare_models_on_test_set(models, X_te[:5], y_te[:5])
+    return {
+        "status": "PROBABILITY_COMPARISON_COMPLETED",
+        "sampleCount": 5,
+        "results": comp
+    }
 
 # ==================== DAY 106: ADVANCED ATTACK PREDICTION API ====================
 

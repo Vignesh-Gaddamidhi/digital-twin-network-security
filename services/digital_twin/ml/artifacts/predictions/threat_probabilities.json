@@ -1,0 +1,483 @@
+[
+  {
+    "predictionId": "PRED-DA0EDA5F",
+    "timestamp": "2026-09-13T04:20:00.152223+00:00",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "THREAT",
+    "modelName": "Random Forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.87
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-B297DE30",
+    "timestamp": "2026-09-13T04:20:00.153467+00:00",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "decisionThreshold": 0.9,
+    "threatClass": "NORMAL",
+    "modelName": "Random Forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.87
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-4A0E971C",
+    "timestamp": "2026-09-13T04:20:00.794200+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Logistic Regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-ED2618A0",
+    "timestamp": "2026-09-13T04:20:00.794248+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Logistic Regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-55E59648",
+    "timestamp": "2026-09-13T04:20:00.794280+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Logistic Regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-B7A51CA1",
+    "timestamp": "2026-09-13T04:20:00.851191+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Random Forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-9C3E51B9",
+    "timestamp": "2026-09-13T04:20:00.851285+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Random Forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-3CEC5DC1",
+    "timestamp": "2026-09-13T04:20:00.851338+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "Random Forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-8F841E5B",
+    "timestamp": "2026-09-13T04:20:00.867294+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "XGBoost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-51B53B2E",
+    "timestamp": "2026-09-13T04:20:00.867349+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "XGBoost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-97BA1231",
+    "timestamp": "2026-09-13T04:20:00.867378+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "XGBoost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-4B1C364A",
+    "timestamp": "2026-09-13T04:20:04.577511+00:00",
+    "threatProbability": 1.0,
+    "threatProbabilityFormatted": "100.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "THREAT",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 1.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-F2B65C4A",
+    "timestamp": "2026-09-13T04:20:04.860466+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "logistic_regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-EB724CEA",
+    "timestamp": "2026-09-13T04:20:04.860522+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "logistic_regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-AD7C77F0",
+    "timestamp": "2026-09-13T04:20:04.860554+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "logistic_regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-703CABB8",
+    "timestamp": "2026-09-13T04:20:04.860582+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "logistic_regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-E3346E53",
+    "timestamp": "2026-09-13T04:20:04.860608+00:00",
+    "threatProbability": 0.0154,
+    "threatProbabilityFormatted": "1.5%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "logistic_regression",
+    "rawScores": {
+      "raw_anomaly_score": 0.015429520048201084
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-1836BBA8",
+    "timestamp": "2026-09-13T04:20:04.874387+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "decision_tree",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-5889AB0C",
+    "timestamp": "2026-09-13T04:20:04.874433+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "decision_tree",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-3112B7A7",
+    "timestamp": "2026-09-13T04:20:04.874458+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "decision_tree",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-1C70230E",
+    "timestamp": "2026-09-13T04:20:04.874482+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "decision_tree",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-A6889C03",
+    "timestamp": "2026-09-13T04:20:04.874505+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "decision_tree",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-08709B78",
+    "timestamp": "2026-09-13T04:20:04.933571+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-191969C2",
+    "timestamp": "2026-09-13T04:20:04.933623+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-41CF86F1",
+    "timestamp": "2026-09-13T04:20:04.933659+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-72872737",
+    "timestamp": "2026-09-13T04:20:04.933686+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-B6135479",
+    "timestamp": "2026-09-13T04:20:04.933734+00:00",
+    "threatProbability": 0.0,
+    "threatProbabilityFormatted": "0.0%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "random_forest",
+    "rawScores": {
+      "raw_anomaly_score": 0.0
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-5A694F27",
+    "timestamp": "2026-09-13T04:20:04.949095+00:00",
+    "threatProbability": 0.0456,
+    "threatProbabilityFormatted": "4.6%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "svm",
+    "rawScores": {
+      "raw_anomaly_score": 0.045621249070455824
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-213DBBD2",
+    "timestamp": "2026-09-13T04:20:04.949142+00:00",
+    "threatProbability": 0.0456,
+    "threatProbabilityFormatted": "4.6%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "svm",
+    "rawScores": {
+      "raw_anomaly_score": 0.045621249070455824
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-7EB12401",
+    "timestamp": "2026-09-13T04:20:04.949170+00:00",
+    "threatProbability": 0.0456,
+    "threatProbabilityFormatted": "4.6%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "svm",
+    "rawScores": {
+      "raw_anomaly_score": 0.045621249070455824
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-FC7C8CC5",
+    "timestamp": "2026-09-13T04:20:04.949197+00:00",
+    "threatProbability": 0.0456,
+    "threatProbabilityFormatted": "4.6%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "svm",
+    "rawScores": {
+      "raw_anomaly_score": 0.045621249070455824
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-60E6C3E5",
+    "timestamp": "2026-09-13T04:20:04.949220+00:00",
+    "threatProbability": 0.0456,
+    "threatProbabilityFormatted": "4.6%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "svm",
+    "rawScores": {
+      "raw_anomaly_score": 0.045621249070455824
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-3BC8F2C4",
+    "timestamp": "2026-09-13T04:20:04.964775+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "xgboost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-D48F186B",
+    "timestamp": "2026-09-13T04:20:04.964822+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "xgboost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-3040E4DC",
+    "timestamp": "2026-09-13T04:20:04.964852+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "xgboost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-E408DC06",
+    "timestamp": "2026-09-13T04:20:04.964876+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "xgboost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  },
+  {
+    "predictionId": "PRED-D8CBA03B",
+    "timestamp": "2026-09-13T04:20:04.964898+00:00",
+    "threatProbability": 0.0576,
+    "threatProbabilityFormatted": "5.8%",
+    "decisionThreshold": 0.5,
+    "threatClass": "NORMAL",
+    "modelName": "xgboost",
+    "rawScores": {
+      "raw_anomaly_score": 0.0575665645301342
+    },
+    "metadata": {}
+  }
+]
