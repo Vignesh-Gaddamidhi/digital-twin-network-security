@@ -1,0 +1,253 @@
+[
+  {
+    "explanationId": "SHAP-805DFB6A",
+    "predictionId": "PRED-LIVE-PORT-SCAN",
+    "modelName": "random_forest",
+    "modelVersion": "rf-v1.0",
+    "baseValue": 0.5075,
+    "baseValueFormatted": "50.7%",
+    "predictionValue": 0.7,
+    "predictionValueFormatted": "70.0%",
+    "features": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.65,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 3.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 0.4,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      },
+      {
+        "featureName": "port_22_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 7
+      },
+      {
+        "featureName": "port_53_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 8
+      },
+      {
+        "featureName": "port_other_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 9
+      },
+      {
+        "featureName": "unique_destination_ports",
+        "featureValue": 3.4,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 10
+      },
+      {
+        "featureName": "flow_duration",
+        "featureValue": -0.8,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 11
+      },
+      {
+        "featureName": "tcp_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 12
+      },
+      {
+        "featureName": "udp_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 13
+      },
+      {
+        "featureName": "icmp_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 14
+      },
+      {
+        "featureName": "failed_connections",
+        "featureValue": 2.5,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 15
+      },
+      {
+        "featureName": "failed_connection_rate",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 16
+      },
+      {
+        "featureName": "dns_queries",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 17
+      },
+      {
+        "featureName": "dns_frequency",
+        "featureValue": -0.5,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 18
+      },
+      {
+        "featureName": "destination_diversity",
+        "featureValue": 2.9,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 19
+      },
+      {
+        "featureName": "unique_destination_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.0,
+        "shapValueFormatted": "+0.0000",
+        "direction": "NEUTRAL",
+        "absoluteContribution": 0.0,
+        "rank": 20
+      }
+    ],
+    "topPositiveFeatures": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.65,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 3.8,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 0.4,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeFeatures": [
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "generatedAt": "2026-09-13T12:26:42.098183+00:00"
+  }
+]

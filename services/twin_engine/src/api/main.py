@@ -166,6 +166,8 @@ from services.digital_twin.ml.xai.explanations.xai_models import (
     ExplanationStatusEnum, FeatureAttribution, PredictionExplanation
 )
 from services.digital_twin.ml.xai.xai_engine import base_xai_engine
+from services.digital_twin.ml.xai.shap.shap_models import SHAPExplanation, FeatureSHAPItem, ContributionDirection
+from services.digital_twin.ml.xai.shap.shap_engine import shap_explainer_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -576,6 +578,54 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 121: SHAP INTEGRATION API ====================
+
+class SHAPExplainRequest(BaseModel):
+    predictionId: str = "PRED-SHAP-001"
+    featureValues: Dict[str, float]
+    modelName: str = "random_forest"
+    modelVersion: str = "rf-v1.0"
+
+@app.post("/api/v1/twin/ml/xai/shap/explain")
+def api_explain_with_shap(req: SHAPExplainRequest):
+    import joblib
+    from pathlib import Path
+    model_file = Path(f"services/digital_twin/ml/artifacts/{req.modelName}/model.joblib")
+    if not model_file.exists():
+        # Fallback to random forest
+        model_file = Path("services/digital_twin/ml/artifacts/random_forest/model.joblib")
+        if not model_file.exists():
+            raise HTTPException(status_code=404, detail="Trained model artifact not found.")
+
+    model_data = joblib.load(model_file)
+    model = model_data["model"] if isinstance(model_data, dict) and "model" in model_data else model_data
+
+    explanation = shap_explainer_engine.explain_instance(
+        prediction_id=req.predictionId,
+        features=req.featureValues,
+        model=model,
+        model_name=req.modelName,
+        model_version=req.modelVersion
+    )
+
+    return {
+        "status": "SHAP_EXPLANATION_COMPLETED",
+        "explanation": explanation.model_dump(),
+        "summaryString": explanation.to_summary_string()
+    }
+
+@app.get("/api/v1/twin/ml/xai/shap/history")
+def api_get_shap_history():
+    return {
+        "count": len(shap_explainer_engine.history),
+        "history": [exp.model_dump() for exp in shap_explainer_engine.history]
+    }
+
+@app.post("/api/v1/twin/ml/xai/shap/clear")
+def api_clear_shap_history():
+    shap_explainer_engine.clear()
+    return {"status": "SHAP_HISTORY_CLEARED"}
 
 # ==================== DAY 120: EXPLAINABLE AI (XAI) ARCHITECTURE API ====================
 
