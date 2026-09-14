@@ -224,6 +224,11 @@ from services.digital_twin.attack_path.scoring.path_scoring_models import (
     AttackPathRisk, PathRankingResult, RankedPathItem
 )
 from services.digital_twin.attack_path.scoring.path_risk_engine import path_risk_engine
+from services.digital_twin.attack_path.visualization.path_visual_models import (
+    PathVisualStateEnum, NodeVisualCard, EdgeVisualCard, AttackPathVisualPanel,
+    GraphVisualizationFilter, ComprehensivePathExplanationReport
+)
+from services.digital_twin.attack_path.visualization.path_visual_engine import attack_path_visual_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -637,6 +642,55 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 139: ATTACK PATH VISUALIZATION & EXPLANATION API ====================
+
+class ExplainPathRequest(BaseModel):
+    path: DiscoveredPathDetail
+    entryThreatProbability: float = 0.87
+    attackImpactWeight: float = 0.80
+    mlThreatFeatures: Optional[List[str]] = ["connection frequency", "destination diversity", "abnormal port activity"]
+
+@app.get("/api/v1/twin/attack-path/visual/node/{deviceId}")
+def api_get_node_visual_card(deviceId: str):
+    try:
+        return attack_path_visual_engine.get_node_visual_card(deviceId).model_dump()
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/attack-path/visual/edge")
+def api_get_edge_visual_card(source: str, destination: str):
+    try:
+        return attack_path_visual_engine.get_edge_visual_card(source, destination).model_dump()
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/visual/explain")
+def api_explain_attack_path(req: ExplainPathRequest):
+    try:
+        risk = path_risk_engine.calculate_path_risk(
+            req.path, req.entryThreatProbability, req.attackImpactWeight
+        )
+        report = attack_path_visual_engine.generate_comprehensive_explanation(
+            path=req.path,
+            risk=risk,
+            ml_threat_features=req.mlThreatFeatures
+        )
+        return {
+            "status": "PATH_EXPLANATION_GENERATED",
+            "report": report.model_dump(),
+            "formattedCliCard": report.to_formatted_cli_card()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/visual/filter")
+def api_filter_graph_nodes(filters: GraphVisualizationFilter):
+    nodes = attack_path_visual_engine.filter_graph_nodes(filters)
+    return {
+        "matchedCount": len(nodes),
+        "nodes": {k: v.model_dump() for k, v in nodes.items()}
+    }
 
 # ==================== DAY 138: PATH RISK SCORING & RANKING API ====================
 
