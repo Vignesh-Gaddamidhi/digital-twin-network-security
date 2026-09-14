@@ -1,0 +1,250 @@
+[
+  {
+    "scoringId": "PRISK-1E5EC5",
+    "pathId": "PATH-EEE5A8",
+    "nodeSequence": [
+      "ATTACKER-EXT",
+      "WEB-01",
+      "DB-01"
+    ],
+    "score": 61.0,
+    "scoreFormatted": "61.00 / 100.0",
+    "level": "HIGH",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 1.0,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 2,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.2
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 20.0,
+    "assetContribution": 25.0,
+    "impactContribution": 16.0,
+    "reachabilityMultiplier": 1.0,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [
+      {
+        "vulnerabilityId": "CVE-2026-SQLI",
+        "nodeId": "DB-01",
+        "relevance": "RELEVANT",
+        "traversedPort": 3306,
+        "traversedService": "MYSQL",
+        "affectedService": "MYSQL",
+        "effectiveWeight": 1.0,
+        "rationale": "Vulnerability 'CVE-2026-SQLI' directly targets exposed database service (MYSQL:3306)."
+      }
+    ],
+    "explanation": "Path risk assessed at 61.00 [HIGH]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 1.00 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
+    "timestamp": "2026-09-14T07:33:59.508286+00:00"
+  },
+  {
+    "scoringId": "PRISK-DCB6C1",
+    "pathId": "PATH-7D5D41",
+    "nodeSequence": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "score": 61.0,
+    "scoreFormatted": "61.00 / 100.0",
+    "level": "HIGH",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 1.0,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 2,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.2
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 20.0,
+    "assetContribution": 25.0,
+    "impactContribution": 16.0,
+    "reachabilityMultiplier": 1.0,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [
+      {
+        "vulnerabilityId": "CVE-2026-WEB-RCE",
+        "nodeId": "WEB-01",
+        "relevance": "POSSIBLY_RELEVANT",
+        "traversedPort": 22,
+        "traversedService": "SSH",
+        "affectedService": "SSH",
+        "effectiveWeight": 0.5,
+        "rationale": "Vulnerability 'CVE-2026-WEB-RCE' active on host, but indirect service correlation."
+      },
+      {
+        "vulnerabilityId": "CVE-2026-SQLI",
+        "nodeId": "DB-01",
+        "relevance": "RELEVANT",
+        "traversedPort": 3306,
+        "traversedService": "MYSQL",
+        "affectedService": "MYSQL",
+        "effectiveWeight": 1.0,
+        "rationale": "Vulnerability 'CVE-2026-SQLI' directly targets exposed database service (MYSQL:3306)."
+      }
+    ],
+    "explanation": "Path risk assessed at 61.00 [HIGH]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 1.00 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
+    "timestamp": "2026-09-14T07:33:59.510583+00:00"
+  },
+  {
+    "scoringId": "PRISK-D39A3F",
+    "pathId": "PATH-2D69CB",
+    "nodeSequence": [
+      "CLIENT-01",
+      "DB-01"
+    ],
+    "score": 6.75,
+    "scoreFormatted": "6.75 / 100.0",
+    "level": "LOW",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 0.2,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 1,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.8
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 0.6,
+    "assetContribution": 3.75,
+    "impactContribution": 2.4,
+    "reachabilityMultiplier": 0.15,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [],
+    "explanation": "Path risk assessed at 6.75 [LOW]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 0.20 vulnerability factor. Reachability status: BLOCKED (multiplier: 0.15).",
+    "timestamp": "2026-09-14T07:33:59.511455+00:00"
+  },
+  {
+    "scoringId": "PRISK-8D10B3",
+    "pathId": "PATH-B2EABF",
+    "nodeSequence": [
+      "ATTACKER-EXT",
+      "WEB-01",
+      "DB-01"
+    ],
+    "score": 61.0,
+    "scoreFormatted": "61.00 / 100.0",
+    "level": "HIGH",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 1.0,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 2,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.2
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 20.0,
+    "assetContribution": 25.0,
+    "impactContribution": 16.0,
+    "reachabilityMultiplier": 1.0,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [
+      {
+        "vulnerabilityId": "CVE-2026-SQLI",
+        "nodeId": "DB-01",
+        "relevance": "RELEVANT",
+        "traversedPort": 3306,
+        "traversedService": "MYSQL",
+        "affectedService": "MYSQL",
+        "effectiveWeight": 1.0,
+        "rationale": "Vulnerability 'CVE-2026-SQLI' directly targets exposed database service (MYSQL:3306)."
+      }
+    ],
+    "explanation": "Path risk assessed at 61.00 [HIGH]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 1.00 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
+    "timestamp": "2026-09-14T07:34:42.202462+00:00"
+  },
+  {
+    "scoringId": "PRISK-111CAC",
+    "pathId": "PATH-C45FBD",
+    "nodeSequence": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "score": 61.0,
+    "scoreFormatted": "61.00 / 100.0",
+    "level": "HIGH",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 1.0,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 2,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.2
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 20.0,
+    "assetContribution": 25.0,
+    "impactContribution": 16.0,
+    "reachabilityMultiplier": 1.0,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [
+      {
+        "vulnerabilityId": "CVE-2026-WEB-RCE",
+        "nodeId": "WEB-01",
+        "relevance": "POSSIBLY_RELEVANT",
+        "traversedPort": 22,
+        "traversedService": "SSH",
+        "affectedService": "SSH",
+        "effectiveWeight": 0.5,
+        "rationale": "Vulnerability 'CVE-2026-WEB-RCE' active on host, but indirect service correlation."
+      },
+      {
+        "vulnerabilityId": "CVE-2026-SQLI",
+        "nodeId": "DB-01",
+        "relevance": "RELEVANT",
+        "traversedPort": 3306,
+        "traversedService": "MYSQL",
+        "affectedService": "MYSQL",
+        "effectiveWeight": 1.0,
+        "rationale": "Vulnerability 'CVE-2026-SQLI' directly targets exposed database service (MYSQL:3306)."
+      }
+    ],
+    "explanation": "Path risk assessed at 61.00 [HIGH]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 1.00 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
+    "timestamp": "2026-09-14T07:34:42.204084+00:00"
+  },
+  {
+    "scoringId": "PRISK-7B9163",
+    "pathId": "PATH-2F74F6",
+    "nodeSequence": [
+      "CLIENT-01",
+      "DB-01"
+    ],
+    "score": 6.75,
+    "scoreFormatted": "6.75 / 100.0",
+    "level": "LOW",
+    "factors": {
+      "entryThreatProbability": 0.87,
+      "maximumNodeRisk": 0.0,
+      "cumulativeVulnerabilityExposure": 0.2,
+      "targetCriticality": 1.0,
+      "attackImpact": 0.8,
+      "pathLength": 1,
+      "reachableEdges": 0,
+      "securityControlStrength": 0.8
+    },
+    "threatContribution": 0.0,
+    "vulnerabilityContribution": 0.6,
+    "assetContribution": 3.75,
+    "impactContribution": 2.4,
+    "reachabilityMultiplier": 0.15,
+    "criticalTarget": true,
+    "vulnerabilityAssessments": [],
+    "explanation": "Path risk assessed at 6.75 [LOW]. Maximum intermediate node risk is 0.0/100, targeting DB-01 (CRITICAL criticality) with 0.20 vulnerability factor. Reachability status: BLOCKED (multiplier: 0.15).",
+    "timestamp": "2026-09-14T07:34:42.205729+00:00"
+  }
+]
