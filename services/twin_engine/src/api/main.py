@@ -648,6 +648,96 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
+# ==================== DAY 144: LIVE TRAFFIC MONITORING API ====================
+
+@app.get("/api/v1/twin/traffic/live")
+def api_get_live_traffic_metrics(
+    device_id: Optional[str] = None,
+    protocol: Optional[str] = "ALL",
+    time_range: str = "5m",
+    simulate_spike: bool = False
+):
+    from datetime import datetime, timezone, timedelta
+    
+    # 1. Base Rates (Spike multiplier when simulated attack scenario is active)
+    base_pkts = 420.0 if not simulate_spike else 1420.0
+    base_bytes = 540000.0 if not simulate_spike else 1840000.0
+    
+    # Scale slightly if filtered by individual device
+    if device_id and device_id != "ALL":
+        base_pkts = base_pkts * 0.45
+        base_bytes = base_bytes * 0.45
+
+    # 2. Connection Statistics (Day 144.5 Specification)
+    active_conns = 42 if not simulate_spike else 86
+    failed_conns = 4 if not simulate_spike else 18
+    successful_conns = active_conns - failed_conns
+    failure_rate = round((failed_conns / active_conns) * 100, 1)
+
+    # 3. Protocol Distribution (Day 144.2 Specification)
+    protocols = [
+        {"protocol": "TCP", "percentage": 45.2, "packetCount": int(base_pkts * 12), "byteCount": int(base_bytes * 10)},
+        {"protocol": "HTTPS", "percentage": 28.4, "packetCount": int(base_pkts * 8), "byteCount": int(base_bytes * 6)},
+        {"protocol": "DNS", "percentage": 12.1, "packetCount": int(base_pkts * 3), "byteCount": int(base_bytes * 2)},
+        {"protocol": "UDP", "percentage": 8.3, "packetCount": int(base_pkts * 2), "byteCount": int(base_bytes * 1)},
+        {"protocol": "SSH", "percentage": 4.0, "packetCount": int(base_pkts * 1), "byteCount": int(base_bytes * 0.5)},
+        {"protocol": "ICMP", "percentage": 2.0, "packetCount": int(base_pkts * 0.5), "byteCount": int(base_bytes * 0.2)}
+    ]
+
+    # 4. Generate Time Series Velocity Curve (20 points)
+    now = datetime.now(timezone.utc)
+    timeline = []
+    for i in range(20):
+        pt_time = now - timedelta(seconds=(20 - i) * 15)
+        # Add slight pseudo-random variation or spike at end
+        noise = 1.0 + (0.15 * ((i % 5) - 2))
+        is_pt_spike = simulate_spike and (i >= 14)
+        if is_pt_spike:
+            pt_pkts = int(base_pkts * 1.8 * (1.0 + 0.05 * (i - 14)))
+            pt_bytes = int(base_bytes * 1.8 * (1.0 + 0.05 * (i - 14)))
+        else:
+            pt_pkts = int((base_pkts / 1.5 if simulate_spike else base_pkts) * noise)
+            pt_bytes = int((base_bytes / 1.5 if simulate_spike else base_bytes) * noise)
+
+        timeline.append({
+            "timestamp": pt_time.isoformat(),
+            "timeLabel": pt_time.strftime("%H:%M:%S"),
+            "packetRate": pt_pkts,
+            "byteRate": pt_bytes,
+            "isAnomaly": is_pt_spike
+        })
+
+    # 5. Traffic Spike Anomaly Descriptor
+    anomaly = {
+        "detected": simulate_spike,
+        "anomalyType": "TRAFFIC_SPIKE_DETECTED" if simulate_spike else None,
+        "severity": "CRITICAL" if simulate_spike else None,
+        "affectedDevice": device_id or "WEB-01",
+        "correlatedEventId": "EVT-DOS-9412" if simulate_spike else None,
+        "description": "Traffic anomaly detected: Rate exceeds 2.5x baseline moving average." if simulate_spike else "Traffic within standard operational baseline."
+    }
+
+    return {
+        "packetRate": int(base_pkts),
+        "packetRateFormatted": f"{int(base_pkts):,} pkts/s",
+        "byteRate": int(base_bytes),
+        "byteRateFormatted": f"{round(base_bytes / (1024 * 1024), 2)} MB/s",
+        "totalVolumeBytes": int(base_bytes * 120),
+        "totalVolumeFormatted": f"{round((base_bytes * 120) / (1024 * 1024), 1)} MB",
+        "connections": {
+            "active": active_conns,
+            "successful": successful_conns,
+            "failed": failed_conns,
+            "failureRate": failure_rate
+        },
+        "protocols": protocols,
+        "timeline": timeline,
+        "anomaly": anomaly,
+        "filteredDevice": device_id or "ALL",
+        "selectedTimeRange": time_range,
+        "timestamp": now.isoformat()
+    }
+
 # ==================== DAY 143: LIVE NETWORK TOPOLOGY API ====================
 
 @app.get("/api/v1/twin/topology/live")
