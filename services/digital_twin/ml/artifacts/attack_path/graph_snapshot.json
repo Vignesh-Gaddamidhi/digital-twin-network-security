@@ -1,6 +1,6 @@
 {
   "nodeCount": 5,
-  "edgeCount": 4,
+  "edgeCount": 2,
   "nodes": {
     "ATTACKER-EXT": {
       "nodeId": "ATTACKER-EXT",
@@ -10,7 +10,7 @@
       "ipAddresses": [
         "198.51.100.24"
       ],
-      "deviceType": "External Threat Actor",
+      "deviceType": "Kali Linux 2026",
       "zone": "INTERNET",
       "assetCriticality": "VERY_LOW",
       "vulnerabilities": [],
@@ -28,20 +28,20 @@
       "ipAddresses": [
         "192.168.10.101"
       ],
-      "deviceType": "User Workstation",
-      "zone": "USER_LAN",
+      "deviceType": "Windows 11 Enterprise",
+      "zone": "INTERNAL",
       "assetCriticality": "LOW",
       "vulnerabilities": [],
       "exposedPorts": [
-        80,
-        443
+        445,
+        3389
       ],
       "services": [
-        "HTTP-CLIENT",
-        "HTTPS-CLIENT"
+        "SMB",
+        "RDP"
       ],
-      "securityState": "NORMAL",
-      "riskScore": 0.0,
+      "securityState": "QUARANTINED",
+      "riskScore": 5.76,
       "reachable": true
     },
     "WEB-01": {
@@ -52,7 +52,7 @@
       "ipAddresses": [
         "192.168.20.80"
       ],
-      "deviceType": "Web Application Server",
+      "deviceType": "Ubuntu 24.04 LTS",
       "zone": "DMZ",
       "assetCriticality": "HIGH",
       "vulnerabilities": [
@@ -68,8 +68,8 @@
         "HTTPS",
         "SSH"
       ],
-      "securityState": "NORMAL",
-      "riskScore": 0.0,
+      "securityState": "AT_RISK",
+      "riskScore": 60.8,
       "reachable": true
     },
     "DB-01": {
@@ -80,20 +80,22 @@
       "ipAddresses": [
         "192.168.30.10"
       ],
-      "deviceType": "Production Database Server",
-      "zone": "SECURE_DATA",
+      "deviceType": "RHEL 9.4",
+      "zone": "DATABASE",
       "assetCriticality": "CRITICAL",
       "vulnerabilities": [
         "CVE-2026-SQLI"
       ],
       "exposedPorts": [
-        3306
+        3306,
+        5432
       ],
       "services": [
-        "MYSQL"
+        "MYSQL",
+        "POSTGRESQL"
       ],
       "securityState": "NORMAL",
-      "riskScore": 0.0,
+      "riskScore": 69.6,
       "reachable": true
     },
     "DNS-SERVER-01": {
@@ -104,8 +106,8 @@
       "ipAddresses": [
         "192.168.1.53"
       ],
-      "deviceType": "Internal DNS Server",
-      "zone": "INFRA",
+      "deviceType": "Debian 12",
+      "zone": "INTERNAL",
       "assetCriticality": "MEDIUM",
       "vulnerabilities": [],
       "exposedPorts": [
@@ -115,84 +117,49 @@
         "DNS"
       ],
       "securityState": "NORMAL",
-      "riskScore": 0.0,
+      "riskScore": 5.76,
       "reachable": true
     }
   },
   "edges": {
-    "EDGE-ATT-CLIENT": {
-      "edgeId": "EDGE-ATT-CLIENT",
+    "CONN-01": {
+      "edgeId": "CONN-01",
       "sourceNode": "ATTACKER-EXT",
-      "destinationNode": "CLIENT-01",
-      "connectionId": "CONN-DEFAULT",
+      "destinationNode": "WEB-01",
+      "connectionId": "CONN-01",
       "protocol": "TCP",
       "sourcePort": null,
       "destinationPort": 443,
       "service": "HTTPS",
       "reachable": true,
       "trustRelationship": false,
-      "securityControl": "EDGE-FIREWALL",
+      "securityControl": "Permitted by FW-RULE-01: Internet to DMZ Web Ingress",
       "vulnerabilityExposure": null,
       "riskContribution": 0.0,
-      "status": "ACTIVE"
+      "status": "REACHABLE"
     },
-    "EDGE-CLIENT-WEB": {
-      "edgeId": "EDGE-CLIENT-WEB",
-      "sourceNode": "CLIENT-01",
-      "destinationNode": "WEB-01",
-      "connectionId": "CONN-DEFAULT",
-      "protocol": "TCP",
-      "sourcePort": null,
-      "destinationPort": 22,
-      "service": "SSH",
-      "reachable": true,
-      "trustRelationship": false,
-      "securityControl": "INTERNAL-SEGMENTATION-ACL",
-      "vulnerabilityExposure": null,
-      "riskContribution": 0.0,
-      "status": "ACTIVE"
-    },
-    "EDGE-WEB-DB": {
-      "edgeId": "EDGE-WEB-DB",
+    "CONN-03": {
+      "edgeId": "CONN-03",
       "sourceNode": "WEB-01",
       "destinationNode": "DB-01",
-      "connectionId": "CONN-DEFAULT",
+      "connectionId": "CONN-03",
       "protocol": "TCP",
       "sourcePort": null,
       "destinationPort": 3306,
       "service": "MYSQL",
       "reachable": true,
       "trustRelationship": false,
-      "securityControl": "DMZ-TO-SECURE-FIREWALL",
-      "vulnerabilityExposure": "CVE-2026-SQLI",
-      "riskContribution": 0.0,
-      "status": "ACTIVE"
-    },
-    "EDGE-CLIENT-DNS": {
-      "edgeId": "EDGE-CLIENT-DNS",
-      "sourceNode": "CLIENT-01",
-      "destinationNode": "DNS-SERVER-01",
-      "connectionId": "CONN-DEFAULT",
-      "protocol": "UDP",
-      "sourcePort": null,
-      "destinationPort": 53,
-      "service": "DNS",
-      "reachable": true,
-      "trustRelationship": false,
-      "securityControl": null,
+      "securityControl": "Permitted by FW-RULE-03: DMZ to Database Access",
       "vulnerabilityExposure": null,
       "riskContribution": 0.0,
-      "status": "ACTIVE"
+      "status": "REACHABLE"
     }
   },
   "adjacency": {
     "ATTACKER-EXT": [
-      "CLIENT-01"
+      "WEB-01"
     ],
-    "CLIENT-01": [
-      "WEB-01",
-      "DNS-SERVER-01"
-    ],
+    "CLIENT-01": [],
     "WEB-01": [
       "DB-01"
     ],

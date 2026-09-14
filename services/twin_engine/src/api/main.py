@@ -208,6 +208,10 @@ from services.digital_twin.attack_path.graph.graph_models import (
     NodeTypeEnum, PathStatusEnum, AttackPathNode, AttackPathEdge, AttackPath
 )
 from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
+from services.digital_twin.attack_path.graph.security_zone_models import (
+    NetworkZoneEnum, ReachabilityStateEnum, SecurityControlPolicy, DEFAULT_SECURITY_POLICIES
+)
+from services.digital_twin.attack_path.graph.twin_graph_synchronizer import twin_graph_synchronizer
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -621,6 +625,45 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 135: TWIN GRAPH SYNCHRONIZATION API ====================
+
+@app.post("/api/v1/twin/attack-path/sync/full")
+def api_sync_attack_path_graph():
+    try:
+        twin_graph_synchronizer.full_synchronization()
+        return {
+            "status": "GRAPH_SYNCHRONIZED",
+            "snapshot": attack_path_graph.snapshot()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/sync/device")
+def api_sync_twin_device(deviceData: Dict[str, Any]):
+    try:
+        twin_graph_synchronizer.sync_device(deviceData)
+        return {"status": "DEVICE_SYNCHRONIZED", "deviceId": deviceData.get("deviceId")}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/sync/isolate/{deviceId}")
+def api_isolate_twin_device(deviceId: str):
+    try:
+        twin_graph_synchronizer.isolate_device(deviceId)
+        return {
+            "status": "DEVICE_ISOLATED",
+            "deviceId": deviceId,
+            "graph": attack_path_graph.snapshot()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/attack-path/sync/policies")
+def api_get_security_policies():
+    return {
+        "policies": [p.model_dump() for p in twin_graph_synchronizer.security_policies]
+    }
 
 # ==================== DAY 134: ATTACK PATH GRAPH API ====================
 

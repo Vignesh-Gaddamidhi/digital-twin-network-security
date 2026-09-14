@@ -1,0 +1,173 @@
+{
+  "deviceCount": 5,
+  "connectionCount": 2,
+  "syncedGraph": {
+    "nodeCount": 5,
+    "edgeCount": 2,
+    "nodes": {
+      "ATTACKER-EXT": {
+        "nodeId": "ATTACKER-EXT",
+        "deviceId": "ATTACKER-EXT",
+        "nodeType": "ATTACKER",
+        "hostname": "adversary.external.net",
+        "ipAddresses": [
+          "198.51.100.24"
+        ],
+        "deviceType": "Kali Linux 2026",
+        "zone": "INTERNET",
+        "assetCriticality": "VERY_LOW",
+        "vulnerabilities": [],
+        "exposedPorts": [],
+        "services": [],
+        "securityState": "NORMAL",
+        "riskScore": 0.0,
+        "reachable": true
+      },
+      "CLIENT-01": {
+        "nodeId": "CLIENT-01",
+        "deviceId": "CLIENT-01",
+        "nodeType": "CLIENT",
+        "hostname": "client-01.corp.internal",
+        "ipAddresses": [
+          "192.168.10.101"
+        ],
+        "deviceType": "Windows 11 Enterprise",
+        "zone": "INTERNAL",
+        "assetCriticality": "LOW",
+        "vulnerabilities": [],
+        "exposedPorts": [
+          445,
+          3389
+        ],
+        "services": [
+          "SMB",
+          "RDP"
+        ],
+        "securityState": "QUARANTINED",
+        "riskScore": 5.76,
+        "reachable": true
+      },
+      "WEB-01": {
+        "nodeId": "WEB-01",
+        "deviceId": "WEB-01",
+        "nodeType": "WEB_SERVER",
+        "hostname": "web-01.dmz.internal",
+        "ipAddresses": [
+          "192.168.20.80"
+        ],
+        "deviceType": "Ubuntu 24.04 LTS",
+        "zone": "DMZ",
+        "assetCriticality": "HIGH",
+        "vulnerabilities": [
+          "CVE-2026-WEB-RCE"
+        ],
+        "exposedPorts": [
+          80,
+          443,
+          22
+        ],
+        "services": [
+          "HTTP",
+          "HTTPS",
+          "SSH"
+        ],
+        "securityState": "AT_RISK",
+        "riskScore": 60.8,
+        "reachable": true
+      },
+      "DB-01": {
+        "nodeId": "DB-01",
+        "deviceId": "DB-01",
+        "nodeType": "DATABASE",
+        "hostname": "db-01.secure.internal",
+        "ipAddresses": [
+          "192.168.30.10"
+        ],
+        "deviceType": "RHEL 9.4",
+        "zone": "DATABASE",
+        "assetCriticality": "CRITICAL",
+        "vulnerabilities": [
+          "CVE-2026-SQLI"
+        ],
+        "exposedPorts": [
+          3306,
+          5432
+        ],
+        "services": [
+          "MYSQL",
+          "POSTGRESQL"
+        ],
+        "securityState": "NORMAL",
+        "riskScore": 69.6,
+        "reachable": true
+      },
+      "DNS-SERVER-01": {
+        "nodeId": "DNS-SERVER-01",
+        "deviceId": "DNS-SERVER-01",
+        "nodeType": "DNS_SERVER",
+        "hostname": "dns-01.infra.internal",
+        "ipAddresses": [
+          "192.168.1.53"
+        ],
+        "deviceType": "Debian 12",
+        "zone": "INTERNAL",
+        "assetCriticality": "MEDIUM",
+        "vulnerabilities": [],
+        "exposedPorts": [
+          53
+        ],
+        "services": [
+          "DNS"
+        ],
+        "securityState": "NORMAL",
+        "riskScore": 5.76,
+        "reachable": true
+      }
+    },
+    "edges": {
+      "CONN-01": {
+        "edgeId": "CONN-01",
+        "sourceNode": "ATTACKER-EXT",
+        "destinationNode": "WEB-01",
+        "connectionId": "CONN-01",
+        "protocol": "TCP",
+        "sourcePort": null,
+        "destinationPort": 443,
+        "service": "HTTPS",
+        "reachable": true,
+        "trustRelationship": false,
+        "securityControl": "Permitted by FW-RULE-01: Internet to DMZ Web Ingress",
+        "vulnerabilityExposure": null,
+        "riskContribution": 0.0,
+        "status": "REACHABLE"
+      },
+      "CONN-03": {
+        "edgeId": "CONN-03",
+        "sourceNode": "WEB-01",
+        "destinationNode": "DB-01",
+        "connectionId": "CONN-03",
+        "protocol": "TCP",
+        "sourcePort": null,
+        "destinationPort": 3306,
+        "service": "MYSQL",
+        "reachable": true,
+        "trustRelationship": false,
+        "securityControl": "Permitted by FW-RULE-03: DMZ to Database Access",
+        "vulnerabilityExposure": null,
+        "riskContribution": 0.0,
+        "status": "REACHABLE"
+      }
+    },
+    "adjacency": {
+      "ATTACKER-EXT": [
+        "WEB-01"
+      ],
+      "CLIENT-01": [],
+      "WEB-01": [
+        "DB-01"
+      ],
+      "DB-01": [],
+      "DNS-SERVER-01": []
+    }
+  }
+}
