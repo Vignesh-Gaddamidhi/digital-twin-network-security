@@ -200,6 +200,10 @@ from services.digital_twin.risk.explanation.risk_explanation_models import (
     RiskExplanation, RISK_LEVEL_POLICIES
 )
 from services.digital_twin.risk.explanation.risk_explanation_engine import risk_explanation_engine
+from services.digital_twin.risk.history.risk_trend_models import (
+    RiskTrendDirection, RiskEventType, DeviceContinuousRiskState, NetworkRiskAggregation
+)
+from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -610,6 +614,48 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 132: RISK HISTORY, AGGREGATION & TREND API ====================
+
+class RecordRiskObservationRequest(BaseModel):
+    deviceId: str = "DB-01"
+    riskScore: float = 69.60
+    predictionId: str = "PRED-HIST-132"
+    explanationId: Optional[str] = None
+
+@app.post("/api/v1/twin/risk/history/record")
+def api_record_risk_observation(req: RecordRiskObservationRequest):
+    try:
+        state, events = risk_state_engine.record_risk_observation(
+            device_id=req.deviceId,
+            risk_score=req.riskScore,
+            prediction_id=req.predictionId,
+            explanation_id=req.explanationId
+        )
+        return {
+            "status": "OBSERVATION_RECORDED",
+            "deviceState": state.model_dump(),
+            "eventsGenerated": [e.model_dump() for e in events]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/risk/history/device/{deviceId}")
+def api_get_device_risk_state(deviceId: str):
+    if deviceId not in risk_state_engine.device_states:
+        raise HTTPException(status_code=404, detail=f"No risk history found for device {deviceId}")
+    return risk_state_engine.device_states[deviceId].model_dump()
+
+@app.get("/api/v1/twin/risk/aggregation/network")
+def api_get_network_risk_aggregation(strategy: str = "MAX"):
+    return risk_state_engine.aggregate_network_risk(strategy=strategy).model_dump()
+
+@app.get("/api/v1/twin/risk/events/recent")
+def api_get_recent_risk_events():
+    return {
+        "count": len(risk_state_engine.event_history),
+        "events": [e.model_dump() for e in risk_state_engine.event_history[-20:]]
+    }
 
 # ==================== DAY 131: RISK EXPLANATION & XAI INTEGRATION API ====================
 

@@ -1,0 +1,67 @@
+[
+  {
+    "eventId": "REVT-B648606F",
+    "deviceId": "PROD-DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "LOW",
+    "currentRiskLevel": "MEDIUM",
+    "previousScore": 20.0,
+    "currentScore": 38.0,
+    "scoreDelta": 18.0,
+    "timestamp": "2026-09-14T07:02:42.260430+00:00",
+    "rationale": "Risk escalated: LOW -> MEDIUM on PROD-DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-53C91A0A",
+    "deviceId": "PROD-DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "MEDIUM",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 38.0,
+    "currentScore": 55.0,
+    "scoreDelta": 17.0,
+    "timestamp": "2026-09-14T07:02:42.268066+00:00",
+    "rationale": "Risk escalated: MEDIUM -> HIGH on PROD-DB-01.",
+    "cooldownActive": true
+  },
+  {
+    "eventId": "REVT-32B194BD",
+    "deviceId": "PROD-DB-01",
+    "eventType": "HIGH_RISK_REACHED",
+    "previousRiskLevel": "MEDIUM",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 38.0,
+    "currentScore": 55.0,
+    "scoreDelta": 17.0,
+    "timestamp": "2026-09-14T07:02:42.268093+00:00",
+    "rationale": "High risk threshold entered for asset PROD-DB-01.",
+    "cooldownActive": true
+  },
+  {
+    "eventId": "REVT-301E1312",
+    "deviceId": "PROD-DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "HIGH",
+    "currentRiskLevel": "CRITICAL",
+    "previousScore": 72.0,
+    "currentScore": 89.0,
+    "scoreDelta": 17.0,
+    "timestamp": "2026-09-14T07:02:42.276949+00:00",
+    "rationale": "Risk escalated: HIGH -> CRITICAL on PROD-DB-01.",
+    "cooldownActive": true
+  },
+  {
+    "eventId": "REVT-98CABAF6",
+    "deviceId": "PROD-DB-01",
+    "eventType": "CRITICAL_RISK_REACHED",
+    "previousRiskLevel": "HIGH",
+    "currentRiskLevel": "CRITICAL",
+    "previousScore": 72.0,
+    "currentScore": 89.0,
+    "scoreDelta": 17.0,
+    "timestamp": "2026-09-14T07:02:42.276969+00:00",
+    "rationale": "Critical operational risk threshold breached on asset PROD-DB-01.",
+    "cooldownActive": true
+  }
+]
