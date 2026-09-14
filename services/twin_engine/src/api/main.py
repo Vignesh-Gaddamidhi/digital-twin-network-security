@@ -179,6 +179,12 @@ from services.digital_twin.ml.xai.evidence.unified_pipeline import unified_expla
 from services.digital_twin.ml.xai.visualization.dashboard_models import ComprehensiveXAIForensicReport
 from services.digital_twin.ml.xai.visualization.xai_dashboard_engine import xai_dashboard_engine
 from services.digital_twin.ml.xai.master_xai_validator import master_xai_validator
+from services.digital_twin.risk.factors.factor_types import (
+    AssetCriticalityLevel, VulnerabilitySeverityLevel, AttackImpactLevel,
+    RiskLevelTier, RiskAssessmentStatus, FACTOR_NORMALIZATION_MAP, DEFAULT_CATEGORY_IMPACT_MAP
+)
+from services.digital_twin.risk.validation.risk_schema import RiskAssessment
+from services.digital_twin.risk.engine.risk_scoring_engine import risk_scoring_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -589,6 +595,48 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 127: RISK SCORING ENGINE API ====================
+
+class CalculateRiskRequest(BaseModel):
+    predictionId: str = "PRED-RISK-127"
+    deviceId: str = "SERVER-01"
+    threatProbability: float = 0.87
+    assetCriticality: AssetCriticalityLevel = AssetCriticalityLevel.HIGH
+    vulnerabilitySeverity: VulnerabilitySeverityLevel = VulnerabilitySeverityLevel.HIGH
+    attackImpact: AttackImpactLevel = AttackImpactLevel.CRITICAL
+    source: str = "CLIENT-01"
+    destination: str = "SERVER-01"
+    predictedCategory: str = "PORT_SCAN"
+
+@app.post("/api/v1/twin/risk/calculate")
+def api_calculate_risk(req: CalculateRiskRequest):
+    try:
+        assessment = risk_scoring_engine.calculate_risk(
+            prediction_id=req.predictionId,
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            asset_criticality=req.assetCriticality,
+            vulnerability_severity=req.vulnerabilitySeverity,
+            attack_impact=req.attackImpact,
+            source=req.source,
+            destination=req.destination,
+            predicted_category=req.predictedCategory
+        )
+        return {
+            "status": "RISK_CALCULATED",
+            "assessment": assessment.model_dump(),
+            "formattedCard": assessment.to_formatted_card()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/risk/factors/standards")
+def api_get_risk_factor_standards():
+    return {
+        "normalizationMap": FACTOR_NORMALIZATION_MAP,
+        "defaultCategoryImpactMap": {k: v.value for k, v in DEFAULT_CATEGORY_IMPACT_MAP.items()}
+    }
 
 # ==================== DAY 126: MASTER XAI VALIDATION & BENCHMARK API ====================
 

@@ -913,5 +913,87 @@
     ],
     "confidence": "HIGH",
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
+  },
+  {
+    "explanationId": "EXP-075BD0FD",
+    "predictionId": "PRED-MODESTY",
+    "timestamp": "2026-09-13T13:20:54.494009+00:00",
+    "threatProbability": 0.87,
+    "threatProbabilityFormatted": "87.0%",
+    "predictedCategory": "PORT_SCAN",
+    "categoryConfidence": 0.91,
+    "categoryConfidenceFormatted": "91.0%",
+    "riskLevel": "HIGH",
+    "summary": "Threat probability increased mainly due to abnormal connection frequency, unique destination ports and failed connections.",
+    "detailedExplanation": "The model predicted elevated threat probability (87.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased, while destination diversity increased, indicating communication with a broader set of endpoints than expected provided reinforcing positive evidence. Conversely, bytes per second was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
+    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 0.65)\n  - connection_frequency      : +0.0900 (Value: 48.0)\n  - bytes                     : +0.0555 (Value: 0.4)\nTop mitigating features:\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
+    "topPositiveContributors": [
+      {
+        "featureName": "port_80_ratio",
+        "featureValue": 0.0,
+        "shapValue": 0.1075,
+        "shapValueFormatted": "+0.1075",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.1075,
+        "rank": 1
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": 0.65,
+        "shapValue": 0.0935,
+        "shapValueFormatted": "+0.0935",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0935,
+        "rank": 2
+      },
+      {
+        "featureName": "connection_frequency",
+        "featureValue": 48.0,
+        "shapValue": 0.09,
+        "shapValueFormatted": "+0.0900",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.09,
+        "rank": 3
+      },
+      {
+        "featureName": "bytes",
+        "featureValue": 0.4,
+        "shapValue": 0.0555,
+        "shapValueFormatted": "+0.0555",
+        "direction": "POSITIVE",
+        "absoluteContribution": 0.0555,
+        "rank": 6
+      }
+    ],
+    "topNegativeContributors": [
+      {
+        "featureName": "bytes_per_second",
+        "featureValue": 0.0,
+        "shapValue": -0.079,
+        "shapValueFormatted": "-0.0790",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.079,
+        "rank": 4
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": 0.0,
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.075,
+        "rank": 5
+      }
+    ],
+    "supportingEvidence": [
+      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
+      "packet transmission rate surged beyond normal baseline parameters (observed: 0.65, contribution: +0.0935)",
+      "connection frequency increased significantly relative to the learned baseline (observed: 48.00, contribution: +0.0900)",
+      "transmitted byte volume showed an unexpected upward surge (observed: 0.40, contribution: +0.0555)",
+      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
+      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
+    ],
+    "confidence": "HIGH",
+    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   }
 ]
