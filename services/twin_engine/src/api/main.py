@@ -212,6 +212,10 @@ from services.digital_twin.attack_path.graph.security_zone_models import (
     NetworkZoneEnum, ReachabilityStateEnum, SecurityControlPolicy, DEFAULT_SECURITY_POLICIES
 )
 from services.digital_twin.attack_path.graph.twin_graph_synchronizer import twin_graph_synchronizer
+from services.digital_twin.attack_path.nodes.entry_point_models import (
+    StateSourceEnum, TargetTypeEnum, EntryPointScore, AttackTargetDefinition, DeviceCompromiseState
+)
+from services.digital_twin.attack_path.nodes.entry_point_engine import entry_point_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -625,6 +629,65 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 136: ATTACKER & ENTRY POINT API ====================
+
+class CreateAttackerRequest(BaseModel):
+    nodeId: str = "ATTACKER-01"
+    hostname: str = "adversary.external.net"
+    ip: str = "198.51.100.24"
+
+class ScoreEntryPointRequest(BaseModel):
+    deviceId: str = "WEB-01"
+    threatProbability: float = 0.87
+
+class SetSimulationCompromiseRequest(BaseModel):
+    deviceId: str = "CLIENT-01"
+    state: str = "COMPROMISED"
+    scenarioId: str = "LATERAL_MOVEMENT_LIKE"
+
+class RegisterTargetRequest(BaseModel):
+    deviceId: str = "DB-01"
+    targetType: TargetTypeEnum = TargetTypeEnum.DATABASE
+    serviceName: Optional[str] = "MYSQL"
+    port: Optional[int] = 3306
+    description: str = "Production Database Crown Jewel"
+
+@app.post("/api/v1/twin/attack-path/attacker/create")
+def api_create_attacker_node(req: CreateAttackerRequest):
+    try:
+        node = entry_point_engine.create_attacker_node(req.nodeId, req.hostname, req.ip)
+        return {"status": "ATTACKER_CREATED", "attacker": node.model_dump()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/entry-point/score")
+def api_score_entry_point(req: ScoreEntryPointRequest):
+    try:
+        score = entry_point_engine.evaluate_entry_point(req.deviceId, req.threatProbability)
+        return {"status": "ENTRY_POINT_SCORED", "entryScore": score.model_dump()}
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/compromise/set-simulation")
+def api_set_simulation_compromise(req: SetSimulationCompromiseRequest):
+    try:
+        res = entry_point_engine.set_simulation_compromise(req.deviceId, req.state, req.scenarioId)
+        return {"status": "COMPROMISE_STATE_SET", "compromise": res.model_dump()}
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/target/register")
+def api_register_attack_target(req: RegisterTargetRequest):
+    try:
+        tgt = entry_point_engine.register_target(
+            req.deviceId, req.targetType, req.serviceName, req.port, req.description
+        )
+        return {"status": "TARGET_REGISTERED", "target": tgt.model_dump()}
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 135: TWIN GRAPH SYNCHRONIZATION API ====================
 

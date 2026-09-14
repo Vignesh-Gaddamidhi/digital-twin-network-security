@@ -1,6 +1,6 @@
 {
   "nodeCount": 5,
-  "edgeCount": 2,
+  "edgeCount": 5,
   "nodes": {
     "ATTACKER-EXT": {
       "nodeId": "ATTACKER-EXT",
@@ -40,7 +40,7 @@
         "SMB",
         "RDP"
       ],
-      "securityState": "QUARANTINED",
+      "securityState": "NORMAL",
       "riskScore": 5.76,
       "reachable": true
     },
@@ -138,6 +138,22 @@
       "riskContribution": 0.0,
       "status": "REACHABLE"
     },
+    "CONN-02": {
+      "edgeId": "CONN-02",
+      "sourceNode": "CLIENT-01",
+      "destinationNode": "WEB-01",
+      "connectionId": "CONN-02",
+      "protocol": "TCP",
+      "sourcePort": null,
+      "destinationPort": 22,
+      "service": "SSH",
+      "reachable": true,
+      "trustRelationship": false,
+      "securityControl": "Permitted by FW-RULE-02: Internal to DMZ Management",
+      "vulnerabilityExposure": null,
+      "riskContribution": 0.0,
+      "status": "REACHABLE"
+    },
     "CONN-03": {
       "edgeId": "CONN-03",
       "sourceNode": "WEB-01",
@@ -153,13 +169,49 @@
       "vulnerabilityExposure": null,
       "riskContribution": 0.0,
       "status": "REACHABLE"
+    },
+    "CONN-04": {
+      "edgeId": "CONN-04",
+      "sourceNode": "CLIENT-01",
+      "destinationNode": "DNS-SERVER-01",
+      "connectionId": "CONN-04",
+      "protocol": "UDP",
+      "sourcePort": null,
+      "destinationPort": 53,
+      "service": "DNS",
+      "reachable": true,
+      "trustRelationship": false,
+      "securityControl": "Permitted: Intra-zone communication within INTERNAL",
+      "vulnerabilityExposure": null,
+      "riskContribution": 0.0,
+      "status": "REACHABLE"
+    },
+    "CONN-05": {
+      "edgeId": "CONN-05",
+      "sourceNode": "CLIENT-01",
+      "destinationNode": "DB-01",
+      "connectionId": "CONN-05",
+      "protocol": "TCP",
+      "sourcePort": null,
+      "destinationPort": 3306,
+      "service": "MYSQL",
+      "reachable": false,
+      "trustRelationship": false,
+      "securityControl": "Blocked by FW-RULE-04: Internal to Database Direct Blocking",
+      "vulnerabilityExposure": null,
+      "riskContribution": 0.0,
+      "status": "BLOCKED"
     }
   },
   "adjacency": {
     "ATTACKER-EXT": [
       "WEB-01"
     ],
-    "CLIENT-01": [],
+    "CLIENT-01": [
+      "WEB-01",
+      "DNS-SERVER-01",
+      "DB-01"
+    ],
     "WEB-01": [
       "DB-01"
     ],
