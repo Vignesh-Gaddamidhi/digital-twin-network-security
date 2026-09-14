@@ -90,7 +90,8 @@ class PathDiscoveryEngine:
         source: str,
         target: str,
         constraints: Optional[PathConstraints] = None,
-        only_reachable: bool = False
+        only_reachable: bool = False,
+        persist: bool = True
     ) -> PathDiscoveryResult:
         c = constraints or PathConstraints()
         # Verify endpoints exist
