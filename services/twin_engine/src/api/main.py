@@ -217,9 +217,13 @@ from services.digital_twin.attack_path.nodes.entry_point_models import (
 )
 from services.digital_twin.attack_path.nodes.entry_point_engine import entry_point_engine
 from services.digital_twin.attack_path.discovery.discovery_models import (
-    TraversalMethodEnum, PathConstraints, PathDiscoveryResult
+    TraversalMethodEnum, PathConstraints, PathDiscoveryResult, DiscoveredPathDetail
 )
 from services.digital_twin.attack_path.discovery.path_discovery_engine import path_discovery_engine
+from services.digital_twin.attack_path.scoring.path_scoring_models import (
+    AttackPathRisk, PathRankingResult, RankedPathItem
+)
+from services.digital_twin.attack_path.scoring.path_risk_engine import path_risk_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -633,6 +637,53 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 138: PATH RISK SCORING & RANKING API ====================
+
+class EvaluatePathRiskRequest(BaseModel):
+    path: DiscoveredPathDetail
+    entryThreatProbability: float = 0.87
+    attackImpactWeight: float = 0.80
+
+EvaluatePathRiskRequest.model_rebuild()
+
+class RankPathsRequest(BaseModel):
+    paths: List[DiscoveredPathDetail]
+    entryThreatProbability: float = 0.87
+    attackImpactWeight: float = 0.80
+
+RankPathsRequest.model_rebuild()
+
+@app.post("/api/v1/twin/attack-path/scoring/evaluate")
+def api_evaluate_path_risk(req: EvaluatePathRiskRequest):
+    try:
+        res = path_risk_engine.calculate_path_risk(
+            path=req.path,
+            entry_threat_probability=req.entryThreatProbability,
+            attack_impact_weight=req.attackImpactWeight
+        )
+        return {
+            "status": "PATH_RISK_EVALUATED",
+            "riskAssessment": res.model_dump(),
+            "summaryString": res.to_formatted_summary()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/scoring/rank")
+def api_rank_attack_paths(req: RankPathsRequest):
+    try:
+        ranking = path_risk_engine.rank_paths(
+            paths=req.paths,
+            entry_threat_probability=req.entryThreatProbability,
+            attack_impact_weight=req.attackImpactWeight
+        )
+        return {
+            "status": "PATHS_RANKED",
+            "ranking": ranking.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 137: PATH DISCOVERY & REACHABILITY API ====================
 
