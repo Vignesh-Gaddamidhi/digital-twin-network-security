@@ -216,6 +216,10 @@ from services.digital_twin.attack_path.nodes.entry_point_models import (
     StateSourceEnum, TargetTypeEnum, EntryPointScore, AttackTargetDefinition, DeviceCompromiseState
 )
 from services.digital_twin.attack_path.nodes.entry_point_engine import entry_point_engine
+from services.digital_twin.attack_path.discovery.discovery_models import (
+    TraversalMethodEnum, PathConstraints, PathDiscoveryResult
+)
+from services.digital_twin.attack_path.discovery.path_discovery_engine import path_discovery_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -629,6 +633,56 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 137: PATH DISCOVERY & REACHABILITY API ====================
+
+class DiscoverPathsRequest(BaseModel):
+    source: str = "ATTACKER-EXT"
+    target: str = "DB-01"
+    constraints: Optional[PathConstraints] = None
+
+@app.post("/api/v1/twin/attack-path/discover/shortest")
+def api_discover_shortest_path(req: DiscoverPathsRequest):
+    try:
+        res = path_discovery_engine.find_shortest_path(
+            source=req.source,
+            target=req.target,
+            constraints=req.constraints
+        )
+        return {
+            "status": "SHORTEST_PATH_DISCOVERED",
+            "result": res.model_dump(),
+            "summaryString": res.to_formatted_summary()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/discover/all")
+def api_discover_all_paths(req: DiscoverPathsRequest):
+    try:
+        res = path_discovery_engine.find_all_paths(
+            source=req.source,
+            target=req.target,
+            constraints=req.constraints
+        )
+        return {
+            "status": "ALL_PATHS_DISCOVERED",
+            "result": res.model_dump(),
+            "summaryString": res.to_formatted_summary()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/attack-path/discover/history")
+def api_get_discovery_history():
+    return {
+        "count": len(path_discovery_engine.history),
+        "history": [h.model_dump() for h in path_discovery_engine.history[-20:]]
+    }
 
 # ==================== DAY 136: ATTACKER & ENTRY POINT API ====================
 
