@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import numpy as np
 import sys
 from pathlib import Path
@@ -646,6 +647,41 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 141: DASHBOARD SHELL & UI FOUNDATION API ====================
+
+@app.get("/api/v1/twin/dashboard/shell")
+def api_get_dashboard_shell_context():
+    now_iso = datetime.now(timezone.utc).isoformat()
+    now_time = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+    
+    # Derive counts from existing phase stores
+    from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
+    from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
+    
+    crit_count = sum(1 for v in attack_path_graph.nodes.values() if v.assetCriticality == "CRITICAL")
+    high_risk_count = sum(1 for v in risk_state_engine.device_states.values() if v.currentRiskLevel.value in ("HIGH", "CRITICAL"))
+
+    return {
+        "systemTitle": "NETWORK SECURITY DIGITAL TWIN",
+        "systemStatus": "ONLINE",
+        "simulationState": "RUNNING",
+        "environmentName": "LAB / SIMULATION",
+        "activeScenario": "LATERAL_MOVEMENT_LIKE",
+        "badges": {
+            "threats": 3,
+            "risk": high_risk_count,
+            "alerts": len(risk_state_engine.event_history),
+            "criticalAssets": crit_count
+        },
+        "timestamps": {
+            "eventTime": now_iso,
+            "receivedTime": now_iso,
+            "processedTime": now_iso,
+            "predictionTime": now_iso,
+            "lastUpdated": now_time
+        }
+    }
 
 # ==================== DAY 140: MASTER ATTACK PATH ANALYSIS API ====================
 
