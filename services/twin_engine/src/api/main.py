@@ -185,6 +185,10 @@ from services.digital_twin.risk.factors.factor_types import (
 )
 from services.digital_twin.risk.validation.risk_schema import RiskAssessment
 from services.digital_twin.risk.engine.risk_scoring_engine import risk_scoring_engine
+from services.digital_twin.risk.factors.asset.asset_criticality_models import (
+    PredictionProvenance, ThreatAssetContextRecord
+)
+from services.digital_twin.risk.factors.asset.threat_asset_engine import threat_asset_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -595,6 +599,58 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 128: THREAT PROBABILITY & ASSET CRITICALITY API ====================
+
+class BindThreatAssetRequest(BaseModel):
+    deviceId: str = "DB-01"
+    threatProbability: float = 0.87
+    provenance: PredictionProvenance
+
+class UpdateAssetCriticalityRequest(BaseModel):
+    deviceId: str = "CLIENT-01"
+    criticality: AssetCriticalityLevel = AssetCriticalityLevel.MEDIUM
+
+@app.post("/api/v1/twin/risk/factors/asset/bind")
+def api_bind_threat_to_asset(req: BindThreatAssetRequest):
+    try:
+        record = threat_asset_engine.bind_threat_to_asset(
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            prediction_provenance=req.provenance
+        )
+        return {
+            "status": "ASSET_CONTEXT_BOUND",
+            "context": record.model_dump(),
+            "formattedCard": record.to_formatted_card()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/risk/factors/asset/inventory")
+def api_get_asset_inventory():
+    return {
+        "count": len(threat_asset_engine.asset_registry),
+        "assets": threat_asset_engine.asset_registry,
+        "criticalityConfigs": {k.value: v.model_dump() for k, v in threat_asset_engine.criticality_configs.items()}
+    }
+
+@app.put("/api/v1/twin/risk/factors/asset/criticality")
+def api_update_asset_criticality(req: UpdateAssetCriticalityRequest):
+    try:
+        updated = threat_asset_engine.update_asset_criticality(req.deviceId, req.criticality)
+        return {
+            "status": "CRITICALITY_UPDATED",
+            "device": updated
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== DAY 127: RISK SCORING ENGINE API ====================
 
