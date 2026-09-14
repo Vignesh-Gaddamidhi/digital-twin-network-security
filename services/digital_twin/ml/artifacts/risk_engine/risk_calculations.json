@@ -1,9 +1,9 @@
 [
   {
-    "calculationId": "CALC-3E6A747A",
+    "calculationId": "CALC-7530723A",
     "predictionId": "PRED-CANON-130",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-14T07:50:56.738145+00:00",
+    "timestamp": "2026-09-14T08:20:34.321737+00:00",
     "rawRiskScore": 0.696,
     "riskScore": 69.6,
     "riskScoreFormatted": "69.60 / 100.0",
@@ -31,10 +31,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-62C61D75",
+    "calculationId": "CALC-5B812E16",
     "predictionId": "PRED-TC1",
     "deviceId": "DEV-01",
-    "timestamp": "2026-09-14T07:50:56.742240+00:00",
+    "timestamp": "2026-09-14T08:20:34.323673+00:00",
     "rawRiskScore": 0.032,
     "riskScore": 3.2,
     "riskScoreFormatted": "3.20 / 100.0",
@@ -62,10 +62,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-8CEF2999",
+    "calculationId": "CALC-D3D24820",
     "predictionId": "PRED-TC2",
     "deviceId": "DEV-02",
-    "timestamp": "2026-09-14T07:50:56.761747+00:00",
+    "timestamp": "2026-09-14T08:20:34.369445+00:00",
     "rawRiskScore": 0.4096,
     "riskScore": 40.96,
     "riskScoreFormatted": "40.96 / 100.0",
@@ -93,10 +93,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-C58BB2C7",
+    "calculationId": "CALC-2D2748D9",
     "predictionId": "PRED-TC3",
     "deviceId": "DEV-03",
-    "timestamp": "2026-09-14T07:50:56.773004+00:00",
+    "timestamp": "2026-09-14T08:20:34.379974+00:00",
     "rawRiskScore": 0.9,
     "riskScore": 90.0,
     "riskScoreFormatted": "90.00 / 100.0",
@@ -124,10 +124,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-1F898E09",
+    "calculationId": "CALC-AB9B02E0",
     "predictionId": "PRED-000123",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-14T07:50:58.100662+00:00",
+    "timestamp": "2026-09-14T08:20:36.144982+00:00",
     "rawRiskScore": 0.696,
     "riskScore": 69.6,
     "riskScoreFormatted": "69.60 / 100.0",
@@ -155,10 +155,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-FC9BF0A9",
+    "calculationId": "CALC-B7F34985",
     "predictionId": "PRED-NORM-HTTP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.106737+00:00",
+    "timestamp": "2026-09-14T08:20:36.154179+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -186,10 +186,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-780A4214",
+    "calculationId": "CALC-C5FB9840",
     "predictionId": "PRED-NORM-HTTPS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.132821+00:00",
+    "timestamp": "2026-09-14T08:20:36.185723+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -217,10 +217,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-994DAF74",
+    "calculationId": "CALC-8C3221CA",
     "predictionId": "PRED-NORM-DNS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.163218+00:00",
+    "timestamp": "2026-09-14T08:20:36.258451+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -248,10 +248,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-3B376AA1",
+    "calculationId": "CALC-CBA820C6",
     "predictionId": "PRED-NORM-SSH",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.195591+00:00",
+    "timestamp": "2026-09-14T08:20:36.303410+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -279,10 +279,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-35A068C1",
+    "calculationId": "CALC-7EB19B50",
     "predictionId": "PRED-NORM-ICMP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.224119+00:00",
+    "timestamp": "2026-09-14T08:20:36.337159+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -310,10 +310,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-D01266F1",
+    "calculationId": "CALC-ED419ADF",
     "predictionId": "PRED-NORM-TCP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.276028+00:00",
+    "timestamp": "2026-09-14T08:20:36.369769+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -341,10 +341,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-6371853C",
+    "calculationId": "CALC-5CA310CE",
     "predictionId": "PRED-NORM-UDP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.309226+00:00",
+    "timestamp": "2026-09-14T08:20:36.405382+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -372,10 +372,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-46172D01",
+    "calculationId": "CALC-E4BB6BE6",
     "predictionId": "PRED-ATT-PORT_SCAN",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.339297+00:00",
+    "timestamp": "2026-09-14T08:20:36.457353+00:00",
     "rawRiskScore": 0.024,
     "riskScore": 2.4,
     "riskScoreFormatted": "2.40 / 100.0",
@@ -403,10 +403,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-18068BCE",
+    "calculationId": "CALC-D78F25CC",
     "predictionId": "PRED-ATT-BRUTE_FORCE_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-14T07:50:58.371708+00:00",
+    "timestamp": "2026-09-14T08:20:36.495364+00:00",
     "rawRiskScore": 0.1088,
     "riskScore": 10.88,
     "riskScoreFormatted": "10.88 / 100.0",
@@ -434,10 +434,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-50C47BC9",
+    "calculationId": "CALC-0DC604BF",
     "predictionId": "PRED-ATT-DOS_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-14T07:50:58.400524+00:00",
+    "timestamp": "2026-09-14T08:20:36.539849+00:00",
     "rawRiskScore": 0.1216,
     "riskScore": 12.16,
     "riskScoreFormatted": "12.16 / 100.0",
@@ -465,10 +465,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-3DC42F44",
+    "calculationId": "CALC-C0C4D9D4",
     "predictionId": "PRED-ATT-DNS_ANOMALY",
     "deviceId": "DNS-SERVER-01",
-    "timestamp": "2026-09-14T07:50:58.431816+00:00",
+    "timestamp": "2026-09-14T08:20:36.578863+00:00",
     "rawRiskScore": 0.0576,
     "riskScore": 5.76,
     "riskScoreFormatted": "5.76 / 100.0",
@@ -496,10 +496,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-B9E562E8",
+    "calculationId": "CALC-F1309B67",
     "predictionId": "PRED-ATT-BEACONING",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-14T07:50:58.462373+00:00",
+    "timestamp": "2026-09-14T08:20:36.622964+00:00",
     "rawRiskScore": 0.0336,
     "riskScore": 3.36,
     "riskScoreFormatted": "3.36 / 100.0",
@@ -527,10 +527,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-5CD24269",
+    "calculationId": "CALC-5C569ACB",
     "predictionId": "PRED-ATT-LATERAL_MOVEMENT_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-14T07:50:58.494823+00:00",
+    "timestamp": "2026-09-14T08:20:36.666846+00:00",
     "rawRiskScore": 0.11264,
     "riskScore": 11.26,
     "riskScoreFormatted": "11.26 / 100.0",
@@ -558,10 +558,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-39586242",
+    "calculationId": "CALC-9950B40F",
     "predictionId": "PRED-ATT-EXFILTRATION_LIKE",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-14T07:50:58.527849+00:00",
+    "timestamp": "2026-09-14T08:20:36.708028+00:00",
     "rawRiskScore": 0.19,
     "riskScore": 19.0,
     "riskScoreFormatted": "19.00 / 100.0",
@@ -589,10 +589,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-FE3D7719",
+    "calculationId": "CALC-92A03499",
     "predictionId": "P4",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-14T07:50:58.573489+00:00",
+    "timestamp": "2026-09-14T08:20:36.747653+00:00",
     "rawRiskScore": 0.102,
     "riskScore": 10.2,
     "riskScoreFormatted": "10.20 / 100.0",
@@ -614,6 +614,37 @@
       "attackImpact": "MEDIUM"
     },
     "formulaProof": "0.8500 \u00c3\u2014 1.0000 \u00c3\u2014 0.2000 \u00c3\u2014 0.6000 = 0.102000 \u00e2\u2020\u2019 10.20 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  },
+  {
+    "calculationId": "CALC-CB9CD253",
+    "predictionId": "P-NORM",
+    "deviceId": "CLIENT-01",
+    "timestamp": "2026-09-14T08:20:49.842526+00:00",
+    "rawRiskScore": 0.00128,
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "riskLevel": "LOW",
+    "factors": {
+      "threatProbability": 0.08,
+      "threatFormatted": "8.0%",
+      "assetCriticality": 0.4,
+      "assetCriticalityLevel": "LOW",
+      "vulnerabilityScore": 0.2,
+      "vulnerabilitySeverityLevel": "NONE",
+      "attackImpactScore": 0.2,
+      "attackImpactLevel": "VERY_LOW"
+    },
+    "contributingFactors": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW",
+      "vulnerability": "NONE",
+      "attackImpact": "VERY_LOW"
+    },
+    "formulaProof": "0.0800 \u00c3\u2014 0.4000 \u00c3\u2014 0.2000 \u00c3\u2014 0.2000 = 0.001280 \u00e2\u2020\u2019 0.13 / 100.0",
     "riskEngineVersion": "v3.0-multiplicative",
     "factorConfigVersion": "v1.0",
     "thresholdConfigVersion": "v1.0",

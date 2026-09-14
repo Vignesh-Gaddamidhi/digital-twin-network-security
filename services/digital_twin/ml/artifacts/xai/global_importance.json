@@ -1,10 +1,10 @@
 {
-  "reportId": "GIMP-9ECB68E6",
+  "reportId": "GIMP-911A4F65",
   "modelName": "random_forest",
   "modelVersion": "rf-v1.0",
   "datasetVersion": "dataset-v1.0",
   "featureVersion": "feature-v1.0",
-  "generatedAt": "2026-09-14T07:50:42.086595+00:00",
+  "generatedAt": "2026-09-14T08:20:18.296649+00:00",
   "nativeMethod": "TREE_IMPORTANCE",
   "nativeImportances": [
     {

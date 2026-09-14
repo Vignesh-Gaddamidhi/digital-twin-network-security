@@ -208,6 +208,13 @@ class TwinSecurityGraphSynchronizer:
                 reachable=True
             )
             attack_path_graph.add_node(node)
+            # Sync initial continuous risk state in risk_state_engine
+            from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
+            risk_state_engine.record_risk_observation(
+                device_id=dev_id,
+                risk_score=float(d.get("riskScore", 0.0)),
+                prediction_id=f"PRED-INIT-{dev_id}"
+            )
 
         # 2. Sync Edges
         for conn_id, c in self.connection_store.items():

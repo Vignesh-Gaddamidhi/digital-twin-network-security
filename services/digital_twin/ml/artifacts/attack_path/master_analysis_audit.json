@@ -1,7 +1,7 @@
 [
   {
-    "analysisId": "APANA-9E92FE54",
-    "timestamp": "2026-09-14T07:52:26.773689+00:00",
+    "analysisId": "APANA-7521F89F",
+    "timestamp": "2026-09-14T08:20:40.950751+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -20,12 +20,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-9EBB20",
+    "explanationId": "PEXP-6C7CF5",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-BDAB2AE2",
-    "timestamp": "2026-09-14T07:52:26.791078+00:00",
+    "analysisId": "APANA-4D8CA345",
+    "timestamp": "2026-09-14T08:20:40.974767+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -44,12 +44,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-21ECFC",
+    "explanationId": "PEXP-3F1FA4",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-F139A22F",
-    "timestamp": "2026-09-14T07:52:26.831042+00:00",
+    "analysisId": "APANA-D4C42E50",
+    "timestamp": "2026-09-14T08:20:41.006483+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -68,12 +68,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-8A5FFB",
+    "explanationId": "PEXP-D2EAEE",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-F1D8ACA3",
-    "timestamp": "2026-09-14T07:52:26.856710+00:00",
+    "analysisId": "APANA-AA3C3741",
+    "timestamp": "2026-09-14T08:20:41.036202+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -92,12 +92,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-CF53F2",
+    "explanationId": "PEXP-44F0AB",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-9512A655",
-    "timestamp": "2026-09-14T07:52:26.880133+00:00",
+    "analysisId": "APANA-EF920EA8",
+    "timestamp": "2026-09-14T08:20:41.074645+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -116,12 +116,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-05935C",
+    "explanationId": "PEXP-83A501",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-E1911A70",
-    "timestamp": "2026-09-14T07:52:26.902205+00:00",
+    "analysisId": "APANA-908EB5DB",
+    "timestamp": "2026-09-14T08:20:41.141185+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -140,27 +140,27 @@
     "status": "NO_PATH_FOUND"
   },
   {
-    "analysisId": "APANA-5F9FE4F4",
-    "timestamp": "2026-09-14T07:53:09.126771+00:00",
+    "analysisId": "APANA-DABE21BF",
+    "timestamp": "2026-09-14T08:20:49.881214+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
     "traversalMethod": "DFS_ALL_BOUNDED",
-    "pathsDiscovered": 1,
-    "pathsBlocked": 0,
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
     "pathsPartial": 0,
     "selectedPath": [
       "CLIENT-01",
       "WEB-01",
       "DB-01"
     ],
-    "pathRiskScore": 56.0,
-    "pathRiskLevel": "HIGH",
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
     "criticalTarget": true,
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-B79623",
+    "explanationId": "PEXP-E39EA2",
     "status": "COMPLETED"
   }
 ]

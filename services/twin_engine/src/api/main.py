@@ -648,6 +648,73 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
+# ==================== DAY 147: MASTER DASHBOARD SUMMARY & SIMULATION CONTROL API ====================
+
+class SimulationControlRequest(BaseModel):
+    action: str = "START" # START, PAUSE, STOP, RESET
+    scenario: Optional[str] = "LATERAL_MOVEMENT_LIKE"
+    speed: Optional[int] = 1
+
+@app.post("/api/v1/twin/simulation/control")
+def api_control_simulation(req: SimulationControlRequest):
+    act = req.action.upper()
+    status_map = {"START": "RUNNING", "PAUSE": "PAUSED", "STOP": "STOPPED", "RESET": "RESET"}
+    return {
+        "status": status_map.get(act, "RUNNING"),
+        "activeScenario": req.scenario or "LATERAL_MOVEMENT_LIKE",
+        "speedMultiplier": req.speed or 1,
+        "elapsedSimulationTime": "00:12:31",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+@app.get("/api/v1/twin/dashboard/summary")
+def api_get_master_dashboard_summary():
+    now_iso = datetime.now(timezone.utc).isoformat()
+    now_time = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+
+    # Delegate to sub-endpoints internally to prevent divergent state
+    shell_ctx = api_get_dashboard_shell_context()
+    kpis = api_get_dashboard_kpi_payload()
+    topology = api_get_live_topology(highlight_path=True)
+    traffic = api_get_live_traffic_metrics(simulate_spike=False)
+    timeline = api_get_threat_timeline_events()
+    prediction = api_get_prediction_xai_details(device_id="CLIENT-01")
+
+    # Top prioritized attack path
+    top_path = {
+        "pathId": "PATH-002",
+        "route": ["ATTACKER-EXT", "CLIENT-01", "WEB-01", "DB-01"],
+        "riskScore": 80.36,
+        "riskLevel": "CRITICAL",
+        "criticalTarget": True,
+        "status": "POSSIBLE",
+        "explanation": "Modeled path reaches production database DB-01 through vulnerable web tier."
+    }
+
+    # Derive state consistency hash from nodes and active risk score
+    import hashlib
+    raw_hash_data = f"{kpis['risk']['score']}-{topology['totalNodes']}-{top_path['riskScore']}"
+    consistency_hash = hashlib.sha256(raw_hash_data.encode("utf-8")).hexdigest()[:12]
+
+    return {
+        "header": shell_ctx,
+        "simulationControl": {
+            "status": "RUNNING",
+            "activeScenario": "LATERAL_MOVEMENT_LIKE",
+            "speedMultiplier": 1,
+            "elapsedSimulationTime": "00:12:31",
+            "tickCount": 751
+        },
+        "kpis": kpis,
+        "topology": topology,
+        "traffic": traffic,
+        "timeline": timeline,
+        "prediction": prediction,
+        "topAttackPath": top_path,
+        "stateConsistencyHash": consistency_hash,
+        "timestamp": now_iso
+    }
+
 # ==================== DAY 146: PREDICTIONS & XAI PANEL API ====================
 
 @app.get("/api/v1/twin/predictions/xai")
