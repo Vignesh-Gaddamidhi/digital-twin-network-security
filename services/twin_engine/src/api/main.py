@@ -204,6 +204,9 @@ from services.digital_twin.risk.history.risk_trend_models import (
     RiskTrendDirection, RiskEventType, DeviceContinuousRiskState, NetworkRiskAggregation
 )
 from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
+from services.digital_twin.risk.engine.master_risk_orchestrator import (
+    master_risk_orchestrator, FinalRiskObject
+)
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -614,6 +617,51 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 133: END-TO-END RISK PIPELINE & AUDIT API ====================
+
+class EndToEndRiskRequest(BaseModel):
+    predictionId: str = "PRED-LIVE-133"
+    deviceId: str = "DB-01"
+    threatProbability: float = 0.87
+    predictedCategory: str = "PORT_SCAN"
+    categoryConfidence: float = 0.91
+    xaiExplanation: Optional[str] = None
+    topContributingFeatures: List[str] = ["connection_frequency", "destination_diversity", "unique_destination_ports", "failed_connections"]
+    customVulnerabilities: Optional[List[VulnerabilityRecord]] = None
+    targetService: Optional[str] = None
+
+@app.post("/api/v1/twin/risk/pipeline/end-to-end")
+def api_process_end_to_end_risk(req: EndToEndRiskRequest):
+    try:
+        final_risk = master_risk_orchestrator.process_end_to_end_risk(
+            prediction_id=req.predictionId,
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            predicted_category=req.predictedCategory,
+            category_confidence=req.categoryConfidence,
+            xai_explanation=req.xaiExplanation,
+            top_contributing_features=req.topContributingFeatures,
+            custom_vulnerabilities=req.customVulnerabilities,
+            target_service=req.targetService
+        )
+        return {
+            "status": "END_TO_END_RISK_COMPLETED",
+            "finalRiskObject": final_risk.model_dump()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/risk/pipeline/audit-log")
+def api_get_risk_audit_log():
+    return {
+        "count": len(master_risk_orchestrator.audit_log),
+        "auditLog": [r.model_dump() for r in master_risk_orchestrator.audit_log[-50:]]
+    }
 
 # ==================== DAY 132: RISK HISTORY, AGGREGATION & TREND API ====================
 

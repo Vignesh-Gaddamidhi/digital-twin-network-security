@@ -1,6 +1,6 @@
 [
   {
-    "explanationId": "REXP-3E681279",
+    "explanationId": "REXP-FFD3A768",
     "riskId": "RISK-CANON-131",
     "predictionId": "PRED-CANON-131",
     "deviceId": "DB-01",
@@ -27,10 +27,10 @@
     "recommendedAction": "Investigation should be prioritized. Prepare mitigation and segmentation playbooks.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-14T06:59:10.206514+00:00"
+    "generatedAt": "2026-09-14T07:09:06.725016+00:00"
   },
   {
-    "explanationId": "REXP-FEE33AD5",
+    "explanationId": "REXP-E74BAAAF",
     "riskId": "RISK-MISSING",
     "predictionId": "PRED-MISSING",
     "deviceId": "WEB-01",
@@ -57,10 +57,10 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-14T06:59:10.209361+00:00"
+    "generatedAt": "2026-09-14T07:09:06.727141+00:00"
   },
   {
-    "explanationId": "REXP-68B2255B",
+    "explanationId": "REXP-D7C18530",
     "riskId": "RISK-PARTIAL",
     "predictionId": "PRED-PARTIAL",
     "deviceId": "CLIENT-01",
@@ -87,14 +87,14 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-14T06:59:10.219602+00:00"
+    "generatedAt": "2026-09-14T07:09:06.735011+00:00"
   },
   {
-    "explanationId": "REXP-78DF4A12",
-    "riskId": "RISK-LIVE-131",
-    "predictionId": "PRED-LIVE-131",
-    "deviceId": "PROD-DB-01",
-    "threatExplanation": "Threat probability increased primarily because connection frequency, destination diversity, unique destination ports showed significant baseline deviation.",
+    "explanationId": "REXP-30EA4DAF",
+    "riskId": "CALC-876FB792",
+    "predictionId": "PRED-000123",
+    "deviceId": "DB-01",
+    "threatExplanation": "Threat probability increased primarily because connection_frequency, destination_diversity, unique_destination_ports showed significant baseline deviation.",
     "riskExplanation": "Risk is HIGH because threat probability is elevated, affected asset has CRITICAL criticality, active vulnerability severity is HIGH, predicted attack impact is CRITICAL.",
     "factorBreakdown": {
       "threatProbability": "87.0%",
@@ -110,13 +110,493 @@
       "Vulnerability: HIGH",
       "Attack Impact: CRITICAL"
     ],
-    "mitigationContext": "Host PROD-DB-01 requires review of exposed network interfaces.",
+    "mitigationContext": "Host DB-01 requires review of exposed network interfaces.",
     "riskLevel": "HIGH",
     "riskScore": 69.6,
     "riskScoreFormatted": "69.60 / 100.0",
     "recommendedAction": "Investigation should be prioritized. Prepare mitigation and segmentation playbooks.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-14T06:59:19.014096+00:00"
+    "generatedAt": "2026-09-14T07:09:07.703828+00:00"
+  },
+  {
+    "explanationId": "REXP-D909F132",
+    "riskId": "CALC-B8565111",
+    "predictionId": "PRED-NORM-HTTP",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.715956+00:00"
+  },
+  {
+    "explanationId": "REXP-4150086F",
+    "riskId": "CALC-D92B0458",
+    "predictionId": "PRED-NORM-HTTPS",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.752343+00:00"
+  },
+  {
+    "explanationId": "REXP-A49392CA",
+    "riskId": "CALC-2BF137FB",
+    "predictionId": "PRED-NORM-DNS",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.809711+00:00"
+  },
+  {
+    "explanationId": "REXP-11479CEC",
+    "riskId": "CALC-881089A6",
+    "predictionId": "PRED-NORM-SSH",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.840631+00:00"
+  },
+  {
+    "explanationId": "REXP-68525691",
+    "riskId": "CALC-4C27E461",
+    "predictionId": "PRED-NORM-ICMP",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.871832+00:00"
+  },
+  {
+    "explanationId": "REXP-CA364B3E",
+    "riskId": "CALC-44C8299E",
+    "predictionId": "PRED-NORM-TCP",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.900975+00:00"
+  },
+  {
+    "explanationId": "REXP-1839BCF6",
+    "riskId": "CALC-B6C00417",
+    "predictionId": "PRED-NORM-UDP",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "factorBreakdown": {
+      "threatProbability": "8.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "VERY_LOW \u2014 0.20",
+      "calculatedRisk": "0.13 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 8.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: VERY_LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 0.13,
+    "riskScoreFormatted": "0.13 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.933602+00:00"
+  },
+  {
+    "explanationId": "REXP-AFF1E6F0",
+    "riskId": "CALC-E43CAE93",
+    "predictionId": "PRED-ATT-PORT_SCAN",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability increased primarily because connection_frequency, destination_diversity showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated.",
+    "factorBreakdown": {
+      "threatProbability": "75.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "LOW \u2014 0.40",
+      "calculatedRisk": "2.40 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 75.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: LOW"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 2.4,
+    "riskScoreFormatted": "2.40 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:07.965279+00:00"
+  },
+  {
+    "explanationId": "REXP-47AE1182",
+    "riskId": "CALC-C3514346",
+    "predictionId": "PRED-ATT-BRUTE_FORCE_LIKE",
+    "deviceId": "WEB-01",
+    "threatExplanation": "Threat probability increased primarily because failed_connections, connection_frequency showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated, affected asset has HIGH criticality, predicted attack impact is HIGH.",
+    "factorBreakdown": {
+      "threatProbability": "85.0%",
+      "assetCriticality": "HIGH \u2014 0.80",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "HIGH \u2014 0.80",
+      "calculatedRisk": "10.88 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 85.0%",
+      "Asset Criticality: HIGH",
+      "Vulnerability: NONE",
+      "Attack Impact: HIGH"
+    ],
+    "mitigationContext": "Compensating controls active for WEB-01.",
+    "riskLevel": "LOW",
+    "riskScore": 10.88,
+    "riskScoreFormatted": "10.88 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.006178+00:00"
+  },
+  {
+    "explanationId": "REXP-82A21B35",
+    "riskId": "CALC-5409683D",
+    "predictionId": "PRED-ATT-DOS_LIKE",
+    "deviceId": "WEB-01",
+    "threatExplanation": "Threat probability increased primarily because packet_rate, bytes_per_second showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated, affected asset has HIGH criticality, predicted attack impact is HIGH.",
+    "factorBreakdown": {
+      "threatProbability": "95.0%",
+      "assetCriticality": "HIGH \u2014 0.80",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "HIGH \u2014 0.80",
+      "calculatedRisk": "12.16 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 95.0%",
+      "Asset Criticality: HIGH",
+      "Vulnerability: NONE",
+      "Attack Impact: HIGH"
+    ],
+    "mitigationContext": "Compensating controls active for WEB-01.",
+    "riskLevel": "LOW",
+    "riskScore": 12.16,
+    "riskScoreFormatted": "12.16 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.038073+00:00"
+  },
+  {
+    "explanationId": "REXP-96DBB3CD",
+    "riskId": "CALC-3EAFC5E0",
+    "predictionId": "PRED-ATT-DNS_ANOMALY",
+    "deviceId": "DNS-SERVER-01",
+    "threatExplanation": "Threat probability increased primarily because dns_frequency, dns_queries showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated.",
+    "factorBreakdown": {
+      "threatProbability": "80.0%",
+      "assetCriticality": "MEDIUM \u2014 0.60",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "MEDIUM \u2014 0.60",
+      "calculatedRisk": "5.76 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 80.0%",
+      "Asset Criticality: MEDIUM",
+      "Vulnerability: NONE",
+      "Attack Impact: MEDIUM"
+    ],
+    "mitigationContext": "Compensating controls active for DNS-SERVER-01.",
+    "riskLevel": "LOW",
+    "riskScore": 5.76,
+    "riskScoreFormatted": "5.76 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.070446+00:00"
+  },
+  {
+    "explanationId": "REXP-29E42CE8",
+    "riskId": "CALC-1884EDFA",
+    "predictionId": "PRED-ATT-BEACONING",
+    "deviceId": "CLIENT-01",
+    "threatExplanation": "Threat probability increased primarily because connection_frequency, flow_duration showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated.",
+    "factorBreakdown": {
+      "threatProbability": "70.0%",
+      "assetCriticality": "LOW \u2014 0.40",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "MEDIUM \u2014 0.60",
+      "calculatedRisk": "3.36 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 70.0%",
+      "Asset Criticality: LOW",
+      "Vulnerability: NONE",
+      "Attack Impact: MEDIUM"
+    ],
+    "mitigationContext": "Compensating controls active for CLIENT-01.",
+    "riskLevel": "LOW",
+    "riskScore": 3.36,
+    "riskScoreFormatted": "3.36 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.102903+00:00"
+  },
+  {
+    "explanationId": "REXP-5E125C64",
+    "riskId": "CALC-AD50FE31",
+    "predictionId": "PRED-ATT-LATERAL_MOVEMENT_LIKE",
+    "deviceId": "WEB-01",
+    "threatExplanation": "Threat probability increased primarily because destination_diversity, port_443_ratio showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated, affected asset has HIGH criticality, predicted attack impact is HIGH.",
+    "factorBreakdown": {
+      "threatProbability": "88.0%",
+      "assetCriticality": "HIGH \u2014 0.80",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "HIGH \u2014 0.80",
+      "calculatedRisk": "11.26 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 88.0%",
+      "Asset Criticality: HIGH",
+      "Vulnerability: NONE",
+      "Attack Impact: HIGH"
+    ],
+    "mitigationContext": "Compensating controls active for WEB-01.",
+    "riskLevel": "LOW",
+    "riskScore": 11.26,
+    "riskScoreFormatted": "11.26 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.134641+00:00"
+  },
+  {
+    "explanationId": "REXP-6EEB91C9",
+    "riskId": "CALC-2C7F43AB",
+    "predictionId": "PRED-ATT-EXFILTRATION_LIKE",
+    "deviceId": "DB-01",
+    "threatExplanation": "Threat probability increased primarily because bytes, bytes_per_second showed significant baseline deviation.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated, affected asset has CRITICAL criticality, predicted attack impact is CRITICAL.",
+    "factorBreakdown": {
+      "threatProbability": "95.0%",
+      "assetCriticality": "CRITICAL \u2014 1.00",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "CRITICAL \u2014 1.00",
+      "calculatedRisk": "19.00 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 95.0%",
+      "Asset Criticality: CRITICAL",
+      "Vulnerability: NONE",
+      "Attack Impact: CRITICAL"
+    ],
+    "mitigationContext": "Compensating controls active for DB-01.",
+    "riskLevel": "LOW",
+    "riskScore": 19.0,
+    "riskScoreFormatted": "19.00 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.170359+00:00"
+  },
+  {
+    "explanationId": "REXP-A3258465",
+    "riskId": "CALC-505AD930",
+    "predictionId": "P4",
+    "deviceId": "DB-01",
+    "threatExplanation": "Threat probability was assessed at 85.0%, but detailed local SHAP feature attributions were only partially available.",
+    "riskExplanation": "Risk is LOW because threat probability is elevated, affected asset has CRITICAL criticality.",
+    "factorBreakdown": {
+      "threatProbability": "85.0%",
+      "assetCriticality": "CRITICAL \u2014 1.00",
+      "vulnerability": "NONE \u2014 0.20",
+      "attackImpact": "MEDIUM \u2014 0.60",
+      "calculatedRisk": "10.20 / 100",
+      "riskLevel": "LOW"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 85.0%",
+      "Asset Criticality: CRITICAL",
+      "Vulnerability: NONE",
+      "Attack Impact: MEDIUM"
+    ],
+    "mitigationContext": "Compensating controls active for DB-01.",
+    "riskLevel": "LOW",
+    "riskScore": 10.2,
+    "riskScoreFormatted": "10.20 / 100.0",
+    "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:08.205047+00:00"
+  },
+  {
+    "explanationId": "REXP-33B23602",
+    "riskId": "CALC-5472EC23",
+    "predictionId": "PRED-LIVE-133",
+    "deviceId": "DB-01",
+    "threatExplanation": "Threat probability increased primarily because connection frequency surged.",
+    "riskExplanation": "Risk is MEDIUM because threat probability is elevated, affected asset has CRITICAL criticality, active vulnerability severity is HIGH.",
+    "factorBreakdown": {
+      "threatProbability": "87.0%",
+      "assetCriticality": "CRITICAL \u2014 1.00",
+      "vulnerability": "HIGH \u2014 0.80",
+      "attackImpact": "MEDIUM \u2014 0.60",
+      "calculatedRisk": "41.76 / 100",
+      "riskLevel": "MEDIUM"
+    },
+    "topRiskFactors": [
+      "Threat Probability: 87.0%",
+      "Asset Criticality: CRITICAL",
+      "Vulnerability: HIGH",
+      "Attack Impact: MEDIUM"
+    ],
+    "mitigationContext": "Host DB-01 requires review of exposed network interfaces.",
+    "riskLevel": "MEDIUM",
+    "riskScore": 41.76,
+    "riskScoreFormatted": "41.76 / 100.0",
+    "recommendedAction": "Schedule routine investigation and cross-reference IDS telemetry events.",
+    "riskAssessmentConfidence": "HIGH",
+    "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
+    "generatedAt": "2026-09-14T07:09:19.730474+00:00"
   }
 ]

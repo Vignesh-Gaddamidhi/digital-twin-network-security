@@ -1,50 +1,18 @@
 {
-  "PROD-DB-01": {
-    "deviceId": "PROD-DB-01",
-    "currentRiskScore": 89.0,
-    "currentRiskLevel": "CRITICAL",
-    "riskTrend": "INCREASING",
-    "consecutiveObservations": 5,
-    "lastAssessmentAt": "2026-09-14T07:02:42.276703+00:00",
+  "DB-01": {
+    "deviceId": "DB-01",
+    "currentRiskScore": 41.76,
+    "currentRiskLevel": "MEDIUM",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-14T07:09:19.728931+00:00",
     "history": [
       {
-        "observationId": "ROBS-9D8CF27D",
-        "timestamp": "2026-09-14T07:02:42.248830+00:00",
-        "riskScore": 20.0,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-SERIES-1430037980",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-697EB4F8",
-        "timestamp": "2026-09-14T07:02:42.260268+00:00",
-        "riskScore": 38.0,
+        "observationId": "ROBS-AD24B6D2",
+        "timestamp": "2026-09-14T07:09:19.728931+00:00",
+        "riskScore": 41.76,
         "riskLevel": "MEDIUM",
-        "predictionId": "PRED-SERIES-1868412995",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-876DEB2A",
-        "timestamp": "2026-09-14T07:02:42.267735+00:00",
-        "riskScore": 55.0,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-SERIES-575011706",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-9A66211F",
-        "timestamp": "2026-09-14T07:02:42.272594+00:00",
-        "riskScore": 72.0,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-SERIES-1417689010",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-42478516",
-        "timestamp": "2026-09-14T07:02:42.276703+00:00",
-        "riskScore": 89.0,
-        "riskLevel": "CRITICAL",
-        "predictionId": "PRED-SERIES-1117950563",
+        "predictionId": "PRED-LIVE-133",
         "explanationId": null
       }
     ]
