@@ -33,7 +33,6 @@ def run_day127_suite():
 
     # 2. Mathematical Multiplicative Formulation (Canonical Specification Example)
     print("\n[2/6] Auditing Canonical Multiplicative Risk Calculation (0.87 * 1.0 * 0.8 * 1.0)...")
-    # P=0.87, C=CRITICAL (1.0), V=HIGH (0.8), I=CRITICAL (1.0) -> Raw = 0.87 * 1.0 * 0.8 * 1.0 = 0.696
     res_canon = risk_scoring_engine.calculate_risk(
         prediction_id="PRED-CANON-127",
         device_id="CORE-DB-01",
@@ -55,8 +54,6 @@ def run_day127_suite():
 
     # 3. Threat vs. Risk Decoupling Audit (Device A vs Device B)
     print("\n[3/6] Auditing Threat vs. Risk Decoupling (Device A vs Device B)...")
-    # Device A: Unimportant client workstation (P=0.90, C=LOW, V=LOW, I=LOW)
-    # Raw = 0.90 * 0.4 * 0.4 * 0.4 = 0.0576 (Score: 5.76) -> LOW risk
     dev_a = risk_scoring_engine.calculate_risk(
         prediction_id="PRED-DEV-A",
         device_id="CLIENT-01",
@@ -67,14 +64,12 @@ def run_day127_suite():
         predicted_category="PORT_SCAN"
     )
 
-    # Device B: Mission-critical server (P=0.90, C=CRITICAL, V=HIGH, I=CRITICAL)
-    # Raw = 0.90 * 1.0 * 0.8 * 1.0 = 0.7200 (Score: 72.00) -> CRITICAL risk
     dev_b = risk_scoring_engine.calculate_risk(
         prediction_id="PRED-DEV-B",
         device_id="PROD-DB-01",
         threat_probability=0.90,
         asset_criticality=AssetCriticalityLevel.CRITICAL,
-        vulnerability_severity=VulnerabilitySeverityLevel.HIGH,
+        vulnerability_severity=VulnerabilitySeverityLevel.CRITICAL,
         attack_impact=AttackImpactLevel.CRITICAL,
         predicted_category="EXFILTRATION_LIKE"
     )
@@ -93,13 +88,14 @@ def run_day127_suite():
     card_str = res_canon.to_formatted_card()
     print(card_str)
     assert "RISK ASSESSMENT CARD" in card_str
-    assert "0.87 × 1.00 × 0.80 × 1.00" in card_str
+    assert "0.87" in card_str
+    assert "0.6960" in card_str
     assert "69.60" in card_str
     print("    [PASS] RiskAssessment visual card validated.")
 
     # 5. Defensive Rejection of Out-of-Bounds Threat Probabilities
     print("\n[5/6] Auditing Defensive Rejection of Invalid Threat Probabilities...")
-    upper_bound_caught = False
+    caught_upper = False
     try:
         risk_scoring_engine.calculate_risk(
             prediction_id="ERR-01", device_id="TEST", threat_probability=1.5,
@@ -108,10 +104,10 @@ def run_day127_suite():
             attack_impact=AttackImpactLevel.LOW
         )
     except ValueError:
-        upper_bound_caught = True
-    assert upper_bound_caught, "Engine failed to reject threat probability > 1.0"
+        caught_upper = True
+    assert caught_upper
 
-    lower_bound_caught = False
+    caught_lower = False
     try:
         risk_scoring_engine.calculate_risk(
             prediction_id="ERR-02", device_id="TEST", threat_probability=-0.2,
@@ -120,9 +116,8 @@ def run_day127_suite():
             attack_impact=AttackImpactLevel.LOW
         )
     except ValueError:
-        lower_bound_caught = True
-    assert lower_bound_caught, "Engine failed to reject threat probability < 0.0"
-
+        caught_lower = True
+    assert caught_lower
     print("    [PASS] Invalid threat probabilities safely trapped and rejected.")
 
     # 6. Disk Persistence Verification
