@@ -193,7 +193,7 @@ class RiskStateEngine:
             self.event_history.extend(generated_events)
 
         self._persist_state()
-        return state, generated_events
+        return state.model_copy(deep=True), generated_events
 
     def aggregate_network_risk(self, strategy: str = "MAX", top_n: int = 3) -> NetworkRiskAggregation:
         if not self.device_states:

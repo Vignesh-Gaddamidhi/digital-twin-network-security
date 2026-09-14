@@ -160,14 +160,16 @@ class PathDiscoveryEngine:
         )
 
         self.history.append(result)
-        self._persist_result(result)
+        if persist:
+            self._persist_result(result)
         return result
 
     def find_all_paths(
         self,
         source: str,
         target: str,
-        constraints: Optional[PathConstraints] = None
+        constraints: Optional[PathConstraints] = None,
+        persist: bool = True
     ) -> PathDiscoveryResult:
         c = constraints or PathConstraints()
         _ = attack_path_graph.get_node(source)
@@ -224,7 +226,8 @@ class PathDiscoveryEngine:
         )
 
         self.history.append(result)
-        self._persist_result(result)
+        if persist:
+            self._persist_result(result)
         return result
 
     def _persist_result(self, res: PathDiscoveryResult):

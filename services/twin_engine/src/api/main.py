@@ -229,6 +229,10 @@ from services.digital_twin.attack_path.visualization.path_visual_models import (
     GraphVisualizationFilter, ComprehensivePathExplanationReport
 )
 from services.digital_twin.attack_path.visualization.path_visual_engine import attack_path_visual_engine
+from services.digital_twin.attack_path.analysis.attack_path_analysis_models import (
+    AnalysisStatusEnum, AttackPathAuditRecord, MasterAttackPathAnalysisResult
+)
+from services.digital_twin.attack_path.analysis.master_attack_path_orchestrator import master_attack_path_orchestrator
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -642,6 +646,55 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 140: MASTER ATTACK PATH ANALYSIS API ====================
+
+class MasterAttackPathRequest(BaseModel):
+    source: str = "CLIENT-01"
+    target: str = "DB-01"
+    entryThreatProbability: float = 0.88
+    attackImpactWeight: float = 0.80
+    mlThreatFeatures: Optional[List[str]] = ["destination diversity", "connection frequency", "port activity"]
+
+@app.post("/api/v1/twin/attack-path/master/analyze")
+def api_run_master_attack_path_analysis(req: MasterAttackPathRequest):
+    try:
+        res = master_attack_path_orchestrator.run_master_analysis(
+            source_device_id=req.source,
+            target_device_id=req.target,
+            entry_threat_probability=req.entryThreatProbability,
+            attack_impact_weight=req.attackImpactWeight,
+            ml_threat_features=req.mlThreatFeatures
+        )
+        return {
+            "status": "MASTER_ATTACK_PATH_ANALYSIS_COMPLETED",
+            "result": res.model_dump(),
+            "socSummary": res.to_soc_summary()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/master/benchmark")
+def api_benchmark_attack_path_scalability():
+    try:
+        bench = master_attack_path_orchestrator.benchmark_graph_scalability()
+        return {
+            "status": "BENCHMARK_COMPLETED",
+            "results": bench
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/attack-path/master/audit-log")
+def api_get_attack_path_audit_log():
+    return {
+        "count": len(master_attack_path_orchestrator.audit_log),
+        "auditLog": [r.model_dump() for r in master_attack_path_orchestrator.audit_log[-50:]]
+    }
 
 # ==================== DAY 139: ATTACK PATH VISUALIZATION & EXPLANATION API ====================
 

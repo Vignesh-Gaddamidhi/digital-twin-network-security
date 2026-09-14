@@ -1,18 +1,34 @@
 {
   "DB-01": {
     "deviceId": "DB-01",
-    "currentRiskScore": 41.76,
-    "currentRiskLevel": "MEDIUM",
-    "riskTrend": "UNKNOWN",
-    "consecutiveObservations": 1,
-    "lastAssessmentAt": "2026-09-14T07:09:19.728931+00:00",
+    "currentRiskScore": 85.0,
+    "currentRiskLevel": "CRITICAL",
+    "riskTrend": "INCREASING",
+    "consecutiveObservations": 3,
+    "lastAssessmentAt": "2026-09-14T07:52:27.033716+00:00",
     "history": [
       {
-        "observationId": "ROBS-AD24B6D2",
-        "timestamp": "2026-09-14T07:09:19.728931+00:00",
-        "riskScore": 41.76,
+        "observationId": "ROBS-DD396D95",
+        "timestamp": "2026-09-14T07:52:27.030771+00:00",
+        "riskScore": 35.0,
         "riskLevel": "MEDIUM",
-        "predictionId": "PRED-LIVE-133",
+        "predictionId": "P-1",
+        "explanationId": null
+      },
+      {
+        "observationId": "ROBS-96FD20CF",
+        "timestamp": "2026-09-14T07:52:27.032319+00:00",
+        "riskScore": 65.0,
+        "riskLevel": "HIGH",
+        "predictionId": "P-2",
+        "explanationId": null
+      },
+      {
+        "observationId": "ROBS-9574A7AE",
+        "timestamp": "2026-09-14T07:52:27.033716+00:00",
+        "riskScore": 85.0,
+        "riskLevel": "CRITICAL",
+        "predictionId": "P-3",
         "explanationId": null
       }
     ]

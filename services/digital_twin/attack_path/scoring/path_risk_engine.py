@@ -75,7 +75,8 @@ class PathRiskEngine:
         self,
         path: DiscoveredPathDetail,
         entry_threat_probability: float = 0.87,
-        attack_impact_weight: float = 0.80
+        attack_impact_weight: float = 0.80,
+        persist: bool = True
     ) -> AttackPathRisk:
         chain = path.nodeSequence
         target_id = chain[-1]
@@ -96,18 +97,21 @@ class PathRiskEngine:
         vuln_assessments: List[VulnerabilityRelevanceAssessment] = []
         vuln_weights = []
 
+        hop_vulns = []
         for i in range(len(chain) - 1):
             u, v = chain[i], chain[i + 1]
             matching = [e for e in attack_path_graph.edges.values() if e.sourceNode == u and e.destinationNode == v]
             if matching:
                 edge = matching[0]
                 v_node = attack_path_graph.get_node(v)
+                curr_hop_weights = []
                 for vid in v_node.vulnerabilities:
                     va = self.evaluate_vulnerability_relevance(v, vid, edge.destinationPort, edge.service)
                     vuln_assessments.append(va)
-                    vuln_weights.append(va.effectiveWeight)
+                    curr_hop_weights.append(va.effectiveWeight)
+                hop_vulns.append(max(curr_hop_weights) if curr_hop_weights else 0.20)
 
-        cum_vuln = max(vuln_weights) if vuln_weights else 0.20
+        cum_vuln = float(sum(hop_vulns) / len(hop_vulns)) if hop_vulns else 0.20
 
         # 3. Reachability Multiplier
         if path.status == PathStatusEnum.POSSIBLE:
@@ -165,20 +169,25 @@ class PathRiskEngine:
         )
 
         self.score_history.append(record)
-        self._persist_scores()
+        if persist:
+            self._persist_scores()
         return record
 
     def rank_paths(
         self,
         paths: List[DiscoveredPathDetail],
         entry_threat_probability: float = 0.87,
-        attack_impact_weight: float = 0.80
+        attack_impact_weight: float = 0.80,
+        persist: bool = True
     ) -> PathRankingResult:
         scored_items: List[Tuple[AttackPathRisk, DiscoveredPathDetail]] = []
 
         for p in paths:
-            risk_rec = self.calculate_path_risk(p, entry_threat_probability, attack_impact_weight)
+            risk_rec = self.calculate_path_risk(p, entry_threat_probability, attack_impact_weight, persist=False)
             scored_items.append((risk_rec, p))
+
+        if persist and scored_items:
+            self._persist_scores()
 
         # Sort descending by risk score
         scored_items.sort(key=lambda x: x[0].score, reverse=True)

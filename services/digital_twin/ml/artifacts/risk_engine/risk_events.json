@@ -1,1 +1,67 @@
-[]
+[
+  {
+    "eventId": "REVT-9C307C78",
+    "deviceId": "DB-01",
+    "eventType": "RISK_SCORE_SPIKE",
+    "previousRiskLevel": "MEDIUM",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 35.0,
+    "currentScore": 65.0,
+    "scoreDelta": 30.0,
+    "timestamp": "2026-09-14T07:52:27.032449+00:00",
+    "rationale": "Risk score spiked by +30.00 points (35.00 -> 65.00) on DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-F8AE907B",
+    "deviceId": "DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "MEDIUM",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 35.0,
+    "currentScore": 65.0,
+    "scoreDelta": 30.0,
+    "timestamp": "2026-09-14T07:52:27.032470+00:00",
+    "rationale": "Risk escalated: MEDIUM -> HIGH on DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-C451A9EF",
+    "deviceId": "DB-01",
+    "eventType": "HIGH_RISK_REACHED",
+    "previousRiskLevel": "MEDIUM",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 35.0,
+    "currentScore": 65.0,
+    "scoreDelta": 30.0,
+    "timestamp": "2026-09-14T07:52:27.032486+00:00",
+    "rationale": "High risk threshold entered for asset DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-5CDFE8FD",
+    "deviceId": "DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "HIGH",
+    "currentRiskLevel": "CRITICAL",
+    "previousScore": 65.0,
+    "currentScore": 85.0,
+    "scoreDelta": 20.0,
+    "timestamp": "2026-09-14T07:52:27.034066+00:00",
+    "rationale": "Risk escalated: HIGH -> CRITICAL on DB-01.",
+    "cooldownActive": true
+  },
+  {
+    "eventId": "REVT-EFEE4152",
+    "deviceId": "DB-01",
+    "eventType": "CRITICAL_RISK_REACHED",
+    "previousRiskLevel": "HIGH",
+    "currentRiskLevel": "CRITICAL",
+    "previousScore": 65.0,
+    "currentScore": 85.0,
+    "scoreDelta": 20.0,
+    "timestamp": "2026-09-14T07:52:27.034087+00:00",
+    "rationale": "Critical operational risk threshold breached on asset DB-01.",
+    "cooldownActive": true
+  }
+]

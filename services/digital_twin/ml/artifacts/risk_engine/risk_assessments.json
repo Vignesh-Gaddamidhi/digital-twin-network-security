@@ -1,7 +1,7 @@
 [
   {
-    "riskId": "RISK-A8677000",
-    "timestamp": "2026-09-14T07:09:05.382451+00:00",
+    "riskId": "RISK-34EA4075",
+    "timestamp": "2026-09-14T07:50:55.727497+00:00",
     "predictionId": "PRED-CANON-127",
     "deviceId": "CORE-DB-01",
     "source": "CLIENT-01",
@@ -29,8 +29,8 @@
     "status": "CALCULATED"
   },
   {
-    "riskId": "RISK-1C176C27",
-    "timestamp": "2026-09-14T07:09:05.384464+00:00",
+    "riskId": "RISK-D8C7A7BA",
+    "timestamp": "2026-09-14T07:50:55.728652+00:00",
     "predictionId": "PRED-DEV-A",
     "deviceId": "CLIENT-01",
     "source": "CLIENT-01",
@@ -58,8 +58,8 @@
     "status": "CALCULATED"
   },
   {
-    "riskId": "RISK-7073118F",
-    "timestamp": "2026-09-14T07:09:05.394531+00:00",
+    "riskId": "RISK-B6C33668",
+    "timestamp": "2026-09-14T07:50:55.738131+00:00",
     "predictionId": "PRED-DEV-B",
     "deviceId": "PROD-DB-01",
     "source": "CLIENT-01",
