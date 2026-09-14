@@ -648,6 +648,151 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
+# ==================== DAY 145: THREAT TIMELINE & SECURITY EVENTS API ====================
+
+@app.get("/api/v1/twin/threats/timeline")
+def api_get_threat_timeline_events(
+    category: Optional[str] = "ALL",
+    severity: Optional[str] = "ALL",
+    device_id: Optional[str] = "ALL"
+):
+    from datetime import datetime, timezone, timedelta
+    now = datetime.now(timezone.utc)
+    
+    # Canonical Timeline Example Sequence (Day 145.2 Specification)
+    raw_events = [
+        {
+            "eventId": "EVT-DNS-100102",
+            "timestamp": (now - timedelta(minutes=5, seconds=28)).isoformat(),
+            "timeLabel": "10:01:02",
+            "category": "SIMULATION",
+            "eventType": "NORMAL_DNS_TRAFFIC",
+            "severity": "LOW",
+            "sourceDevice": "CLIENT-01",
+            "destinationDevice": "DNS-SERVER-01",
+            "protocol": "UDP",
+            "port": 53,
+            "detectionSource": "ZEEK_DNS_INGESTOR",
+            "description": "Normal recursive DNS resolution request observed from workstation.",
+            "evidenceText": "Standard query frequency, domain entropy 2.1 (benign)."
+        },
+        {
+            "eventId": "EVT-IDS-100114",
+            "timestamp": (now - timedelta(minutes=5, seconds=16)).isoformat(),
+            "timeLabel": "10:01:14",
+            "category": "IDS",
+            "eventType": "BURST_CONNECTION_BEHAVIOUR",
+            "severity": "MEDIUM",
+            "sourceDevice": "CLIENT-01",
+            "destinationDevice": "WEB-01",
+            "protocol": "TCP",
+            "port": 22,
+            "detectionSource": "SURICATA_RULE_2100492",
+            "description": "Repeated connection behaviour detected targeting internal management port.",
+            "evidenceText": "24 failed TCP SYN handshakes in 4.2 seconds."
+        },
+        {
+            "eventId": "EVT-ML-100118",
+            "timestamp": (now - timedelta(minutes=5, seconds=12)).isoformat(),
+            "timeLabel": "10:01:18",
+            "category": "PREDICTIONS",
+            "eventType": "THREAT_PROBABILITY_SPIKE",
+            "severity": "HIGH",
+            "sourceDevice": "CLIENT-01",
+            "destinationDevice": "WEB-01",
+            "protocol": "TCP",
+            "port": 22,
+            "detectionSource": "ML_RANDOM_FOREST",
+            "description": "Threat probability increased to 88.0% for LATERAL_MOVEMENT_LIKE.",
+            "confidence": 0.91,
+            "predictionId": "PRED-000123",
+            "topFeatures": ["destination diversity", "connection frequency", "unique destination ports"],
+            "evidenceText": "Attribution SHAP: connection_frequency (+0.31), destination_diversity (+0.24)."
+        },
+        {
+            "eventId": "EVT-RISK-100121",
+            "timestamp": (now - timedelta(minutes=5, seconds=9)).isoformat(),
+            "timeLabel": "10:01:21",
+            "category": "RISK",
+            "eventType": "RISK_LEVEL_ESCALATED",
+            "severity": "HIGH",
+            "sourceDevice": "DB-01",
+            "protocol": "TCP",
+            "detectionSource": "RISK_SCORING_ENGINE",
+            "description": "HIGH risk assigned: Multiplicative score evaluated at 69.60 / 100.0.",
+            "riskScore": 69.60,
+            "evidenceText": "Formula: 0.87 (Threat) * 1.00 (Crit) * 0.80 (Vuln) * 1.00 (Impact) = 69.60."
+        },
+        {
+            "eventId": "EVT-PATH-100125",
+            "timestamp": (now - timedelta(minutes=5, seconds=5)).isoformat(),
+            "timeLabel": "10:01:25",
+            "category": "ATTACK_PATHS",
+            "eventType": "ATTACK_PATH_IDENTIFIED",
+            "severity": "CRITICAL",
+            "sourceDevice": "ATTACKER-EXT",
+            "destinationDevice": "DB-01",
+            "protocol": "TCP",
+            "port": 3306,
+            "detectionSource": "PATH_DISCOVERY_ENGINE",
+            "description": "Potential attack path identified: ATTACKER -> CLIENT-01 -> WEB-01 -> DB-01.",
+            "pathId": "PATH-002",
+            "riskScore": 85.36,
+            "evidenceText": "Traversal crosses DMZ into Database tier through open MySQL service."
+        },
+        {
+            "eventId": "EVT-PATH-100130",
+            "timestamp": (now - timedelta(minutes=5, seconds=0)).isoformat(),
+            "timeLabel": "10:01:30",
+            "category": "ATTACK_PATHS",
+            "eventType": "CRITICAL_TARGET_EXPOSED",
+            "severity": "CRITICAL",
+            "sourceDevice": "WEB-01",
+            "destinationDevice": "DB-01",
+            "protocol": "TCP",
+            "port": 3306,
+            "detectionSource": "PATH_RANKING_ENGINE",
+            "description": "DB-01 identified as critical crown jewel target on prioritized route.",
+            "pathId": "PATH-002",
+            "riskScore": 85.36,
+            "evidenceText": "Target has CRITICAL asset weight; unauthenticated SQL injection exposed."
+        }
+    ]
+
+    # Apply Filters
+    filtered = []
+    cat_upper = category.upper()
+    sev_upper = severity.upper()
+    dev_upper = device_id.upper()
+
+    for ev in raw_events:
+        if cat_upper != "ALL" and ev["category"] != cat_upper:
+            continue
+        if sev_upper != "ALL" and ev["severity"] != sev_upper:
+            continue
+        if dev_upper != "ALL" and (ev["sourceDevice"] != dev_upper and ev.get("destinationDevice") != dev_upper):
+            continue
+        filtered.append(ev)
+
+    counts = {
+        "ALL": len(raw_events),
+        "THREATS": sum(1 for e in raw_events if e["severity"] in ("HIGH", "CRITICAL")),
+        "ALERTS": sum(1 for e in raw_events if e["category"] == "IDS"),
+        "PREDICTIONS": sum(1 for e in raw_events if e["category"] == "PREDICTIONS"),
+        "RISK": sum(1 for e in raw_events if e["category"] == "RISK"),
+        "ATTACK_PATHS": sum(1 for e in raw_events if e["category"] == "ATTACK_PATHS"),
+        "SIMULATION": sum(1 for e in raw_events if e["category"] == "SIMULATION"),
+        "IDS": sum(1 for e in raw_events if e["category"] == "IDS")
+    }
+
+    return {
+        "events": filtered,
+        "totalEvents": len(raw_events),
+        "filteredCount": len(filtered),
+        "categoryCounts": counts,
+        "timestamp": now.isoformat()
+    }
+
 # ==================== DAY 144: LIVE TRAFFIC MONITORING API ====================
 
 @app.get("/api/v1/twin/traffic/live")
