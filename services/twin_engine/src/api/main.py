@@ -648,6 +648,85 @@ def bootstrap_security_grounding():
 class SuricataIngestPayload(BaseModel):
     eveJson: str
 
+# ==================== DAY 143: LIVE NETWORK TOPOLOGY API ====================
+
+@app.get("/api/v1/twin/topology/live")
+def api_get_live_topology(highlight_path: bool = False):
+    from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
+    from services.digital_twin.risk.thresholds.threshold_classifier import threshold_classifier
+    
+    # 1. Zone Layout Boundaries
+    zones = [
+        {"zone": "INTERNET", "label": "EXTERNAL INTERNET PERIMETER", "x": 50, "y": 30, "width": 700, "height": 110, "color": "rgba(239, 68, 68, 0.08)"},
+        {"zone": "DMZ", "label": "DMZ APPLICATION TIER", "x": 50, "y": 170, "width": 700, "height": 130, "color": "rgba(245, 158, 11, 0.08)"},
+        {"zone": "INTERNAL", "label": "CORPORATE INTERNAL USER LAN", "x": 50, "y": 330, "width": 700, "height": 130, "color": "rgba(59, 130, 246, 0.08)"},
+        {"zone": "DATABASE", "label": "SECURE CROWN JEWEL DATA TIER", "x": 50, "y": 490, "width": 700, "height": 120, "color": "rgba(168, 85, 247, 0.08)"}
+    ]
+    
+    # Fixed coordinate map for lab devices
+    coords = {
+        "ATTACKER-EXT": {"x": 150, "y": 80},
+        "FIREWALL-01":  {"x": 400, "y": 80},
+        "WEB-01":        {"x": 400, "y": 230},
+        "CLIENT-01":     {"x": 200, "y": 390},
+        "DNS-SERVER-01": {"x": 550, "y": 390},
+        "DB-01":         {"x": 400, "y": 550}
+    }
+    
+    # Target attack path to highlight if requested
+    active_path_nodes = {"ATTACKER-EXT", "CLIENT-01", "WEB-01", "DB-01"}
+    active_path_edges = {("ATTACKER-EXT", "CLIENT-01"), ("CLIENT-01", "WEB-01"), ("WEB-01", "DB-01")}
+
+    # 2. Compile Nodes
+    nodes = []
+    for nid, node in attack_path_graph.nodes.items():
+        c = coords.get(nid, {"x": 300, "y": 300})
+        tier = threshold_classifier.classify(node.riskScore)
+        nodes.append({
+            "id": node.nodeId,
+            "deviceId": node.deviceId,
+            "hostname": node.hostname,
+            "ip": node.ipAddresses[0] if node.ipAddresses else "10.0.0.1",
+            "zone": node.zone,
+            "deviceType": node.deviceType,
+            "assetCriticality": node.assetCriticality,
+            "securityState": node.securityState,
+            "riskScore": node.riskScore,
+            "riskLevel": tier.value,
+            "openPorts": node.exposedPorts,
+            "services": node.services,
+            "vulnerabilities": node.vulnerabilities,
+            "x": c["x"],
+            "y": c["y"],
+            "isHighlighted": highlight_path and (nid in active_path_nodes)
+        })
+
+    # 3. Compile Edges
+    edges = []
+    for eid, edge in attack_path_graph.edges.items():
+        is_hl = highlight_path and ((edge.sourceNode, edge.destinationNode) in active_path_edges)
+        edges.append({
+            "id": edge.edgeId,
+            "source": edge.sourceNode,
+            "target": edge.destinationNode,
+            "protocol": edge.protocol,
+            "destinationPort": edge.destinationPort,
+            "service": edge.service,
+            "reachability": "REACHABLE" if edge.reachable else "BLOCKED",
+            "securityControl": edge.securityControl,
+            "isHighlighted": is_hl,
+            "status": edge.status
+        })
+
+    return {
+        "zones": zones,
+        "nodes": nodes,
+        "edges": edges,
+        "totalNodes": len(nodes),
+        "totalEdges": len(edges),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
 # ==================== DAY 142: EXECUTIVE KPI CARDS & SECURITY OVERVIEW API ====================
 
 @app.get("/api/v1/twin/dashboard/kpis")
