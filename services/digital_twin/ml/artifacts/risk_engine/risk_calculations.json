@@ -1,0 +1,157 @@
+[
+  {
+    "calculationId": "CALC-F696B2DA",
+    "predictionId": "PRED-CANON-130",
+    "deviceId": "DB-01",
+    "timestamp": "2026-09-14T06:56:27.635989+00:00",
+    "rawRiskScore": 0.696,
+    "riskScore": 69.6,
+    "riskScoreFormatted": "69.60 / 100.0",
+    "riskLevel": "HIGH",
+    "factors": {
+      "threatProbability": 0.87,
+      "threatFormatted": "87.0%",
+      "assetCriticality": 1.0,
+      "assetCriticalityLevel": "CRITICAL",
+      "vulnerabilityScore": 0.8,
+      "vulnerabilitySeverityLevel": "HIGH",
+      "attackImpactScore": 1.0,
+      "attackImpactLevel": "CRITICAL"
+    },
+    "contributingFactors": {
+      "threatProbability": "87.0%",
+      "assetCriticality": "CRITICAL",
+      "vulnerability": "HIGH",
+      "attackImpact": "CRITICAL"
+    },
+    "formulaProof": "0.8700 \u00c3\u2014 1.0000 \u00c3\u2014 0.8000 \u00c3\u2014 1.0000 = 0.696000 \u00e2\u2020\u2019 69.60 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  },
+  {
+    "calculationId": "CALC-6AE894A4",
+    "predictionId": "PRED-TC1",
+    "deviceId": "DEV-01",
+    "timestamp": "2026-09-14T06:56:27.714075+00:00",
+    "rawRiskScore": 0.032,
+    "riskScore": 3.2,
+    "riskScoreFormatted": "3.20 / 100.0",
+    "riskLevel": "LOW",
+    "factors": {
+      "threatProbability": 0.5,
+      "threatFormatted": "50.0%",
+      "assetCriticality": 0.4,
+      "assetCriticalityLevel": "CRITICAL",
+      "vulnerabilityScore": 0.4,
+      "vulnerabilitySeverityLevel": "HIGH",
+      "attackImpactScore": 0.4,
+      "attackImpactLevel": "CRITICAL"
+    },
+    "contributingFactors": {
+      "threatProbability": "50.0%",
+      "assetCriticality": "CRITICAL",
+      "vulnerability": "HIGH",
+      "attackImpact": "CRITICAL"
+    },
+    "formulaProof": "0.5000 \u00c3\u2014 0.4000 \u00c3\u2014 0.4000 \u00c3\u2014 0.4000 = 0.032000 \u00e2\u2020\u2019 3.20 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  },
+  {
+    "calculationId": "CALC-070CD410",
+    "predictionId": "PRED-TC2",
+    "deviceId": "DEV-02",
+    "timestamp": "2026-09-14T06:56:27.733237+00:00",
+    "rawRiskScore": 0.4096,
+    "riskScore": 40.96,
+    "riskScoreFormatted": "40.96 / 100.0",
+    "riskLevel": "MEDIUM",
+    "factors": {
+      "threatProbability": 0.8,
+      "threatFormatted": "80.0%",
+      "assetCriticality": 0.8,
+      "assetCriticalityLevel": "CRITICAL",
+      "vulnerabilityScore": 0.8,
+      "vulnerabilitySeverityLevel": "HIGH",
+      "attackImpactScore": 0.8,
+      "attackImpactLevel": "CRITICAL"
+    },
+    "contributingFactors": {
+      "threatProbability": "80.0%",
+      "assetCriticality": "CRITICAL",
+      "vulnerability": "HIGH",
+      "attackImpact": "CRITICAL"
+    },
+    "formulaProof": "0.8000 \u00c3\u2014 0.8000 \u00c3\u2014 0.8000 \u00c3\u2014 0.8000 = 0.409600 \u00e2\u2020\u2019 40.96 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  },
+  {
+    "calculationId": "CALC-928C9E12",
+    "predictionId": "PRED-TC3",
+    "deviceId": "DEV-03",
+    "timestamp": "2026-09-14T06:56:27.754792+00:00",
+    "rawRiskScore": 0.9,
+    "riskScore": 90.0,
+    "riskScoreFormatted": "90.00 / 100.0",
+    "riskLevel": "CRITICAL",
+    "factors": {
+      "threatProbability": 0.9,
+      "threatFormatted": "90.0%",
+      "assetCriticality": 1.0,
+      "assetCriticalityLevel": "CRITICAL",
+      "vulnerabilityScore": 1.0,
+      "vulnerabilitySeverityLevel": "HIGH",
+      "attackImpactScore": 1.0,
+      "attackImpactLevel": "CRITICAL"
+    },
+    "contributingFactors": {
+      "threatProbability": "90.0%",
+      "assetCriticality": "CRITICAL",
+      "vulnerability": "HIGH",
+      "attackImpact": "CRITICAL"
+    },
+    "formulaProof": "0.9000 \u00c3\u2014 1.0000 \u00c3\u2014 1.0000 \u00c3\u2014 1.0000 = 0.900000 \u00e2\u2020\u2019 90.00 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  },
+  {
+    "calculationId": "CALC-B9155785",
+    "predictionId": "PRED-LIVE-CALC-130",
+    "deviceId": "PROD-DB-01",
+    "timestamp": "2026-09-14T06:56:39.882799+00:00",
+    "rawRiskScore": 0.696,
+    "riskScore": 69.6,
+    "riskScoreFormatted": "69.60 / 100.0",
+    "riskLevel": "HIGH",
+    "factors": {
+      "threatProbability": 0.87,
+      "threatFormatted": "87.0%",
+      "assetCriticality": 1.0,
+      "assetCriticalityLevel": "CRITICAL",
+      "vulnerabilityScore": 0.8,
+      "vulnerabilitySeverityLevel": "HIGH",
+      "attackImpactScore": 1.0,
+      "attackImpactLevel": "CRITICAL"
+    },
+    "contributingFactors": {
+      "threatProbability": "87.0%",
+      "assetCriticality": "CRITICAL",
+      "vulnerability": "HIGH",
+      "attackImpact": "CRITICAL"
+    },
+    "formulaProof": "0.8700 \u00c3\u2014 1.0000 \u00c3\u2014 0.8000 \u00c3\u2014 1.0000 = 0.696000 \u00e2\u2020\u2019 69.60 / 100.0",
+    "riskEngineVersion": "v3.0-multiplicative",
+    "factorConfigVersion": "v1.0",
+    "thresholdConfigVersion": "v1.0",
+    "status": "CALCULATED"
+  }
+]

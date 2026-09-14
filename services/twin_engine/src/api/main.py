@@ -194,6 +194,8 @@ from services.digital_twin.risk.factors.vulnerability.vulnerability_engine impor
 )
 from services.digital_twin.risk.factors.impact.attack_impact_engine import attack_impact_engine
 from services.digital_twin.risk.thresholds.threshold_classifier import threshold_classifier
+from services.digital_twin.risk.calculation.calculation_models import RiskCalculationResult
+from services.digital_twin.risk.calculation.core_risk_calculator import core_risk_calculator
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -604,6 +606,50 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 130: CORE RISK CALCULATION API ====================
+
+class ComputeCoreRiskRequest(BaseModel):
+    predictionId: str = "PRED-CORE-130"
+    deviceId: str = "DB-01"
+    threatProbability: float = 0.87
+    assetCriticality: float = 1.00
+    vulnerabilityScore: float = 0.80
+    attackImpactScore: float = 1.00
+    assetCriticalityLevel: str = "CRITICAL"
+    vulnerabilityLevel: str = "HIGH"
+    attackImpactLevel: str = "CRITICAL"
+
+@app.post("/api/v1/twin/risk/calculation/compute")
+def api_compute_core_risk(req: ComputeCoreRiskRequest):
+    try:
+        res = core_risk_calculator.compute_risk(
+            prediction_id=req.predictionId,
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            asset_criticality=req.assetCriticality,
+            vulnerability_score=req.vulnerabilityScore,
+            attack_impact_score=req.attackImpactScore,
+            asset_criticality_level=req.assetCriticalityLevel,
+            vulnerability_level=req.vulnerabilityLevel,
+            attack_impact_level=req.attackImpactLevel
+        )
+        return {
+            "status": "RISK_CALCULATION_SUCCESS",
+            "calculation": res.model_dump(),
+            "summaryString": res.to_summary_string()
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/risk/calculation/history")
+def api_get_risk_calculation_history():
+    return {
+        "count": len(core_risk_calculator.history),
+        "history": [c.model_dump() for c in core_risk_calculator.history]
+    }
 
 # ==================== DAY 129: VULNERABILITY & ATTACK IMPACT API ====================
 
