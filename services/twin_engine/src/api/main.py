@@ -196,6 +196,10 @@ from services.digital_twin.risk.factors.impact.attack_impact_engine import attac
 from services.digital_twin.risk.thresholds.threshold_classifier import threshold_classifier
 from services.digital_twin.risk.calculation.calculation_models import RiskCalculationResult
 from services.digital_twin.risk.calculation.core_risk_calculator import core_risk_calculator
+from services.digital_twin.risk.explanation.risk_explanation_models import (
+    RiskExplanation, RISK_LEVEL_POLICIES
+)
+from services.digital_twin.risk.explanation.risk_explanation_engine import risk_explanation_engine
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -606,6 +610,55 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 131: RISK EXPLANATION & XAI INTEGRATION API ====================
+
+class SynthesizeRiskExplanationRequest(BaseModel):
+    riskId: str = "RISK-DAY131"
+    predictionId: str = "PRED-DAY131"
+    deviceId: str = "DB-01"
+    threatProbability: float = 0.87
+    assetCriticalityLevel: str = "CRITICAL"
+    assetCriticalityWeight: float = 1.00
+    vulnerabilitySeverityLevel: str = "HIGH"
+    vulnerabilityWeight: float = 0.80
+    attackImpactLevel: str = "CRITICAL"
+    attackImpactWeight: float = 1.00
+    riskScore: float = 69.60
+    xaiThreatExplanation: Optional[str] = None
+    xaiContributingFeatures: Optional[List[str]] = None
+
+@app.post("/api/v1/twin/risk/explanation/synthesize")
+def api_synthesize_risk_explanation(req: SynthesizeRiskExplanationRequest):
+    try:
+        explanation = risk_explanation_engine.generate_risk_explanation(
+            risk_id=req.riskId,
+            prediction_id=req.predictionId,
+            device_id=req.deviceId,
+            threat_probability=req.threatProbability,
+            asset_criticality_level=req.assetCriticalityLevel,
+            asset_criticality_weight=req.assetCriticalityWeight,
+            vulnerability_severity_level=req.vulnerabilitySeverityLevel,
+            vulnerability_weight=req.vulnerabilityWeight,
+            attack_impact_level=req.attackImpactLevel,
+            attack_impact_weight=req.attackImpactWeight,
+            risk_score=req.riskScore,
+            xai_threat_explanation=req.xaiThreatExplanation,
+            xai_contributing_features=req.xaiContributingFeatures
+        )
+        return {
+            "status": "RISK_EXPLANATION_SYNTHESIZED",
+            "explanation": explanation.model_dump(),
+            "formattedReport": explanation.to_formatted_report()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/twin/risk/explanation/policies")
+def api_get_risk_policies():
+    return {
+        "policies": {k.value: v.model_dump() for k, v in RISK_LEVEL_POLICIES.items()}
+    }
 
 # ==================== DAY 130: CORE RISK CALCULATION API ====================
 
