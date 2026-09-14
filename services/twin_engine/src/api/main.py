@@ -204,6 +204,10 @@ from services.digital_twin.risk.history.risk_trend_models import (
     RiskTrendDirection, RiskEventType, DeviceContinuousRiskState, NetworkRiskAggregation
 )
 from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
+from services.digital_twin.attack_path.graph.graph_models import (
+    NodeTypeEnum, PathStatusEnum, AttackPathNode, AttackPathEdge, AttackPath
+)
+from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -617,6 +621,59 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 134: ATTACK PATH GRAPH API ====================
+
+class ConstructPathRequest(BaseModel):
+    attacker: str = "ATTACKER-EXT"
+    entryNode: str = "CLIENT-01"
+    targetNode: str = "DB-01"
+    nodeChain: List[str] = ["ATTACKER-EXT", "CLIENT-01", "WEB-01", "DB-01"]
+    status: PathStatusEnum = PathStatusEnum.POSSIBLE
+    riskScore: float = 69.6
+    riskLevel: str = "HIGH"
+
+@app.get("/api/v1/twin/attack-path/graph")
+def api_get_attack_path_graph():
+    return attack_path_graph.snapshot()
+
+@app.post("/api/v1/twin/attack-path/graph/node")
+def api_add_attack_path_node(node: AttackPathNode):
+    try:
+        attack_path_graph.add_node(node)
+        return {"status": "NODE_ADDED", "node": node.model_dump()}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/graph/edge")
+def api_add_attack_path_edge(edge: AttackPathEdge):
+    try:
+        attack_path_graph.add_edge(edge)
+        return {"status": "EDGE_ADDED", "edge": edge.model_dump()}
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/attack-path/paths/construct")
+def api_construct_attack_path(req: ConstructPathRequest):
+    try:
+        path_obj = attack_path_graph.build_path(
+            attacker=req.attacker,
+            entry_node=req.entryNode,
+            target_node=req.targetNode,
+            node_chain=req.nodeChain,
+            status=req.status,
+            risk_score=req.riskScore,
+            risk_level=req.riskLevel
+        )
+        return {
+            "status": "PATH_CONSTRUCTED",
+            "path": path_obj.model_dump(),
+            "summaryString": path_obj.to_summary_string()
+        }
+    except (KeyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 133: END-TO-END RISK PIPELINE & AUDIT API ====================
 
