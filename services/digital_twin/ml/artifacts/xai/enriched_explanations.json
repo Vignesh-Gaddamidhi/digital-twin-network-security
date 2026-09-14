@@ -1,8 +1,8 @@
 [
   {
-    "explanationId": "EXP-EE9FBF7F",
+    "explanationId": "EXP-57C60EFF",
     "predictionId": "PRED-PORT-SCAN-123",
-    "timestamp": "2026-09-13T13:10:57.625049+00:00",
+    "timestamp": "2026-09-14T06:49:26.688507+00:00",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "PORT_SCAN",
@@ -82,9 +82,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-A9EB59A4",
-    "predictionId": "PRED-5E06EFB0",
-    "timestamp": "2026-09-13T13:11:02.989176+00:00",
+    "explanationId": "EXP-6E4CEA73",
+    "predictionId": "PRED-B9DA498C",
+    "timestamp": "2026-09-14T06:49:31.489313+00:00",
     "threatProbability": 0.28,
     "threatProbabilityFormatted": "28.0%",
     "predictedCategory": "NORMAL",
@@ -133,9 +133,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-9BB92AA7",
-    "predictionId": "PRED-4614BB2D",
-    "timestamp": "2026-09-13T13:11:03.153042+00:00",
+    "explanationId": "EXP-41BA6BDE",
+    "predictionId": "PRED-DC114CE4",
+    "timestamp": "2026-09-14T06:49:31.578759+00:00",
     "threatProbability": 0.44,
     "threatProbabilityFormatted": "44.0%",
     "predictedCategory": "NORMAL",
@@ -205,9 +205,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-FF6DF5DD",
-    "predictionId": "PRED-F56131C1",
-    "timestamp": "2026-09-13T13:11:03.389921+00:00",
+    "explanationId": "EXP-110C5814",
+    "predictionId": "PRED-A1ACB894",
+    "timestamp": "2026-09-14T06:49:31.676377+00:00",
     "threatProbability": 0.67,
     "threatProbabilityFormatted": "67.0%",
     "predictedCategory": "NORMAL",
@@ -267,9 +267,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-2AE01368",
-    "predictionId": "PRED-101A5EE0",
-    "timestamp": "2026-09-13T13:11:03.614856+00:00",
+    "explanationId": "EXP-E7CBAE77",
+    "predictionId": "PRED-5CD241F2",
+    "timestamp": "2026-09-14T06:49:31.780156+00:00",
     "threatProbability": 0.36,
     "threatProbabilityFormatted": "36.0%",
     "predictedCategory": "NORMAL",
@@ -329,9 +329,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-B9EBFF4F",
-    "predictionId": "PRED-C2670793",
-    "timestamp": "2026-09-13T13:11:03.776295+00:00",
+    "explanationId": "EXP-59B8FCEF",
+    "predictionId": "PRED-F7326C1B",
+    "timestamp": "2026-09-14T06:49:31.879330+00:00",
     "threatProbability": 0.1,
     "threatProbabilityFormatted": "10.0%",
     "predictedCategory": "NORMAL",
@@ -391,9 +391,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-2D009A70",
-    "predictionId": "PRED-463371D6",
-    "timestamp": "2026-09-13T13:11:03.982953+00:00",
+    "explanationId": "EXP-F58C866E",
+    "predictionId": "PRED-BDE4F3D5",
+    "timestamp": "2026-09-14T06:49:31.989254+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "PORT_SCAN",
@@ -463,9 +463,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-C60DA947",
-    "predictionId": "PRED-339FFF82",
-    "timestamp": "2026-09-13T13:11:04.231568+00:00",
+    "explanationId": "EXP-6D30770F",
+    "predictionId": "PRED-3F96C1DF",
+    "timestamp": "2026-09-14T06:49:32.113242+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DOS_LIKE",
@@ -545,9 +545,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-EC35131D",
-    "predictionId": "PRED-3B022E41",
-    "timestamp": "2026-09-13T13:11:04.450230+00:00",
+    "explanationId": "EXP-20BA459C",
+    "predictionId": "PRED-A751B2B6",
+    "timestamp": "2026-09-14T06:49:32.231836+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DNS_ANOMALY",
@@ -607,9 +607,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-D058A52E",
-    "predictionId": "PRED-420E9D41",
-    "timestamp": "2026-09-13T13:11:04.676289+00:00",
+    "explanationId": "EXP-DB29C58F",
+    "predictionId": "PRED-102964FE",
+    "timestamp": "2026-09-14T06:49:32.369182+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "BEACONING",
@@ -679,9 +679,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-D84431FB",
-    "predictionId": "PRED-1B042B68",
-    "timestamp": "2026-09-13T13:11:04.864951+00:00",
+    "explanationId": "EXP-7B5B6650",
+    "predictionId": "PRED-593D0DDA",
+    "timestamp": "2026-09-14T06:49:32.493376+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "LATERAL_MOVEMENT_LIKE",
@@ -751,9 +751,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-F1EC786F",
-    "predictionId": "PRED-6F486332",
-    "timestamp": "2026-09-13T13:11:05.072775+00:00",
+    "explanationId": "EXP-5FF349AB",
+    "predictionId": "PRED-C56EE091",
+    "timestamp": "2026-09-14T06:49:32.630248+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "EXFILTRATION_LIKE",
@@ -833,91 +833,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-28A3D811",
+    "explanationId": "EXP-5BF09D6B",
     "predictionId": "PRED-MODESTY",
-    "timestamp": "2026-09-13T13:11:26.372019+00:00",
-    "threatProbability": 0.87,
-    "threatProbabilityFormatted": "87.0%",
-    "predictedCategory": "PORT_SCAN",
-    "categoryConfidence": 0.91,
-    "categoryConfidenceFormatted": "91.0%",
-    "riskLevel": "HIGH",
-    "summary": "Threat probability increased mainly due to abnormal connection frequency, unique destination ports and failed connections.",
-    "detailedExplanation": "The model predicted elevated threat probability (87.0%) primarily because connection frequency increased significantly relative to the learned baseline. Additionally, unusual destination-port activity was observed across multiple targets, while the number of failed connection attempts increased, while destination diversity increased, indicating communication with a broader set of endpoints than expected provided reinforcing positive evidence. Conversely, bytes per second was normal and port 443 ratio was normal acted as mitigating baseline evidence.",
-    "technicalExplanation": "Top contributing features:\n  - port_80_ratio             : +0.1075 (Value: 0.0)\n  - packet_rate               : +0.0935 (Value: 0.65)\n  - connection_frequency      : +0.0900 (Value: 48.0)\n  - bytes                     : +0.0555 (Value: 0.4)\nTop mitigating features:\n  - bytes_per_second          : -0.0790 (Value: 0.0)\n  - port_443_ratio            : -0.0750 (Value: 0.0)",
-    "topPositiveContributors": [
-      {
-        "featureName": "port_80_ratio",
-        "featureValue": 0.0,
-        "shapValue": 0.1075,
-        "shapValueFormatted": "+0.1075",
-        "direction": "POSITIVE",
-        "absoluteContribution": 0.1075,
-        "rank": 1
-      },
-      {
-        "featureName": "packet_rate",
-        "featureValue": 0.65,
-        "shapValue": 0.0935,
-        "shapValueFormatted": "+0.0935",
-        "direction": "POSITIVE",
-        "absoluteContribution": 0.0935,
-        "rank": 2
-      },
-      {
-        "featureName": "connection_frequency",
-        "featureValue": 48.0,
-        "shapValue": 0.09,
-        "shapValueFormatted": "+0.0900",
-        "direction": "POSITIVE",
-        "absoluteContribution": 0.09,
-        "rank": 3
-      },
-      {
-        "featureName": "bytes",
-        "featureValue": 0.4,
-        "shapValue": 0.0555,
-        "shapValueFormatted": "+0.0555",
-        "direction": "POSITIVE",
-        "absoluteContribution": 0.0555,
-        "rank": 6
-      }
-    ],
-    "topNegativeContributors": [
-      {
-        "featureName": "bytes_per_second",
-        "featureValue": 0.0,
-        "shapValue": -0.079,
-        "shapValueFormatted": "-0.0790",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.079,
-        "rank": 4
-      },
-      {
-        "featureName": "port_443_ratio",
-        "featureValue": 0.0,
-        "shapValue": -0.075,
-        "shapValueFormatted": "-0.0750",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.075,
-        "rank": 5
-      }
-    ],
-    "supportingEvidence": [
-      "port 80 ratio showed elevated activity (observed: 0.00, contribution: +0.1075)",
-      "packet transmission rate surged beyond normal baseline parameters (observed: 0.65, contribution: +0.0935)",
-      "connection frequency increased significantly relative to the learned baseline (observed: 48.00, contribution: +0.0900)",
-      "transmitted byte volume showed an unexpected upward surge (observed: 0.40, contribution: +0.0555)",
-      "bytes per second remained within expected tolerances (observed: 0.00, mitigation: -0.0790)",
-      "port 443 ratio remained within expected tolerances (observed: 0.00, mitigation: -0.0750)"
-    ],
-    "confidence": "HIGH",
-    "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
-  },
-  {
-    "explanationId": "EXP-075BD0FD",
-    "predictionId": "PRED-MODESTY",
-    "timestamp": "2026-09-13T13:20:54.494009+00:00",
+    "timestamp": "2026-09-14T06:49:56.969877+00:00",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "PORT_SCAN",

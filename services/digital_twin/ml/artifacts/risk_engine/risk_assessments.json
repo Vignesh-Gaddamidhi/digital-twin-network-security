@@ -1,7 +1,7 @@
 [
   {
-    "riskId": "RISK-BA1277D0",
-    "timestamp": "2026-09-14T06:44:35.480078+00:00",
+    "riskId": "RISK-39D1D07D",
+    "timestamp": "2026-09-14T06:52:26.234902+00:00",
     "predictionId": "PRED-CANON-127",
     "deviceId": "CORE-DB-01",
     "source": "CLIENT-01",
@@ -29,8 +29,8 @@
     "status": "CALCULATED"
   },
   {
-    "riskId": "RISK-2C14BFC5",
-    "timestamp": "2026-09-14T06:44:35.482957+00:00",
+    "riskId": "RISK-A96658B1",
+    "timestamp": "2026-09-14T06:52:26.236254+00:00",
     "predictionId": "PRED-DEV-A",
     "deviceId": "CLIENT-01",
     "source": "CLIENT-01",
@@ -58,29 +58,29 @@
     "status": "CALCULATED"
   },
   {
-    "riskId": "RISK-B72C79FA",
-    "timestamp": "2026-09-14T06:44:35.501466+00:00",
+    "riskId": "RISK-F680F3CC",
+    "timestamp": "2026-09-14T06:52:26.260013+00:00",
     "predictionId": "PRED-DEV-B",
     "deviceId": "PROD-DB-01",
     "source": "CLIENT-01",
     "destination": "SERVER-01",
     "threatProbability": 0.9,
     "assetCriticality": "CRITICAL",
-    "vulnerabilitySeverity": "HIGH",
+    "vulnerabilitySeverity": "CRITICAL",
     "attackImpact": "CRITICAL",
     "assetCriticalityWeight": 1.0,
-    "vulnerabilityWeight": 0.8,
+    "vulnerabilityWeight": 1.0,
     "attackImpactWeight": 1.0,
-    "rawRiskScore": 0.72,
-    "riskScore": 72.0,
+    "rawRiskScore": 0.9,
+    "riskScore": 90.0,
     "riskLevel": "CRITICAL",
     "contributingFactors": [
       "Threat likelihood assessed at 90.0% (EXFILTRATION_LIKE)",
       "Target asset criticality is CRITICAL (normalized: 1.00)",
-      "Vulnerability exposure rating is HIGH (normalized: 0.80)",
+      "Vulnerability exposure rating is CRITICAL (normalized: 1.00)",
       "Category impact severity potential is CRITICAL (normalized: 1.00)"
     ],
-    "explanation": "Calculated CRITICAL risk (72.0/100) based on 90.0% threat probability targeting a CRITICAL criticality host with HIGH vulnerability rating.",
+    "explanation": "Calculated CRITICAL risk (90.0/100) based on 90.0% threat probability targeting a CRITICAL criticality host with CRITICAL vulnerability rating.",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
     "riskEngineVersion": "v3.0-multiplicative",

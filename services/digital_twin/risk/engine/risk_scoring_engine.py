@@ -37,14 +37,8 @@ class RiskScoringEngine:
 
     @staticmethod
     def classify_risk_tier(score: float) -> RiskLevelTier:
-        if score >= 70.0:
-            return RiskLevelTier.CRITICAL
-        elif score >= 45.0:
-            return RiskLevelTier.HIGH
-        elif score >= 20.0:
-            return RiskLevelTier.MEDIUM
-        else:
-            return RiskLevelTier.LOW
+        from services.digital_twin.risk.thresholds.threshold_classifier import threshold_classifier
+        return threshold_classifier.classify(score)
 
     def calculate_risk(
         self,

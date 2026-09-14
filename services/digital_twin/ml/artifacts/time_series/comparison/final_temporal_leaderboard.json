@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T13:10:42Z",
+  "timestamp": "2026-09-14T06:49:11Z",
   "phase": "Phase 14: Time-Series Prediction",
   "metadata": {
     "datasetVersion": "seq-v1.0",
@@ -42,22 +42,22 @@
   "efficiencyTable": [
     {
       "model": "LSTM",
-      "trainingTimeMs": 77.24,
-      "inferenceTimeMs": 2.854,
+      "trainingTimeMs": 52.52,
+      "inferenceTimeMs": 1.945,
       "parameterCount": 6800,
       "falseEarlyWarnings": 0
     },
     {
       "model": "GRU",
-      "trainingTimeMs": 107.37,
-      "inferenceTimeMs": 1.208,
+      "trainingTimeMs": 65.0,
+      "inferenceTimeMs": 1.073,
       "parameterCount": 5249,
       "falseEarlyWarnings": 0
     },
     {
       "model": "Temporal Model",
-      "trainingTimeMs": 283.99,
-      "inferenceTimeMs": 1.556,
+      "trainingTimeMs": 231.67,
+      "inferenceTimeMs": 1.297,
       "parameterCount": 2113,
       "falseEarlyWarnings": 0
     }

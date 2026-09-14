@@ -189,6 +189,11 @@ from services.digital_twin.risk.factors.asset.asset_criticality_models import (
     PredictionProvenance, ThreatAssetContextRecord
 )
 from services.digital_twin.risk.factors.asset.threat_asset_engine import threat_asset_engine
+from services.digital_twin.risk.factors.vulnerability.vulnerability_engine import (
+    vulnerability_scoring_engine, VulnerabilityRecord, VulnerabilityStatus
+)
+from services.digital_twin.risk.factors.impact.attack_impact_engine import attack_impact_engine
+from services.digital_twin.risk.thresholds.threshold_classifier import threshold_classifier
 from services.digital_twin.ml.comparison.model_comparator import model_comparator
 from services.digital_twin.ml.dataset.inventory.source_inventory import (
     SourceInventoryAdapter, dataset_inventory
@@ -599,6 +604,53 @@ def bootstrap_security_grounding():
 
 class SuricataIngestPayload(BaseModel):
     eveJson: str
+
+# ==================== DAY 129: VULNERABILITY & ATTACK IMPACT API ====================
+
+class ScoreVulnerabilityRequest(BaseModel):
+    vulnerabilities: List[VulnerabilityRecord]
+    targetService: Optional[str] = None
+
+class EvaluateImpactRequest(BaseModel):
+    category: str = "DOS_LIKE"
+    assetType: str = "Database Server"
+    service: str = "HTTP"
+
+@app.post("/api/v1/twin/risk/factors/vulnerability/score")
+def api_score_vulnerabilities(req: ScoreVulnerabilityRequest):
+    try:
+        res = vulnerability_scoring_engine.resolve_highest_relevant_vulnerability(
+            vulnerabilities=req.vulnerabilities,
+            target_service=req.targetService
+        )
+        return {
+            "status": "VULNERABILITY_SCORED",
+            "result": res.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/twin/risk/factors/impact/evaluate")
+def api_evaluate_attack_impact(req: EvaluateImpactRequest):
+    try:
+        record = attack_impact_engine.evaluate_impact(
+            category=req.category,
+            asset_type=req.assetType,
+            service=req.service
+        )
+        return {
+            "status": "IMPACT_EVALUATED",
+            "impact": record.model_dump()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/twin/risk/thresholds")
+def api_get_risk_thresholds():
+    return {
+        "status": "THRESHOLDS_RETRIEVED",
+        "boundaries": threshold_classifier.get_boundaries()
+    }
 
 # ==================== DAY 128: THREAT PROBABILITY & ASSET CRITICALITY API ====================
 
