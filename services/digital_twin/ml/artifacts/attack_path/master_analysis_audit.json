@@ -474,5 +474,101 @@
     "featureVersion": "feature-v1.0",
     "explanationId": "PEXP-CDE876",
     "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-BE080C5F",
+    "timestamp": "2026-09-15T05:32:56.912278+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-CEB47E",
+    "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-C3F86009",
+    "timestamp": "2026-09-15T05:33:06.450768+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-28C89B",
+    "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-27FC1550",
+    "timestamp": "2026-09-15T05:33:19.473793+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-DEF0F2",
+    "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-B50511B0",
+    "timestamp": "2026-09-15T05:33:28.287927+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-6ABCFD",
+    "status": "COMPLETED"
   }
 ]

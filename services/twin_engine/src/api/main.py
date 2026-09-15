@@ -279,6 +279,10 @@ from frontend.simulations.simulation_models import (
     SimulationConfiguration, SimulationLiveStateView
 )
 from frontend.simulations.simulation_control_engine import simulation_control_engine
+from frontend.predictions.early_warning_models import (
+    EarlyWarningStateEnum, EarlyWarningDashboardSnapshot
+)
+from frontend.predictions.early_warning_engine import early_warning_dashboard_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1239,6 +1243,30 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 152: EARLY WARNING DASHBOARD API ====================
+
+class TriggerCooldownRequest(BaseModel):
+    targetDevice: str = "WEB-01"
+    durationSeconds: int = 30
+
+@app.get("/api/v1/twin/early-warning/snapshot")
+def api_get_early_warning_snapshot(device: str = "WEB-01"):
+    snapshot = early_warning_dashboard_engine.generate_snapshot(target_device=device)
+    return {
+        "status": "EARLY_WARNING_SNAPSHOT_RETRIEVED",
+        "snapshot": snapshot.model_dump(),
+        "cliCard": snapshot.render_cli_card()
+    }
+
+@app.post("/api/v1/twin/early-warning/cooldown")
+def api_trigger_warning_cooldown(req: TriggerCooldownRequest):
+    early_warning_dashboard_engine.trigger_cooldown(req.targetDevice, req.durationSeconds)
+    return {
+        "status": "COOLDOWN_TRIGGERED",
+        "device": req.targetDevice,
+        "durationSeconds": req.durationSeconds
     }
 
 # ==================== DAY 151: SIMULATION CONTROL CENTER API ====================

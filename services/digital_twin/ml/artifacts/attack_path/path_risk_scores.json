@@ -1,7 +1,7 @@
 [
   {
-    "scoringId": "PRISK-003FA5",
-    "pathId": "PATH-5A3393",
+    "scoringId": "PRISK-CF475F",
+    "pathId": "PATH-EC4BD5",
     "nodeSequence": [
       "CLIENT-01",
       "WEB-01",
@@ -49,11 +49,11 @@
       }
     ],
     "explanation": "Path risk assessed at 80.36 [CRITICAL]. Maximum intermediate node risk is 69.6/100, targeting DB-01 (CRITICAL criticality) with 0.75 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
-    "timestamp": "2026-09-15T05:30:44.899691+00:00"
+    "timestamp": "2026-09-15T05:33:28.283746+00:00"
   },
   {
-    "scoringId": "PRISK-3E5FB6",
-    "pathId": "PATH-3634B6",
+    "scoringId": "PRISK-86FC90",
+    "pathId": "PATH-5A76F3",
     "nodeSequence": [
       "CLIENT-01",
       "DB-01"
@@ -90,11 +90,11 @@
       }
     ],
     "explanation": "Path risk assessed at 12.80 [LOW]. Maximum intermediate node risk is 69.6/100, targeting DB-01 (CRITICAL criticality) with 1.00 vulnerability factor. Reachability status: BLOCKED (multiplier: 0.15).",
-    "timestamp": "2026-09-15T05:30:44.899942+00:00"
+    "timestamp": "2026-09-15T05:33:28.283863+00:00"
   },
   {
-    "scoringId": "PRISK-B3158D",
-    "pathId": "PATH-5A3393",
+    "scoringId": "PRISK-A91F37",
+    "pathId": "PATH-EC4BD5",
     "nodeSequence": [
       "CLIENT-01",
       "WEB-01",
@@ -142,6 +142,6 @@
       }
     ],
     "explanation": "Path risk assessed at 80.36 [CRITICAL]. Maximum intermediate node risk is 69.6/100, targeting DB-01 (CRITICAL criticality) with 0.75 vulnerability factor. Reachability status: POSSIBLE (multiplier: 1.00).",
-    "timestamp": "2026-09-15T05:30:44.903265+00:00"
+    "timestamp": "2026-09-15T05:33:28.285422+00:00"
   }
 ]
