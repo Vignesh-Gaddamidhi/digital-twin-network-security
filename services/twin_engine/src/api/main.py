@@ -279,6 +279,13 @@ from frontend.simulations.simulation_models import (
     SimulationConfiguration, SimulationLiveStateView
 )
 from frontend.simulations.simulation_control_engine import simulation_control_engine
+from frontend.dashboard.integration_models import (
+    ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
+    PipelineObservabilityMetrics, UnifiedGlobalSearchResponse, RealtimeDashboardFrame
+)
+from frontend.dashboard.dashboard_integration_engine import dashboard_integration_engine
+from fastapi import WebSocket, WebSocketDisconnect
+import asyncio
 from frontend.predictions.early_warning_models import (
     EarlyWarningStateEnum, EarlyWarningDashboardSnapshot
 )
@@ -1268,6 +1275,58 @@ def api_trigger_warning_cooldown(req: TriggerCooldownRequest):
         "device": req.targetDevice,
         "durationSeconds": req.durationSeconds
     }
+
+# ==================== DAY 153: DASHBOARD INTEGRATION & REAL-TIME API ====================
+
+class GlobalSearchRequest(BaseModel):
+    query: str
+
+class GlobalTimeRangeRequest(BaseModel):
+    timeRange: str = "30m"
+
+@app.get("/api/v1/twin/integration/health")
+def api_get_subsystem_health():
+    health = dashboard_integration_engine.get_subsystem_health()
+    return {
+        "status": "SUBSYSTEM_HEALTH_RETRIEVED",
+        "health": health.model_dump()
+    }
+
+@app.get("/api/v1/twin/integration/observability")
+def api_get_pipeline_observability():
+    return {
+        "status": "OBSERVABILITY_METRICS_RETRIEVED",
+        "observability": dashboard_integration_engine.observability.model_dump()
+    }
+
+@app.post("/api/v1/twin/integration/search")
+def api_execute_global_search(req: GlobalSearchRequest):
+    res = dashboard_integration_engine.global_search(req.query)
+    return {
+        "status": "SEARCH_COMPLETED",
+        "result": res.model_dump()
+    }
+
+@app.post("/api/v1/twin/integration/timerange")
+def api_set_global_timerange(req: GlobalTimeRangeRequest):
+    active_range = dashboard_integration_engine.set_global_time_range(req.timeRange)
+    return {
+        "status": "TIMERANGE_UPDATED",
+        "timeRange": active_range
+    }
+
+@app.websocket("/api/v1/twin/integration/ws/live")
+async def websocket_dashboard_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            frame = dashboard_integration_engine.generate_realtime_frame()
+            await websocket.send_json(frame.model_dump())
+            await asyncio.sleep(1.0)
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        await websocket.close()
 
 # ==================== DAY 151: SIMULATION CONTROL CENTER API ====================
 
