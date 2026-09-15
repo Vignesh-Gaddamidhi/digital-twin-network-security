@@ -285,6 +285,10 @@ from frontend.topology.three_d_twin_contract import (
     LinkVisual3DState, Unified3DTwinState
 )
 from frontend.topology.three_d_projection_engine import three_d_projection_engine
+from frontend.topology.three_d_scene_models import (
+    CameraStateEnum, WebGLSceneStatusEnum, ThreeDSceneSnapshot
+)
+from frontend.topology.three_d_scene_engine import three_d_scene_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1295,6 +1299,77 @@ def api_get_master_dashboard_overview():
         "overview": data,
         "cliCommandCenter": cli_render
     }
+
+# ==================== DAY 156: THREE.JS FOUNDATION & CAMERA SYSTEM API ====================
+
+class CameraActionRequest(BaseModel):
+    action: str = "RESET"  # ZOOM, PAN, ROTATE, RESET, FOCUS_DEVICE, FOCUS_PATH
+    deltaWheel: float = 0.0
+    deltaX: float = 0.0
+    deltaY: float = 0.0
+    deltaThetaRad: float = 0.0
+    deltaPhiRad: float = 0.0
+    targetDeviceId: Optional[str] = None
+    nodeSequence: Optional[List[str]] = None
+
+class ViewportResizeRequest(BaseModel):
+    width: int = 1280
+    height: int = 720
+    devicePixelRatio: float = 1.0
+
+class SceneLifecycleRequest(BaseModel):
+    action: str = "MOUNT"  # MOUNT, UNMOUNT
+
+@app.get("/api/v1/twin/3d/scene/snapshot")
+def api_get_3d_scene_snapshot():
+    snap = three_d_scene_engine.get_snapshot()
+    return {
+        "status": "SCENE_SNAPSHOT_RETRIEVED",
+        "snapshot": snap.model_dump(),
+        "cliPanel": snap.render_cli_panel()
+    }
+
+@app.post("/api/v1/twin/3d/camera/action")
+def api_execute_camera_action(req: CameraActionRequest):
+    act = req.action.upper()
+    try:
+        if act == "ZOOM":
+            cam = three_d_scene_engine.zoom_camera(req.deltaWheel)
+        elif act == "PAN":
+            cam = three_d_scene_engine.pan_camera(req.deltaX, req.deltaY)
+        elif act == "ROTATE":
+            cam = three_d_scene_engine.rotate_camera(req.deltaThetaRad, req.deltaPhiRad)
+        elif act == "FOCUS_DEVICE":
+            cam = three_d_scene_engine.focus_device(req.targetDeviceId or "WEB-01")
+        elif act == "FOCUS_PATH":
+            cam = three_d_scene_engine.focus_path(req.nodeSequence or ["CLIENT-01", "WEB-01", "DB-01"])
+        else:
+            cam = three_d_scene_engine.reset_camera()
+
+        return {
+            "status": "CAMERA_ACTION_EXECUTED",
+            "camera": cam.model_dump()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/3d/scene/resize")
+def api_resize_scene_viewport(req: ViewportResizeRequest):
+    dim = three_d_scene_engine.resize_viewport(req.width, req.height, req.devicePixelRatio)
+    return {
+        "status": "VIEWPORT_RESIZED",
+        "dimensions": dim.model_dump()
+    }
+
+@app.post("/api/v1/twin/3d/scene/lifecycle")
+def api_manage_scene_lifecycle(req: SceneLifecycleRequest):
+    act = req.action.upper()
+    if act == "UNMOUNT":
+        three_d_scene_engine.unmount_scene()
+        return {"status": "SCENE_UNMOUNTED"}
+    else:
+        snap = three_d_scene_engine.mount_scene()
+        return {"status": "SCENE_MOUNTED", "snapshot": snap.model_dump()}
 
 # ==================== DAY 155: ENTERPRISE 3D DIGITAL TWIN STATE CONTRACT API ====================
 
