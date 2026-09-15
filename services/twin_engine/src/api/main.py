@@ -1,3 +1,4 @@
+from frontend.simulations.simulation_models import ScenarioIdentifierEnum
 import sys
 from pathlib import Path
 
@@ -6620,3 +6621,38 @@ async def websocket_live_gateway_endpoint(websocket: WebSocket):
         websocket_connection_manager.disconnect(websocket)
     except Exception:
         websocket_connection_manager.disconnect(websocket)
+
+# ==================== DAY 164: SIMULATION REAL-TIME PIPELINE API ====================
+
+class SimulationActionRequest(BaseModel):
+    action: str = "START"
+    scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE
+
+class SimulationTickRequest(BaseModel):
+    stepSeconds: int = 1
+
+@app.post("/api/v1/twin/realtime/simulation/action")
+async def api_execute_simulation_realtime_action(req: SimulationActionRequest):
+    act = req.action.upper()
+    if act == "START":
+        res = await simulation_realtime_pipeline.start_simulation(req.scenario)
+    elif act == "PAUSE":
+        res = await simulation_realtime_pipeline.pause_simulation()
+    elif act == "RESUME":
+        res = await simulation_realtime_pipeline.resume_simulation()
+    elif act == "STOP":
+        res = await simulation_realtime_pipeline.stop_simulation()
+    elif act == "RESET":
+        res = await simulation_realtime_pipeline.reset_simulation()
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported action '{req.action}'")
+    return {"status": "ACTION_EXECUTED", "result": res}
+
+@app.post("/api/v1/twin/realtime/simulation/tick")
+async def api_step_simulation_tick(req: SimulationTickRequest):
+    envelopes = await simulation_realtime_pipeline.process_simulation_tick(req.stepSeconds)
+    return {
+        "status": "TICK_PROCESSED",
+        "emittedEnvelopesCount": len(envelopes),
+        "envelopes": [e.model_dump() for e in envelopes]
+    }
