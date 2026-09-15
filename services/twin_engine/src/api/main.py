@@ -242,6 +242,10 @@ from frontend.dashboard.kpi_models import (
     DevicesKPICard, ThreatsKPICard, RiskKPICard, AttacksKPICard, MasterKPISnapshot
 )
 from frontend.dashboard.kpi_summary_engine import kpi_summary_engine
+from frontend.topology.topology_models import (
+    TopologyNodeState, LiveTopologySnapshot, NodeDetailDrawer, ViewportTransform
+)
+from frontend.topology.topology_canvas_engine import topology_canvas_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1203,6 +1207,52 @@ def api_get_dashboard_shell_context():
             "lastUpdated": now_time
         }
     }
+
+# ==================== DAY 143: LIVE NETWORK TOPOLOGY CANVAS API ====================
+
+class ViewportActionRequest(BaseModel):
+    action: str = "RESET"  # ZOOM_IN, ZOOM_OUT, RESET, PAN, FIT
+    deltaX: float = 0.0
+    deltaY: float = 0.0
+
+@app.get("/api/v1/twin/topology/canvas")
+def api_get_topology_canvas(filter: str = "ALL"):
+    snapshot = topology_canvas_engine.generate_live_topology(filter_name=filter)
+    return {
+        "status": "TOPOLOGY_SNAPSHOT_GENERATED",
+        "snapshot": snapshot.model_dump(),
+        "cliCanvas": topology_canvas_engine.render_cli_canvas(snapshot)
+    }
+
+@app.post("/api/v1/twin/topology/viewport/transform")
+def api_transform_viewport(req: ViewportActionRequest):
+    act = req.action.upper()
+    if act == "ZOOM_IN":
+        vp = topology_canvas_engine.zoom_in()
+    elif act == "ZOOM_OUT":
+        vp = topology_canvas_engine.zoom_out()
+    elif act == "PAN":
+        vp = topology_canvas_engine.pan(req.deltaX, req.deltaY)
+    elif act == "FIT":
+        vp = topology_canvas_engine.fit_to_screen(len(attack_path_graph.nodes))
+    else:
+        vp = topology_canvas_engine.reset_view()
+
+    return {
+        "status": "VIEWPORT_TRANSFORMED",
+        "viewport": vp.model_dump()
+    }
+
+@app.get("/api/v1/twin/topology/node/drawer/{deviceId}")
+def api_get_node_drawer(deviceId: str):
+    try:
+        drawer = topology_canvas_engine.get_node_detail_drawer(deviceId)
+        return {
+            "status": "NODE_DRAWER_RETRIEVED",
+            "drawer": drawer.model_dump()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 142: KPI SUMMARY CARDS API ====================
 

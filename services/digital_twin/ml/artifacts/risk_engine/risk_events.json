@@ -1,15 +1,1 @@
-[
-  {
-    "eventId": "REVT-E4F0FE08",
-    "deviceId": "DB-01",
-    "eventType": "RISK_LEVEL_DECREASED",
-    "previousRiskLevel": "CRITICAL",
-    "currentRiskLevel": "HIGH",
-    "previousScore": 78.4,
-    "currentScore": 69.6,
-    "scoreDelta": -8.8,
-    "timestamp": "2026-09-15T04:55:58.673270+00:00",
-    "rationale": "Risk mitigated / recovered: CRITICAL -> HIGH on DB-01.",
-    "cooldownActive": false
-  }
-]
+[]
