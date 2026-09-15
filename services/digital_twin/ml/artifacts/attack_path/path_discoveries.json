@@ -320,5 +320,269 @@
     ],
     "graphVersion": "v1.0",
     "timestamp": "2026-09-14T08:20:49.868565+00:00"
+  },
+  {
+    "analysisId": "PANA-60A833E4",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 2,
+    "pathsPossible": 1,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "maximumDepth": 6,
+    "paths": [
+      {
+        "pathId": "PATH-E588C2",
+        "nodeSequence": [
+          "CLIENT-01",
+          "WEB-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-02",
+          "CONN-03"
+        ],
+        "hopCount": 2,
+        "status": "POSSIBLE",
+        "blockedAt": null,
+        "blockingReason": null,
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Permitted by FW-RULE-03: DMZ to Database Access",
+          "Permitted by FW-RULE-02: Internal to DMZ Management"
+        ]
+      },
+      {
+        "pathId": "PATH-817617",
+        "nodeSequence": [
+          "CLIENT-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-05"
+        ],
+        "hopCount": 1,
+        "status": "BLOCKED",
+        "blockedAt": "DB-01",
+        "blockingReason": "Blocked by FW-RULE-04: Internal to Database Direct Blocking",
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Blocked by FW-RULE-04: Internal to Database Direct Blocking"
+        ]
+      }
+    ],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:25.910621+00:00"
+  },
+  {
+    "analysisId": "PANA-2D6DFABC",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 3,
+    "pathsPossible": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "maximumDepth": 6,
+    "paths": [
+      {
+        "pathId": "PATH-3E8F97",
+        "nodeSequence": [
+          "CLIENT-01",
+          "WEB-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-02",
+          "CONN-03"
+        ],
+        "hopCount": 2,
+        "status": "POSSIBLE",
+        "blockedAt": null,
+        "blockingReason": null,
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Permitted by FW-RULE-03: DMZ to Database Access",
+          "Permitted by FW-RULE-02: Internal to DMZ Management"
+        ]
+      },
+      {
+        "pathId": "PATH-554231",
+        "nodeSequence": [
+          "CLIENT-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-05"
+        ],
+        "hopCount": 1,
+        "status": "BLOCKED",
+        "blockedAt": "DB-01",
+        "blockingReason": "Blocked by FW-RULE-04: Internal to Database Direct Blocking",
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Blocked by FW-RULE-04: Internal to Database Direct Blocking"
+        ]
+      },
+      {
+        "pathId": "PATH-D3D8C7",
+        "nodeSequence": [
+          "CLIENT-01",
+          "APP-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "E-CLIENT-APP",
+          "E-APP-DB"
+        ],
+        "hopCount": 2,
+        "status": "POSSIBLE",
+        "blockedAt": null,
+        "blockingReason": null,
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": []
+      }
+    ],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:25.934680+00:00"
+  },
+  {
+    "analysisId": "PANA-3E03E947",
+    "source": "ATTACKER-EXT",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 1,
+    "pathsPossible": 0,
+    "pathsBlocked": 0,
+    "pathsPartial": 1,
+    "maximumDepth": 6,
+    "paths": [
+      {
+        "pathId": "PATH-FDD64E",
+        "nodeSequence": [
+          "ATTACKER-EXT",
+          "WEB-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-01",
+          "CONN-03"
+        ],
+        "hopCount": 2,
+        "status": "PARTIALLY_REACHABLE",
+        "blockedAt": "DB-01",
+        "blockingReason": "FW-EMERGENCY-ISOLATION",
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Permitted by FW-RULE-01: Internet to DMZ Web Ingress",
+          "FW-EMERGENCY-ISOLATION"
+        ]
+      }
+    ],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:25.974300+00:00"
+  },
+  {
+    "analysisId": "PANA-A28FE99C",
+    "source": "ATTACKER-EXT",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 1,
+    "pathsPossible": 1,
+    "pathsBlocked": 0,
+    "pathsPartial": 0,
+    "maximumDepth": 6,
+    "paths": [
+      {
+        "pathId": "PATH-DD06FE",
+        "nodeSequence": [
+          "ATTACKER-EXT",
+          "WEB-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-01",
+          "CONN-03"
+        ],
+        "hopCount": 2,
+        "status": "POSSIBLE",
+        "blockedAt": null,
+        "blockingReason": null,
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Permitted by FW-RULE-01: Internet to DMZ Web Ingress",
+          "FW-EMERGENCY-ISOLATION"
+        ]
+      }
+    ],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:26.017885+00:00"
+  },
+  {
+    "analysisId": "PANA-D77839F1",
+    "source": "ATTACKER-EXT",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 1,
+    "pathsPossible": 1,
+    "pathsBlocked": 0,
+    "pathsPartial": 0,
+    "maximumDepth": 6,
+    "paths": [
+      {
+        "pathId": "PATH-E396F1",
+        "nodeSequence": [
+          "ATTACKER-EXT",
+          "WEB-01",
+          "DB-01"
+        ],
+        "edgeSequence": [
+          "CONN-01",
+          "CONN-03"
+        ],
+        "hopCount": 2,
+        "status": "POSSIBLE",
+        "blockedAt": null,
+        "blockingReason": null,
+        "vulnerabilitiesEncountered": [
+          "CVE-2026-SQLI"
+        ],
+        "securityControlsEncountered": [
+          "Permitted by FW-RULE-01: Internet to DMZ Web Ingress",
+          "Permitted by FW-RULE-03: DMZ to Database Access"
+        ]
+      }
+    ],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:26.241946+00:00"
+  },
+  {
+    "analysisId": "PANA-0599260B",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsFound": 0,
+    "pathsPossible": 0,
+    "pathsBlocked": 0,
+    "pathsPartial": 0,
+    "maximumDepth": 6,
+    "paths": [],
+    "graphVersion": "v1.0",
+    "timestamp": "2026-09-15T04:46:26.340907+00:00"
   }
 ]
