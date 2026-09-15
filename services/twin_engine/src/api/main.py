@@ -307,6 +307,7 @@ from frontend.topology.three_d_filter_models import (
     TopologyFilterCriteria, ViewportSwitchResponse
 )
 from frontend.topology.three_d_navigation_engine import three_d_navigation_engine
+from frontend.topology.phase19_graduation_orchestrator import phase19_graduation_orchestrator
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1316,6 +1317,32 @@ def api_get_master_dashboard_overview():
         "status": "MASTER_DASHBOARD_RETRIEVED",
         "overview": data,
         "cliCommandCenter": cli_render
+    }
+
+# ==================== DAY 161: PHASE 19 MASTER 3D INTEGRATION & GRADUATION API ====================
+
+@app.post("/api/v1/twin/3d/graduation/e2e-scenario")
+def api_run_3d_e2e_scenario():
+    results = phase19_graduation_orchestrator.run_e2e_security_scenario()
+    return {
+        "status": "3D_E2E_SCENARIO_EXECUTED",
+        "results": results
+    }
+
+@app.get("/api/v1/twin/3d/graduation/performance")
+def api_get_3d_performance_profile():
+    perf = phase19_graduation_orchestrator.profile_scalability_and_limits()
+    return {
+        "status": "3D_PERFORMANCE_PROFILED",
+        "metrics": perf
+    }
+
+@app.get("/api/v1/twin/3d/graduation/memory-audit")
+def api_audit_3d_memory_lifecycle():
+    mem = phase19_graduation_orchestrator.audit_memory_lifecycle()
+    return {
+        "status": "3D_MEMORY_LIFECYCLE_AUDITED",
+        "audit": mem
     }
 
 # ==================== DAY 160: 3D ATTACK PATHS, FILTERING & 2D/3D SWITCH API ====================

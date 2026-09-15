@@ -111,7 +111,7 @@ class DeviceTo3DMapper:
             return MeshArchetypeEnum.DATABASE
         elif "DNS" in t:
             return MeshArchetypeEnum.DNS
-        elif "WEB" in t or "SERVER" in t or "APP" in t:
+        elif "WEB" in t or "SERVER" in t or "APPLICATION" in t or "APP_SERVER" in t or "APP-SERVER" in t or t.startswith("APP ") or " APP " in t or t == "APP":
             return MeshArchetypeEnum.SERVER
         elif "CLIENT" in t or "HOST" in t or "WORKSTATION" in t:
             return MeshArchetypeEnum.CLIENT
