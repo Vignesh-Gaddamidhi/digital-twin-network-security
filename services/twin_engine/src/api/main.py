@@ -10,6 +10,7 @@ from frontend.realtime.realtime_models import (
 )
 from frontend.realtime.realtime_event_manager import realtime_event_manager
 from frontend.realtime.websocket_gateway import websocket_connection_manager
+from frontend.realtime.simulation_realtime_pipeline import simulation_realtime_pipeline
 from datetime import datetime, timezone
 import numpy as np
 import sys

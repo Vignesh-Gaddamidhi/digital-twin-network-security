@@ -133,32 +133,8 @@ class SimulationControlEngine:
         stage = self.live_state.currentStage
         scenario = self.config.scenario
 
-        # Explicit handling for benign NORMAL baseline or immediate TRAFFIC_SPIKE
+        # Explicit handling for benign NORMAL baseline
         if scenario == ScenarioIdentifierEnum.NORMAL:
-            self.live_state.currentPacketsPerSec = 115.0
-            self.live_state.activeEventsCount = 0
-            self.live_state.predictedThreatProb = 0.04
-            self.live_state.networkRiskScore = 12.0
-            self.live_state.activeAttackPathsCount = 0
-            entry_point_engine.set_simulation_compromise("CLIENT-01", "NORMAL")
-            for nid in attack_path_graph.nodes:
-                attack_path_graph.nodes[nid].riskScore = 5.76
-                attack_path_graph.nodes[nid].securityState = "NORMAL"
-            return
-        elif scenario == ScenarioIdentifierEnum.TRAFFIC_SPIKE:
-            self.live_state.currentPacketsPerSec = 1450.0
-            self.live_state.activeEventsCount = 8
-            self.live_state.predictedThreatProb = 0.89
-            self.live_state.networkRiskScore = 78.4
-            self.live_state.activeAttackPathsCount = 2
-            return
-        elif scenario == ScenarioIdentifierEnum.DOS_LIKE:
-            self.live_state.currentPacketsPerSec = 2200.0
-            self.live_state.activeEventsCount = 12
-            self.live_state.predictedThreatProb = 0.95
-            self.live_state.networkRiskScore = 91.0
-            self.live_state.activeAttackPathsCount = 3
-            return
             self.live_state.currentPacketsPerSec = 115.0
             self.live_state.activeEventsCount = 0
             self.live_state.predictedThreatProb = 0.04

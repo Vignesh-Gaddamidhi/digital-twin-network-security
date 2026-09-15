@@ -43,10 +43,12 @@ class WebSocketConnectionManager:
         return snapshot
 
     def disconnect(self, websocket: WebSocket):
-        """Unregisters disconnected client and updates connection state."""
+        """Unregisters disconnected client, updates connection state, and cancels heartbeat daemon if idle."""
         self.active_connections.discard(websocket)
         if not self.active_connections:
             realtime_event_manager.connection_state = RealtimeConnectionState.DISCONNECTED
+            if self._heartbeat_task and not self._heartbeat_task.done():
+                self._heartbeat_task.cancel()
 
     async def broadcast_envelope(self, envelope: RealtimeEventEnvelope) -> int:
         """Broadcasts an incremental delta event envelope to all connected clients."""
