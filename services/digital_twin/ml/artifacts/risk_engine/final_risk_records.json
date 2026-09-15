@@ -1,9 +1,9 @@
 [
   {
-    "riskId": "CALC-003FB7B8",
+    "riskId": "CALC-AA60D650",
     "predictionId": "PRED-000123",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-15T06:49:20.529874+00:00",
+    "timestamp": "2026-09-15T09:11:50.193362+00:00",
     "threatProbability": 0.87,
     "assetCriticality": {
       "level": "CRITICAL",
@@ -36,19 +36,19 @@
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.007,
-      "vulnerabilityResolutionMs": 0.05,
-      "impactEvaluationMs": 0.019,
-      "coreCalculationMs": 1.71,
-      "trendEvaluationMs": 1.326,
-      "explanationSynthesisMs": 1.185,
-      "totalPipelineLatencyMs": 4.35
+      "vulnerabilityResolutionMs": 0.046,
+      "impactEvaluationMs": 0.023,
+      "coreCalculationMs": 1.482,
+      "trendEvaluationMs": 1.151,
+      "explanationSynthesisMs": 1.128,
+      "totalPipelineLatencyMs": 4.66
     }
   },
   {
-    "riskId": "CALC-BBADA13B",
+    "riskId": "CALC-7B92F6BC",
     "predictionId": "PRED-NORM-HTTP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.551602+00:00",
+    "timestamp": "2026-09-15T09:11:50.222212+00:00",
     "threatProbability": 0.08,
     "assetCriticality": {
       "level": "LOW",
@@ -75,20 +75,20 @@
     "status": "CALCULATED",
     "explanationStatus": "PARTIAL",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.008,
-      "vulnerabilityResolutionMs": 0.046,
-      "impactEvaluationMs": 0.029,
-      "coreCalculationMs": 10.433,
-      "trendEvaluationMs": 1.51,
-      "explanationSynthesisMs": 8.045,
-      "totalPipelineLatencyMs": 20.13
+      "assetLookupMs": 0.007,
+      "vulnerabilityResolutionMs": 0.036,
+      "impactEvaluationMs": 0.027,
+      "coreCalculationMs": 12.439,
+      "trendEvaluationMs": 1.321,
+      "explanationSynthesisMs": 13.328,
+      "totalPipelineLatencyMs": 27.21
     }
   },
   {
-    "riskId": "CALC-40E792C1",
+    "riskId": "CALC-F795B595",
     "predictionId": "PRED-NORM-HTTPS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.590718+00:00",
+    "timestamp": "2026-09-15T09:11:50.279311+00:00",
     "threatProbability": 0.08,
     "assetCriticality": {
       "level": "LOW",
@@ -115,20 +115,20 @@
     "status": "CALCULATED",
     "explanationStatus": "PARTIAL",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.027,
-      "impactEvaluationMs": 0.021,
-      "coreCalculationMs": 15.608,
-      "trendEvaluationMs": 2.675,
-      "explanationSynthesisMs": 11.557,
-      "totalPipelineLatencyMs": 29.94
+      "assetLookupMs": 0.004,
+      "vulnerabilityResolutionMs": 0.041,
+      "impactEvaluationMs": 0.036,
+      "coreCalculationMs": 17.741,
+      "trendEvaluationMs": 3.464,
+      "explanationSynthesisMs": 20.34,
+      "totalPipelineLatencyMs": 41.71
     }
   },
   {
-    "riskId": "CALC-D199099D",
+    "riskId": "CALC-1BFA45DE",
     "predictionId": "PRED-NORM-DNS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.621927+00:00",
+    "timestamp": "2026-09-15T09:11:50.330280+00:00",
     "threatProbability": 0.08,
     "assetCriticality": {
       "level": "LOW",
@@ -155,20 +155,140 @@
     "status": "CALCULATED",
     "explanationStatus": "PARTIAL",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.004,
-      "vulnerabilityResolutionMs": 0.026,
-      "impactEvaluationMs": 0.018,
-      "coreCalculationMs": 10.012,
-      "trendEvaluationMs": 1.625,
-      "explanationSynthesisMs": 9.594,
-      "totalPipelineLatencyMs": 21.32
+      "assetLookupMs": 0.005,
+      "vulnerabilityResolutionMs": 0.037,
+      "impactEvaluationMs": 0.026,
+      "coreCalculationMs": 14.124,
+      "trendEvaluationMs": 1.896,
+      "explanationSynthesisMs": 16.897,
+      "totalPipelineLatencyMs": 33.04
     }
   },
   {
-    "riskId": "CALC-2EA1F3C3",
+    "riskId": "CALC-33FBA323",
     "predictionId": "PRED-NORM-SSH",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.656175+00:00",
+    "timestamp": "2026-09-15T09:11:50.378438+00:00",
+    "threatProbability": 0.08,
+    "assetCriticality": {
+      "level": "LOW",
+      "score": 0.4
+    },
+    "vulnerability": {
+      "level": "NONE",
+      "score": 0.2,
+      "status": "PATCHED"
+    },
+    "attackImpact": {
+      "level": "VERY_LOW",
+      "score": 0.2
+    },
+    "rawRiskScore": 0.00128,
+    "riskScore": 0.13,
+    "riskLevel": "LOW",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.98,
+    "topContributingFeatures": [],
+    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "riskTrend": "STABLE",
+    "riskEngineVersion": "1.0",
+    "status": "CALCULATED",
+    "explanationStatus": "PARTIAL",
+    "pipelineLatencyMs": {
+      "assetLookupMs": 0.005,
+      "vulnerabilityResolutionMs": 0.036,
+      "impactEvaluationMs": 0.03,
+      "coreCalculationMs": 15.932,
+      "trendEvaluationMs": 2.162,
+      "explanationSynthesisMs": 14.937,
+      "totalPipelineLatencyMs": 33.17
+    }
+  },
+  {
+    "riskId": "CALC-1EAABD5B",
+    "predictionId": "PRED-NORM-ICMP",
+    "deviceId": "CLIENT-01",
+    "timestamp": "2026-09-15T09:11:50.429624+00:00",
+    "threatProbability": 0.08,
+    "assetCriticality": {
+      "level": "LOW",
+      "score": 0.4
+    },
+    "vulnerability": {
+      "level": "NONE",
+      "score": 0.2,
+      "status": "PATCHED"
+    },
+    "attackImpact": {
+      "level": "VERY_LOW",
+      "score": 0.2
+    },
+    "rawRiskScore": 0.00128,
+    "riskScore": 0.13,
+    "riskLevel": "LOW",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.98,
+    "topContributingFeatures": [],
+    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "riskTrend": "STABLE",
+    "riskEngineVersion": "1.0",
+    "status": "CALCULATED",
+    "explanationStatus": "PARTIAL",
+    "pipelineLatencyMs": {
+      "assetLookupMs": 0.005,
+      "vulnerabilityResolutionMs": 0.037,
+      "impactEvaluationMs": 0.031,
+      "coreCalculationMs": 14.018,
+      "trendEvaluationMs": 1.902,
+      "explanationSynthesisMs": 18.638,
+      "totalPipelineLatencyMs": 34.69
+    }
+  },
+  {
+    "riskId": "CALC-9672B9D8",
+    "predictionId": "PRED-NORM-TCP",
+    "deviceId": "CLIENT-01",
+    "timestamp": "2026-09-15T09:11:50.484538+00:00",
+    "threatProbability": 0.08,
+    "assetCriticality": {
+      "level": "LOW",
+      "score": 0.4
+    },
+    "vulnerability": {
+      "level": "NONE",
+      "score": 0.2,
+      "status": "PATCHED"
+    },
+    "attackImpact": {
+      "level": "VERY_LOW",
+      "score": 0.2
+    },
+    "rawRiskScore": 0.00128,
+    "riskScore": 0.13,
+    "riskLevel": "LOW",
+    "predictedCategory": "NORMAL",
+    "categoryConfidence": 0.98,
+    "topContributingFeatures": [],
+    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
+    "riskTrend": "STABLE",
+    "riskEngineVersion": "1.0",
+    "status": "CALCULATED",
+    "explanationStatus": "PARTIAL",
+    "pipelineLatencyMs": {
+      "assetLookupMs": 0.005,
+      "vulnerabilityResolutionMs": 0.038,
+      "impactEvaluationMs": 0.025,
+      "coreCalculationMs": 15.478,
+      "trendEvaluationMs": 2.838,
+      "explanationSynthesisMs": 19.573,
+      "totalPipelineLatencyMs": 38.02
+    }
+  },
+  {
+    "riskId": "CALC-11ABC578",
+    "predictionId": "PRED-NORM-UDP",
+    "deviceId": "CLIENT-01",
+    "timestamp": "2026-09-15T09:11:50.539375+00:00",
     "threatProbability": 0.08,
     "assetCriticality": {
       "level": "LOW",
@@ -196,139 +316,19 @@
     "explanationStatus": "PARTIAL",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.004,
-      "vulnerabilityResolutionMs": 0.024,
-      "impactEvaluationMs": 0.024,
-      "coreCalculationMs": 9.139,
-      "trendEvaluationMs": 1.513,
-      "explanationSynthesisMs": 9.379,
-      "totalPipelineLatencyMs": 20.12
+      "vulnerabilityResolutionMs": 0.041,
+      "impactEvaluationMs": 0.034,
+      "coreCalculationMs": 16.886,
+      "trendEvaluationMs": 2.105,
+      "explanationSynthesisMs": 17.177,
+      "totalPipelineLatencyMs": 36.3
     }
   },
   {
-    "riskId": "CALC-8E16EC89",
-    "predictionId": "PRED-NORM-ICMP",
-    "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.686586+00:00",
-    "threatProbability": 0.08,
-    "assetCriticality": {
-      "level": "LOW",
-      "score": 0.4
-    },
-    "vulnerability": {
-      "level": "NONE",
-      "score": 0.2,
-      "status": "PATCHED"
-    },
-    "attackImpact": {
-      "level": "VERY_LOW",
-      "score": 0.2
-    },
-    "rawRiskScore": 0.00128,
-    "riskScore": 0.13,
-    "riskLevel": "LOW",
-    "predictedCategory": "NORMAL",
-    "categoryConfidence": 0.98,
-    "topContributingFeatures": [],
-    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
-    "riskTrend": "STABLE",
-    "riskEngineVersion": "1.0",
-    "status": "CALCULATED",
-    "explanationStatus": "PARTIAL",
-    "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.024,
-      "impactEvaluationMs": 0.016,
-      "coreCalculationMs": 9.849,
-      "trendEvaluationMs": 2.364,
-      "explanationSynthesisMs": 8.382,
-      "totalPipelineLatencyMs": 20.69
-    }
-  },
-  {
-    "riskId": "CALC-A028A1D0",
-    "predictionId": "PRED-NORM-TCP",
-    "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.717293+00:00",
-    "threatProbability": 0.08,
-    "assetCriticality": {
-      "level": "LOW",
-      "score": 0.4
-    },
-    "vulnerability": {
-      "level": "NONE",
-      "score": 0.2,
-      "status": "PATCHED"
-    },
-    "attackImpact": {
-      "level": "VERY_LOW",
-      "score": 0.2
-    },
-    "rawRiskScore": 0.00128,
-    "riskScore": 0.13,
-    "riskLevel": "LOW",
-    "predictedCategory": "NORMAL",
-    "categoryConfidence": 0.98,
-    "topContributingFeatures": [],
-    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
-    "riskTrend": "STABLE",
-    "riskEngineVersion": "1.0",
-    "status": "CALCULATED",
-    "explanationStatus": "PARTIAL",
-    "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.022,
-      "impactEvaluationMs": 0.018,
-      "coreCalculationMs": 9.702,
-      "trendEvaluationMs": 1.622,
-      "explanationSynthesisMs": 9.275,
-      "totalPipelineLatencyMs": 20.68
-    }
-  },
-  {
-    "riskId": "CALC-DD76C2AA",
-    "predictionId": "PRED-NORM-UDP",
-    "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.747550+00:00",
-    "threatProbability": 0.08,
-    "assetCriticality": {
-      "level": "LOW",
-      "score": 0.4
-    },
-    "vulnerability": {
-      "level": "NONE",
-      "score": 0.2,
-      "status": "PATCHED"
-    },
-    "attackImpact": {
-      "level": "VERY_LOW",
-      "score": 0.2
-    },
-    "rawRiskScore": 0.00128,
-    "riskScore": 0.13,
-    "riskLevel": "LOW",
-    "predictedCategory": "NORMAL",
-    "categoryConfidence": 0.98,
-    "topContributingFeatures": [],
-    "explanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available. Risk is LOW because low-impact asset conditions and baseline telemetry prevail.",
-    "riskTrend": "STABLE",
-    "riskEngineVersion": "1.0",
-    "status": "CALCULATED",
-    "explanationStatus": "PARTIAL",
-    "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.035,
-      "impactEvaluationMs": 0.017,
-      "coreCalculationMs": 8.14,
-      "trendEvaluationMs": 1.477,
-      "explanationSynthesisMs": 10.386,
-      "totalPipelineLatencyMs": 20.1
-    }
-  },
-  {
-    "riskId": "CALC-1403164F",
+    "riskId": "CALC-69F06D1F",
     "predictionId": "PRED-ATT-PORT_SCAN",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.779451+00:00",
+    "timestamp": "2026-09-15T09:11:50.593536+00:00",
     "threatProbability": 0.75,
     "assetCriticality": {
       "level": "LOW",
@@ -358,20 +358,20 @@
     "status": "CALCULATED",
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.004,
-      "vulnerabilityResolutionMs": 0.03,
-      "impactEvaluationMs": 0.024,
-      "coreCalculationMs": 11.912,
-      "trendEvaluationMs": 1.567,
-      "explanationSynthesisMs": 9.247,
-      "totalPipelineLatencyMs": 22.83
+      "assetLookupMs": 0.006,
+      "vulnerabilityResolutionMs": 0.044,
+      "impactEvaluationMs": 0.027,
+      "coreCalculationMs": 15.84,
+      "trendEvaluationMs": 2.266,
+      "explanationSynthesisMs": 18.133,
+      "totalPipelineLatencyMs": 36.37
     }
   },
   {
-    "riskId": "CALC-527EA086",
+    "riskId": "CALC-FD4E7A0A",
     "predictionId": "PRED-ATT-BRUTE_FORCE_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-15T06:49:20.811118+00:00",
+    "timestamp": "2026-09-15T09:11:50.654627+00:00",
     "threatProbability": 0.85,
     "assetCriticality": {
       "level": "HIGH",
@@ -402,19 +402,19 @@
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.004,
-      "vulnerabilityResolutionMs": 0.025,
-      "impactEvaluationMs": 0.019,
-      "coreCalculationMs": 10.503,
-      "trendEvaluationMs": 1.479,
-      "explanationSynthesisMs": 10.169,
-      "totalPipelineLatencyMs": 22.24
+      "vulnerabilityResolutionMs": 0.027,
+      "impactEvaluationMs": 0.02,
+      "coreCalculationMs": 14.665,
+      "trendEvaluationMs": 1.988,
+      "explanationSynthesisMs": 27.817,
+      "totalPipelineLatencyMs": 44.58
     }
   },
   {
-    "riskId": "CALC-7ABB6A95",
+    "riskId": "CALC-DB6EECDD",
     "predictionId": "PRED-ATT-DOS_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-15T06:49:20.842262+00:00",
+    "timestamp": "2026-09-15T09:11:50.713044+00:00",
     "threatProbability": 0.95,
     "assetCriticality": {
       "level": "HIGH",
@@ -444,20 +444,20 @@
     "status": "CALCULATED",
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.024,
-      "impactEvaluationMs": 0.016,
-      "coreCalculationMs": 8.959,
-      "trendEvaluationMs": 1.463,
-      "explanationSynthesisMs": 10.528,
-      "totalPipelineLatencyMs": 21.03
+      "assetLookupMs": 0.005,
+      "vulnerabilityResolutionMs": 0.034,
+      "impactEvaluationMs": 0.025,
+      "coreCalculationMs": 19.282,
+      "trendEvaluationMs": 3.074,
+      "explanationSynthesisMs": 18.472,
+      "totalPipelineLatencyMs": 40.96
     }
   },
   {
-    "riskId": "CALC-9667F4D1",
+    "riskId": "CALC-42ABFB2C",
     "predictionId": "PRED-ATT-DNS_ANOMALY",
     "deviceId": "DNS-SERVER-01",
-    "timestamp": "2026-09-15T06:49:20.872417+00:00",
+    "timestamp": "2026-09-15T09:11:50.769926+00:00",
     "threatProbability": 0.8,
     "assetCriticality": {
       "level": "MEDIUM",
@@ -487,20 +487,20 @@
     "status": "CALCULATED",
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.004,
-      "vulnerabilityResolutionMs": 0.021,
-      "impactEvaluationMs": 0.015,
-      "coreCalculationMs": 9.153,
-      "trendEvaluationMs": 1.423,
-      "explanationSynthesisMs": 8.598,
-      "totalPipelineLatencyMs": 19.25
+      "assetLookupMs": 0.007,
+      "vulnerabilityResolutionMs": 0.036,
+      "impactEvaluationMs": 0.025,
+      "coreCalculationMs": 19.566,
+      "trendEvaluationMs": 2.751,
+      "explanationSynthesisMs": 15.34,
+      "totalPipelineLatencyMs": 37.79
     }
   },
   {
-    "riskId": "CALC-FAE4D898",
+    "riskId": "CALC-0201A850",
     "predictionId": "PRED-ATT-BEACONING",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-15T06:49:20.905167+00:00",
+    "timestamp": "2026-09-15T09:11:50.828021+00:00",
     "threatProbability": 0.7,
     "assetCriticality": {
       "level": "LOW",
@@ -531,19 +531,19 @@
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.023,
-      "impactEvaluationMs": 0.015,
-      "coreCalculationMs": 11.624,
-      "trendEvaluationMs": 2.179,
-      "explanationSynthesisMs": 8.375,
-      "totalPipelineLatencyMs": 22.26
+      "vulnerabilityResolutionMs": 0.026,
+      "impactEvaluationMs": 0.019,
+      "coreCalculationMs": 18.003,
+      "trendEvaluationMs": 3.978,
+      "explanationSynthesisMs": 20.879,
+      "totalPipelineLatencyMs": 42.97
     }
   },
   {
-    "riskId": "CALC-A076D06D",
+    "riskId": "CALC-28ECA2CE",
     "predictionId": "PRED-ATT-LATERAL_MOVEMENT_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-15T06:49:20.950603+00:00",
+    "timestamp": "2026-09-15T09:11:50.879914+00:00",
     "threatProbability": 0.88,
     "assetCriticality": {
       "level": "HIGH",
@@ -573,20 +573,20 @@
     "status": "CALCULATED",
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
-      "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.026,
-      "impactEvaluationMs": 0.034,
-      "coreCalculationMs": 9.729,
-      "trendEvaluationMs": 2.598,
-      "explanationSynthesisMs": 22.659,
-      "totalPipelineLatencyMs": 35.12
+      "assetLookupMs": 0.004,
+      "vulnerabilityResolutionMs": 0.032,
+      "impactEvaluationMs": 0.024,
+      "coreCalculationMs": 16.437,
+      "trendEvaluationMs": 2.322,
+      "explanationSynthesisMs": 15.882,
+      "totalPipelineLatencyMs": 34.76
     }
   },
   {
-    "riskId": "CALC-1E258C9B",
+    "riskId": "CALC-E8C41A3C",
     "predictionId": "PRED-ATT-EXFILTRATION_LIKE",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-15T06:49:21.009549+00:00",
+    "timestamp": "2026-09-15T09:11:50.942510+00:00",
     "threatProbability": 0.95,
     "assetCriticality": {
       "level": "CRITICAL",
@@ -617,19 +617,19 @@
     "explanationStatus": "GENERATED",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.006,
-      "vulnerabilityResolutionMs": 0.037,
-      "impactEvaluationMs": 0.038,
-      "coreCalculationMs": 14.729,
-      "trendEvaluationMs": 1.907,
-      "explanationSynthesisMs": 12.928,
-      "totalPipelineLatencyMs": 29.7
+      "vulnerabilityResolutionMs": 0.045,
+      "impactEvaluationMs": 0.041,
+      "coreCalculationMs": 19.722,
+      "trendEvaluationMs": 4.221,
+      "explanationSynthesisMs": 20.5,
+      "totalPipelineLatencyMs": 44.61
     }
   },
   {
-    "riskId": "CALC-A4E21AF5",
+    "riskId": "CALC-539F67E0",
     "predictionId": "P4",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-15T06:49:21.045091+00:00",
+    "timestamp": "2026-09-15T09:11:50.999778+00:00",
     "threatProbability": 0.85,
     "assetCriticality": {
       "level": "CRITICAL",
@@ -657,12 +657,12 @@
     "explanationStatus": "PARTIAL",
     "pipelineLatencyMs": {
       "assetLookupMs": 0.003,
-      "vulnerabilityResolutionMs": 0.028,
-      "impactEvaluationMs": 0.025,
-      "coreCalculationMs": 10.093,
-      "trendEvaluationMs": 2.345,
-      "explanationSynthesisMs": 9.921,
-      "totalPipelineLatencyMs": 22.46
+      "vulnerabilityResolutionMs": 0.035,
+      "impactEvaluationMs": 0.036,
+      "coreCalculationMs": 19.299,
+      "trendEvaluationMs": 3.408,
+      "explanationSynthesisMs": 15.668,
+      "totalPipelineLatencyMs": 38.51
     }
   }
 ]

@@ -1,7 +1,7 @@
 [
   {
-    "analysisId": "APANA-4A0F290E",
-    "timestamp": "2026-09-15T06:49:24.742117+00:00",
+    "analysisId": "APANA-FB7A12D5",
+    "timestamp": "2026-09-15T09:11:55.726286+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -20,12 +20,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-D7F752",
+    "explanationId": "PEXP-94FA73",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-ADC4EECE",
-    "timestamp": "2026-09-15T06:49:24.757933+00:00",
+    "analysisId": "APANA-1CE9B205",
+    "timestamp": "2026-09-15T09:11:55.752383+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -44,12 +44,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-266ED2",
+    "explanationId": "PEXP-CCE34F",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-AAB109D9",
-    "timestamp": "2026-09-15T06:49:24.783140+00:00",
+    "analysisId": "APANA-8FE4E68E",
+    "timestamp": "2026-09-15T09:11:55.806694+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -68,12 +68,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-56142A",
+    "explanationId": "PEXP-08EC47",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-63103878",
-    "timestamp": "2026-09-15T06:49:24.805599+00:00",
+    "analysisId": "APANA-36FCA8A3",
+    "timestamp": "2026-09-15T09:11:55.852639+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -92,12 +92,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-F7FAD7",
+    "explanationId": "PEXP-0204BD",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-1E4C87FC",
-    "timestamp": "2026-09-15T06:49:24.838192+00:00",
+    "analysisId": "APANA-7C440A7B",
+    "timestamp": "2026-09-15T09:11:55.894084+00:00",
     "graphVersion": "v1.0",
     "source": "ATTACKER-EXT",
     "target": "DB-01",
@@ -116,12 +116,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-DD8074",
+    "explanationId": "PEXP-2CAA2D",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-B288785E",
-    "timestamp": "2026-09-15T06:49:24.879105+00:00",
+    "analysisId": "APANA-F315D637",
+    "timestamp": "2026-09-15T09:11:55.952104+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -140,8 +140,8 @@
     "status": "NO_PATH_FOUND"
   },
   {
-    "analysisId": "APANA-E4B4220E",
-    "timestamp": "2026-09-15T06:49:29.255900+00:00",
+    "analysisId": "APANA-EE725C7B",
+    "timestamp": "2026-09-15T09:12:01.342370+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -160,12 +160,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-2ADC18",
+    "explanationId": "PEXP-228B37",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-849133A3",
-    "timestamp": "2026-09-15T06:49:29.276749+00:00",
+    "analysisId": "APANA-F50273B7",
+    "timestamp": "2026-09-15T09:12:01.392538+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -184,12 +184,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-B37ADE",
+    "explanationId": "PEXP-FC041C",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-D40478DE",
-    "timestamp": "2026-09-15T06:49:31.208710+00:00",
+    "analysisId": "APANA-AEC48ECA",
+    "timestamp": "2026-09-15T09:12:03.897937+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -208,12 +208,12 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-3C30B9",
+    "explanationId": "PEXP-FB06A8",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-BD92937E",
-    "timestamp": "2026-09-15T06:49:31.822178+00:00",
+    "analysisId": "APANA-D4DA237B",
+    "timestamp": "2026-09-15T09:12:04.874986+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -232,12 +232,32 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-4C09D7",
+    "explanationId": "PEXP-0A64D6",
     "status": "COMPLETED"
   },
   {
-    "analysisId": "APANA-E6FB3467",
-    "timestamp": "2026-09-15T06:49:32.002472+00:00",
+    "analysisId": "APANA-CBAC4AE5",
+    "timestamp": "2026-09-15T09:12:05.034722+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 0,
+    "pathsBlocked": 0,
+    "pathsPartial": 0,
+    "selectedPath": null,
+    "pathRiskScore": 0.0,
+    "pathRiskLevel": "LOW",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": null,
+    "status": "NO_PATH_FOUND"
+  },
+  {
+    "analysisId": "APANA-C7939497",
+    "timestamp": "2026-09-15T09:12:05.102406+00:00",
     "graphVersion": "v1.0",
     "source": "CLIENT-01",
     "target": "DB-01",
@@ -256,7 +276,31 @@
     "riskEngineVersion": "v3.0-multiplicative",
     "modelVersion": "rf-v1.0",
     "featureVersion": "feature-v1.0",
-    "explanationId": "PEXP-1127D1",
+    "explanationId": "PEXP-704F37",
+    "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-69170E2C",
+    "timestamp": "2026-09-15T09:13:02.833131+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-91B5CE",
     "status": "COMPLETED"
   }
 ]

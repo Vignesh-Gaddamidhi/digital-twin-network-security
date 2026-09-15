@@ -1,7 +1,7 @@
 [
   {
-    "reportId": "PEXP-4C09D7",
-    "pathId": "PATH-CCB661",
+    "reportId": "PEXP-91B5CE",
+    "pathId": "PATH-CC66BA",
     "nodeSequence": [
       "CLIENT-01",
       "WEB-01",
@@ -17,26 +17,6 @@
     "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
     "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port 443 ratio. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (80.4/100).",
     "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T06:49:31.821494+00:00"
-  },
-  {
-    "reportId": "PEXP-1127D1",
-    "pathId": "PATH-A94EF5",
-    "nodeSequence": [
-      "CLIENT-01",
-      "WEB-01",
-      "DB-01"
-    ],
-    "directedChainString": "CLIENT-01 -> WEB-01 -> DB-01",
-    "visualState": "CRITICAL_PATH",
-    "pathRiskScore": 80.36,
-    "pathRiskLevel": "CRITICAL",
-    "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port 443 ratio.",
-    "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01.",
-    "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port 443 ratio. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (80.4/100).",
-    "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T06:49:32.001728+00:00"
+    "timestamp": "2026-09-15T09:13:02.832199+00:00"
   }
 ]

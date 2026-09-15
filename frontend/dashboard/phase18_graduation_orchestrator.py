@@ -15,6 +15,7 @@ from frontend.simulations.simulation_control_engine import simulation_control_en
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from services.digital_twin.attack_path.graph.twin_graph_synchronizer import twin_graph_synchronizer
 from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
+from services.digital_twin.attack_path.analysis.master_attack_path_orchestrator import master_attack_path_orchestrator
 
 class Phase18GraduationOrchestrator:
     """Master orchestrator executing multi-scenario E2E audits, containment verification, and performance profiling."""

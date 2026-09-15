@@ -280,6 +280,11 @@ from frontend.simulations.simulation_models import (
 )
 from frontend.simulations.simulation_control_engine import simulation_control_engine
 from frontend.dashboard.phase18_graduation_orchestrator import phase18_graduation_orchestrator
+from frontend.topology.three_d_twin_contract import (
+    MeshArchetypeEnum, Vector3D, CanonicalTwinDevice, DeviceVisual3DState,
+    LinkVisual3DState, Unified3DTwinState
+)
+from frontend.topology.three_d_projection_engine import three_d_projection_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1291,7 +1296,29 @@ def api_get_master_dashboard_overview():
         "cliCommandCenter": cli_render
     }
 
-# ==================== DAY 154: MASTER DASHBOARD INTEGRATION & RELEASE API ====================
+# ==================== DAY 155: ENTERPRISE 3D DIGITAL TWIN STATE CONTRACT API ====================
+
+@app.get("/api/v1/twin/3d/state")
+def api_get_3d_twin_state():
+    state_3d = three_d_projection_engine.build_3d_twin_state()
+    return {
+        "status": "3D_TWIN_STATE_RETRIEVED",
+        "state": state_3d.model_dump()
+    }
+
+@app.post("/api/v1/twin/3d/select/{deviceId}")
+def api_select_3d_device(deviceId: str):
+    if deviceId not in attack_path_graph.nodes:
+        raise HTTPException(status_code=404, detail=f"Device '{deviceId}' does not exist in Twin graph.")
+    three_d_projection_engine.selected_device_id = deviceId
+    state_3d = three_d_projection_engine.build_3d_twin_state()
+    return {
+        "status": "3D_DEVICE_SELECTED",
+        "selectedDeviceId": deviceId,
+        "visualState": state_3d.visualStates[deviceId].model_dump()
+    }
+
+# ==================== DAY 154: MASTER DASHBOARD INTEGRATION & RELEASE API ===================="
 
 class RunScenarioAuditRequest(BaseModel):
     scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE
