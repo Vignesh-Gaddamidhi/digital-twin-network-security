@@ -266,6 +266,10 @@ from frontend.risk.risk_dashboard_models import (
     RiskTierDistribution, DeviceRiskRow, RiskDashboardSnapshot
 )
 from frontend.risk.risk_dashboard_engine import risk_dashboard_engine
+from frontend.attacks.attack_path_dashboard_models import (
+    PathFilterTypeEnum, AttackPathItemCard, AttackPathDashboardSnapshot
+)
+from frontend.attacks.attack_path_dashboard_engine import attack_path_dashboard_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1226,6 +1230,30 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 149: ATTACK PATH DASHBOARD API ====================
+
+class SelectAttackPathRequest(BaseModel):
+    pathId: str
+
+@app.get("/api/v1/twin/attack-path/dashboard")
+def api_get_attack_path_dashboard(filter: PathFilterTypeEnum = PathFilterTypeEnum.ALL):
+    snapshot = attack_path_dashboard_engine.generate_dashboard_snapshot(filter_type=filter)
+    return {
+        "status": "ATTACK_PATH_DASHBOARD_RETRIEVED",
+        "snapshot": snapshot.model_dump(),
+        "cliPanel": snapshot.render_cli_panel()
+    }
+
+@app.post("/api/v1/twin/attack-path/dashboard/select")
+def api_select_attack_path(req: SelectAttackPathRequest):
+    snapshot = attack_path_dashboard_engine.select_path(req.pathId)
+    return {
+        "status": "ATTACK_PATH_SELECTED",
+        "selectedPathId": req.pathId,
+        "detail": snapshot.selectedPathDetail.model_dump() if snapshot.selectedPathDetail else None,
+        "cliPanel": snapshot.render_cli_panel()
     }
 
 # ==================== DAY 148: RISK DASHBOARD PANEL API ====================

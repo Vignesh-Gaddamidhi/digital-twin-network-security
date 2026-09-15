@@ -1,0 +1,92 @@
+{
+  "ATTACKER-EXT": {
+    "deviceId": "ATTACKER-EXT",
+    "currentRiskScore": 0.0,
+    "currentRiskLevel": "LOW",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:22:21.975233+00:00",
+    "history": [
+      {
+        "observationId": "ROBS-EB50C8A3",
+        "timestamp": "2026-09-15T05:22:21.975233+00:00",
+        "riskScore": 0.0,
+        "riskLevel": "LOW",
+        "predictionId": "PRED-INIT-ATTACKER-EXT",
+        "explanationId": null
+      }
+    ]
+  },
+  "CLIENT-01": {
+    "deviceId": "CLIENT-01",
+    "currentRiskScore": 5.76,
+    "currentRiskLevel": "LOW",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:22:21.978391+00:00",
+    "history": [
+      {
+        "observationId": "ROBS-D5C59252",
+        "timestamp": "2026-09-15T05:22:21.978391+00:00",
+        "riskScore": 5.76,
+        "riskLevel": "LOW",
+        "predictionId": "PRED-INIT-CLIENT-01",
+        "explanationId": null
+      }
+    ]
+  },
+  "WEB-01": {
+    "deviceId": "WEB-01",
+    "currentRiskScore": 60.8,
+    "currentRiskLevel": "HIGH",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:22:21.981516+00:00",
+    "history": [
+      {
+        "observationId": "ROBS-6358F828",
+        "timestamp": "2026-09-15T05:22:21.981516+00:00",
+        "riskScore": 60.8,
+        "riskLevel": "HIGH",
+        "predictionId": "PRED-INIT-WEB-01",
+        "explanationId": null
+      }
+    ]
+  },
+  "DB-01": {
+    "deviceId": "DB-01",
+    "currentRiskScore": 69.6,
+    "currentRiskLevel": "HIGH",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:22:21.985075+00:00",
+    "history": [
+      {
+        "observationId": "ROBS-070EF494",
+        "timestamp": "2026-09-15T05:22:21.985075+00:00",
+        "riskScore": 69.6,
+        "riskLevel": "HIGH",
+        "predictionId": "PRED-INIT-DB-01",
+        "explanationId": null
+      }
+    ]
+  },
+  "DNS-SERVER-01": {
+    "deviceId": "DNS-SERVER-01",
+    "currentRiskScore": 5.76,
+    "currentRiskLevel": "LOW",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:22:21.989109+00:00",
+    "history": [
+      {
+        "observationId": "ROBS-2E47C317",
+        "timestamp": "2026-09-15T05:22:21.989109+00:00",
+        "riskScore": 5.76,
+        "riskLevel": "LOW",
+        "predictionId": "PRED-INIT-DNS-SERVER-01",
+        "explanationId": null
+      }
+    ]
+  }
+}

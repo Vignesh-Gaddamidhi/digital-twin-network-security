@@ -1,7 +1,7 @@
 [
   {
-    "reportId": "PEXP-7AE90F",
-    "pathId": "PATH-7D8A6F",
+    "reportId": "PEXP-2C79BC",
+    "pathId": "PATH-0BA663",
     "nodeSequence": [
       "CLIENT-01",
       "WEB-01",
@@ -12,91 +12,11 @@
     "pathRiskScore": 80.36,
     "pathRiskLevel": "CRITICAL",
     "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal destination diversity, connection frequency, port 443 ratio.",
+    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port 443 ratio.",
     "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01.",
     "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal destination diversity, connection frequency, port 443 ratio. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (80.4/100).",
+    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port 443 ratio. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (80.4/100).",
     "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T05:07:05.173092+00:00"
-  },
-  {
-    "reportId": "PEXP-C41CF4",
-    "pathId": "PATH-C7D98D",
-    "nodeSequence": [
-      "CLIENT-01",
-      "WEB-01",
-      "DB-01"
-    ],
-    "directedChainString": "CLIENT-01 -> WEB-01 -> DB-01",
-    "visualState": "CRITICAL_PATH",
-    "pathRiskScore": 80.36,
-    "pathRiskLevel": "CRITICAL",
-    "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity.",
-    "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01.",
-    "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (80.4/100).",
-    "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T05:07:05.225286+00:00"
-  },
-  {
-    "reportId": "PEXP-23AD67",
-    "pathId": "PATH-791389",
-    "nodeSequence": [
-      "ATTACKER-EXT",
-      "WEB-01",
-      "DB-01"
-    ],
-    "directedChainString": "ATTACKER-EXT -> WEB-01 -> DB-01",
-    "visualState": "POTENTIAL_ATTACK_PATH",
-    "pathRiskScore": 42.68,
-    "pathRiskLevel": "MEDIUM",
-    "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity.",
-    "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-WEB-RCE, CVE-2026-SQLI) targeting DB-01.",
-    "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-WEB-RCE, CVE-2026-SQLI) targeting DB-01. Resulting in MEDIUM path risk (42.7/100).",
-    "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T05:07:05.310096+00:00"
-  },
-  {
-    "reportId": "PEXP-AAFC19",
-    "pathId": "PATH-7DCC33",
-    "nodeSequence": [
-      "ATTACKER-EXT",
-      "WEB-01",
-      "DB-01"
-    ],
-    "directedChainString": "ATTACKER-EXT -> WEB-01 -> DB-01",
-    "visualState": "CRITICAL_PATH",
-    "pathRiskScore": 85.36,
-    "pathRiskLevel": "CRITICAL",
-    "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity.",
-    "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-WEB-RCE, CVE-2026-SQLI) targeting DB-01.",
-    "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-WEB-RCE, CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (85.4/100).",
-    "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T05:07:05.394619+00:00"
-  },
-  {
-    "reportId": "PEXP-706D7E",
-    "pathId": "PATH-1BFD72",
-    "nodeSequence": [
-      "ATTACKER-EXT",
-      "WEB-01",
-      "DB-01"
-    ],
-    "directedChainString": "ATTACKER-EXT -> WEB-01 -> DB-01",
-    "visualState": "CRITICAL_PATH",
-    "pathRiskScore": 77.36,
-    "pathRiskLevel": "CRITICAL",
-    "criticalTarget": true,
-    "mlEvidence": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity.",
-    "riskEvidence": "The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01.",
-    "graphTopologyEvidence": "The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01.",
-    "combinedExplanation": "The initial threat prediction was influenced by abnormal connection frequency, destination diversity, port activity. The modeled attack path traverses WEB-01 directly reaching crown jewel DB-01. The route exposes active vulnerabilities (CVE-2026-SQLI) targeting DB-01. Resulting in CRITICAL path risk (77.4/100).",
-    "recommendedMitigation": "Apply immediate network segmentation between WEB-01 and DB-01 on exposed destination port.",
-    "timestamp": "2026-09-15T05:07:05.511588+00:00"
+    "timestamp": "2026-09-15T05:22:22.048942+00:00"
   }
 ]
