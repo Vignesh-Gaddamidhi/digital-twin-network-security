@@ -293,6 +293,11 @@ from frontend.topology.device_3d_models import (
     SelectionStateEnum, LabelDisplayMode, DeviceInspectionDetail3D, DeviceRendererSnapshot
 )
 from frontend.topology.device_3d_renderer_engine import device_3d_renderer_engine
+from frontend.topology.link_3d_models import (
+    LinkStateEnum, TrafficFlowDirectionEnum, TrafficProtocolType,
+    TrafficParticleState, NetworkLink3D, LinkRendererSnapshot
+)
+from frontend.topology.link_3d_renderer_engine import link_3d_renderer_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1303,6 +1308,63 @@ def api_get_master_dashboard_overview():
         "overview": data,
         "cliCommandCenter": cli_render
     }
+
+# ==================== DAY 158: 3D NETWORK LINKS & TRAFFIC PARTICLES API ====================
+
+class UpdateLinkStatusRequest(BaseModel):
+    linkId: str
+    status: LinkStateEnum
+
+class Inject3DTrafficRequest(BaseModel):
+    linkId: str
+    protocol: Optional[TrafficProtocolType] = None
+    direction: TrafficFlowDirectionEnum = TrafficFlowDirectionEnum.FORWARD
+    bytesCount: int = 1024
+
+@app.get("/api/v1/twin/3d/links/snapshot")
+def api_get_3d_links_snapshot():
+    snap = link_3d_renderer_engine.get_snapshot()
+    return {
+        "status": "3D_LINKS_SNAPSHOT_RETRIEVED",
+        "snapshot": snap.model_dump()
+    }
+
+@app.post("/api/v1/twin/3d/links/status")
+def api_update_3d_link_status(req: UpdateLinkStatusRequest):
+    link_3d_renderer_engine.update_link_status(req.linkId, req.status)
+    return {
+        "status": "LINK_STATUS_UPDATED",
+        "linkId": req.linkId,
+        "newStatus": req.status.value
+    }
+
+@app.post("/api/v1/twin/3d/traffic/inject")
+def api_inject_3d_traffic_flow(req: Inject3DTrafficRequest):
+    particle = link_3d_renderer_engine.inject_traffic_flow(
+        link_id=req.linkId,
+        protocol=req.protocol,
+        direction=req.direction,
+        bytes_count=req.bytesCount
+    )
+    if not particle:
+        return {"status": "FLOW_INJECTION_DROPPED_OR_BLOCKED", "linkId": req.linkId}
+    return {
+        "status": "FLOW_INJECTED",
+        "particle": particle.model_dump()
+    }
+
+@app.post("/api/v1/twin/3d/traffic/step")
+def api_step_3d_traffic_simulation():
+    recycled = link_3d_renderer_engine.step_particle_simulation()
+    return {
+        "status": "TRAFFIC_SIMULATION_STEPPED",
+        "recycledCount": recycled
+    }
+
+@app.post("/api/v1/twin/3d/traffic/clear")
+def api_clear_3d_traffic():
+    link_3d_renderer_engine.clear_all_traffic()
+    return {"status": "ALL_TRAFFIC_CLEARED"}
 
 # ==================== DAY 157: 3D DEVICES, LABELS & SELECTION API ====================
 
