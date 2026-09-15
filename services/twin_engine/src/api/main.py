@@ -1,3 +1,4 @@
+from frontend.realtime.realtime_store_engine import realtime_store_engine
 from frontend.realtime.live_security_engine import live_security_engine, EarlyWarningStateEnum
 from frontend.realtime.live_telemetry_engine import live_telemetry_engine, ConnectionLifecycleState
 from frontend.simulations.simulation_models import ScenarioIdentifierEnum
@@ -6794,3 +6795,41 @@ async def api_update_realtime_risk(req: UpdateRiskRequest):
 async def api_highlight_attack_path(req: HighlightAttackPathRequest):
     env = await live_security_engine.trigger_live_attack_path_highlight(req.pathId)
     return {"status": "ATTACK_PATH_HIGHLIGHTED", "envelope": env.model_dump()}
+
+# ==================== DAY 167: FRONTEND REAL-TIME STORE API ====================
+
+class SelectDeviceRequest(BaseModel):
+    deviceId: Optional[str] = None
+
+class SetFilterRequest(BaseModel):
+    criteria: TopologyFilterCriteria
+
+@app.get("/api/v1/twin/realtime/store/state")
+def api_get_realtime_store_state():
+    realtime_store_engine.evaluate_staleness()
+    return {
+        "status": "STORE_STATE_RETRIEVED",
+        "connectionState": realtime_store_engine.connectionState.value,
+        "backendState": realtime_store_engine.backendState.value,
+        "dataFreshness": realtime_store_engine.dataFreshness.value,
+        "selectedDeviceId": realtime_store_engine.selectedDeviceId,
+        "devicesCount": len(realtime_store_engine.devices),
+        "notificationsCount": len(realtime_store_engine.notifications),
+        "filters": realtime_store_engine.activeFilters.model_dump()
+    }
+
+@app.post("/api/v1/twin/realtime/store/select-device")
+def api_select_device_store(req: SelectDeviceRequest):
+    realtime_store_engine.select_device(req.deviceId)
+    return {
+        "status": "DEVICE_SELECTED",
+        "selectedDeviceId": realtime_store_engine.selectedDeviceId
+    }
+
+@app.post("/api/v1/twin/realtime/store/filter")
+def api_set_store_filter(req: SetFilterRequest):
+    realtime_store_engine.set_active_filters(req.criteria)
+    return {
+        "status": "FILTER_APPLIED",
+        "activeFilters": realtime_store_engine.activeFilters.model_dump()
+    }
