@@ -302,6 +302,11 @@ from frontend.topology.security_3d_models import (
     DeviceSecurity3DVisual, SecurityRendererSnapshot
 )
 from frontend.topology.security_3d_renderer_engine import security_3d_renderer_engine
+from frontend.topology.three_d_filter_models import (
+    AttackPathVisualStatusEnum, ViewModeEnum, VisibilityPresetEnum,
+    TopologyFilterCriteria, ViewportSwitchResponse
+)
+from frontend.topology.three_d_navigation_engine import three_d_navigation_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1311,6 +1316,48 @@ def api_get_master_dashboard_overview():
         "status": "MASTER_DASHBOARD_RETRIEVED",
         "overview": data,
         "cliCommandCenter": cli_render
+    }
+
+# ==================== DAY 160: 3D ATTACK PATHS, FILTERING & 2D/3D SWITCH API ====================
+
+class SelectAttackPath3DRequest(BaseModel):
+    pathId: Optional[str] = None
+
+class SwitchViewportRequest(BaseModel):
+    targetMode: ViewModeEnum = ViewModeEnum.VIEW_3D
+
+@app.get("/api/v1/twin/3d/paths/all")
+def api_get_all_3d_attack_paths():
+    three_d_navigation_engine.sync_attack_paths()
+    return {
+        "status": "3D_ATTACK_PATHS_RETRIEVED",
+        "totalPaths": len(three_d_navigation_engine.cached_attack_paths),
+        "paths": [p.model_dump() for p in three_d_navigation_engine.cached_attack_paths.values()]
+    }
+
+@app.post("/api/v1/twin/3d/paths/select")
+def api_select_3d_attack_path(req: SelectAttackPath3DRequest):
+    detail = three_d_navigation_engine.select_attack_path_3d(req.pathId)
+    return {
+        "status": "ATTACK_PATH_3D_SELECTED" if detail else "ATTACK_PATH_3D_DESELECTED",
+        "selectedPath": detail.model_dump() if detail else None
+    }
+
+@app.post("/api/v1/twin/3d/filter")
+def api_apply_3d_topology_filter(criteria: TopologyFilterCriteria):
+    vis_map = three_d_navigation_engine.apply_topology_filter(criteria)
+    return {
+        "status": "TOPOLOGY_FILTER_APPLIED",
+        "visibleDevicesCount": sum(1 for v in vis_map.values() if v),
+        "visibilityMap": vis_map
+    }
+
+@app.post("/api/v1/twin/3d/viewport/switch")
+def api_switch_viewport_mode(req: SwitchViewportRequest):
+    res = three_d_navigation_engine.switch_viewport_mode(req.targetMode)
+    return {
+        "status": "VIEWPORT_MODE_SWITCHED",
+        "response": res.model_dump()
     }
 
 # ==================== DAY 159: 3D SECURITY STATE & RISK VISUALIZATION API ====================

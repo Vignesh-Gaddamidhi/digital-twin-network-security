@@ -51,6 +51,7 @@ class NetworkLink3D(BaseModel):
     destinationPos: Vector3D
     midArcPos: Vector3D
     isReachable: bool = True
+    isTraversedInAttackPath: bool = False
     activeParticles: List[TrafficParticleState] = Field(default_factory=list)
     trafficRateBps: float = 1024.0
 

@@ -49,6 +49,8 @@ class Device3DMeshMetadata(BaseModel):
     baseColorHex: str = "#3B82F6"
     emissiveColorHex: str = "#000000"
     isSelectable: bool = True
+    isHighlighted: bool = False
+    isVisible: bool = True
     label: Device3DLabel
 
 class DeviceInspectionDetail3D(BaseModel):
