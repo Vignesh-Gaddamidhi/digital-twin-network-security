@@ -1,3 +1,4 @@
+from frontend.realtime.phase20_graduation_orchestrator import phase20_graduation_orchestrator
 from frontend.realtime.realtime_store_engine import realtime_store_engine
 from frontend.realtime.live_security_engine import live_security_engine, EarlyWarningStateEnum
 from frontend.realtime.live_telemetry_engine import live_telemetry_engine, ConnectionLifecycleState
@@ -6832,4 +6833,22 @@ def api_set_store_filter(req: SetFilterRequest):
     return {
         "status": "FILTER_APPLIED",
         "activeFilters": realtime_store_engine.activeFilters.model_dump()
+    }
+
+# ==================== DAY 168: PHASE 20 MASTER REAL-TIME GRADUATION API ====================
+
+@app.post("/api/v1/twin/realtime/graduation/e2e-scenario")
+async def api_run_realtime_e2e_scenario():
+    res = await phase20_graduation_orchestrator.run_complete_live_lifecycle()
+    return {
+        "status": "REALTIME_E2E_SCENARIO_EXECUTED",
+        "results": res
+    }
+
+@app.get("/api/v1/twin/realtime/graduation/performance")
+def api_get_realtime_performance_profile():
+    perf = phase20_graduation_orchestrator.profile_realtime_latency_and_throughput()
+    return {
+        "status": "REALTIME_PERFORMANCE_PROFILED",
+        "metrics": perf
     }
