@@ -258,6 +258,10 @@ from frontend.threats.threat_models import (
     DetectionSourceEnum, ThreatTimelineItem, ThreatFilterCriteria, UnifiedIncidentDrillDown
 )
 from frontend.threats.threat_timeline_engine import threat_timeline_engine
+from frontend.predictions.prediction_models import (
+    AttackCategoryEnum, ModelMetadata, ShapFeatureContribution, LivePredictionDetail
+)
+from frontend.predictions.prediction_panel_engine import prediction_panel_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1219,6 +1223,49 @@ def api_get_dashboard_shell_context():
             "lastUpdated": now_time
         }
     }
+
+# ==================== DAY 147: PREDICTIONS PANEL & XAI API ====================
+
+class EvaluatePredictionRequest(BaseModel):
+    targetDevice: str = "WEB-01"
+    currentThreatProbability: float = 0.72
+    futureThreatProbability: float = 0.87
+    predictedCategory: AttackCategoryEnum = AttackCategoryEnum.PORT_SCAN
+    confidenceScore: float = 0.91
+    shapValues: Optional[Dict[str, float]] = {
+        "connection_frequency": 0.31,
+        "destination_diversity": 0.22,
+        "port_activity": 0.18,
+        "packet_rate": 0.11
+    }
+
+@app.get("/api/v1/twin/predictions/panel")
+def api_get_prediction_panel(device: str = "WEB-01"):
+    pred = prediction_panel_engine.get_live_prediction(device_id=device)
+    return {
+        "status": "PREDICTION_PANEL_RETRIEVED",
+        "prediction": pred.model_dump(),
+        "cliPanel": pred.render_cli_panel()
+    }
+
+@app.post("/api/v1/twin/predictions/evaluate")
+def api_evaluate_prediction(req: EvaluatePredictionRequest):
+    try:
+        pred = prediction_panel_engine.generate_prediction_with_xai(
+            target_device=req.targetDevice,
+            current_prob=req.currentThreatProbability,
+            future_prob=req.futureThreatProbability,
+            category=req.predictedCategory,
+            confidence=req.confidenceScore,
+            shap_values=req.shapValues
+        )
+        return {
+            "status": "PREDICTION_EVALUATED",
+            "prediction": pred.model_dump(),
+            "cliPanel": pred.render_cli_panel()
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 # ==================== DAY 146: THREAT TIMELINE & SECURITY EVENTS API ====================
 
