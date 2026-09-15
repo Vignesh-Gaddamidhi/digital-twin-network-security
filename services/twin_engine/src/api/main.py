@@ -234,6 +234,10 @@ from services.digital_twin.attack_path.analysis.attack_path_analysis_models impo
     AnalysisStatusEnum, AttackPathAuditRecord, MasterAttackPathAnalysisResult
 )
 from services.digital_twin.attack_path.analysis.master_attack_path_orchestrator import master_attack_path_orchestrator
+from frontend.dashboard.dashboard_state_models import (
+    ComponentStatus, NavigationSection, HeaderInfo, DashboardKPISummary, DashboardState
+)
+from frontend.dashboard.dashboard_engine import dashboard_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1194,6 +1198,40 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 141: DASHBOARD ARCHITECTURE & UI FOUNDATION API ====================
+
+class DashboardNavigateRequest(BaseModel):
+    section: NavigationSection = NavigationSection.OVERVIEW
+
+class ComponentStateUpdateRequest(BaseModel):
+    componentId: str = "topology_canvas"
+    status: ComponentStatus = ComponentStatus.LOADED
+    errorMessage: Optional[str] = None
+
+@app.get("/api/v1/twin/dashboard/state")
+def api_get_dashboard_state():
+    return {
+        "status": "DASHBOARD_STATE_RETRIEVED",
+        "state": dashboard_engine.current_state.model_dump(),
+        "cliShell": dashboard_engine.render_cli_dashboard_shell()
+    }
+
+@app.post("/api/v1/twin/dashboard/navigate")
+def api_dashboard_navigate(req: DashboardNavigateRequest):
+    updated = dashboard_engine.set_active_section(req.section)
+    return {
+        "status": "NAVIGATION_UPDATED",
+        "activeSection": updated.activeSection.value
+    }
+
+@app.post("/api/v1/twin/dashboard/component/state")
+def api_update_component_state(req: ComponentStateUpdateRequest):
+    updated = dashboard_engine.trigger_component_state(req.componentId, req.status, req.errorMessage)
+    return {
+        "status": "COMPONENT_STATE_UPDATED",
+        "component": updated.componentStates[req.componentId].model_dump()
     }
 
 # ==================== DAY 140: MASTER ATTACK PATH ANALYSIS API ====================
