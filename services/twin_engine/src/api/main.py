@@ -274,6 +274,11 @@ from frontend.alerts.alert_center_models import (
     AlertStatusEnum, SecurityAlertItem, CorrelatedIncidentCampaign, AlertFilterCriteria
 )
 from frontend.alerts.alert_center_engine import alert_center_engine
+from frontend.simulations.simulation_models import (
+    SimulationExecutionState, SimulationStageEnum, ScenarioIdentifierEnum,
+    SimulationConfiguration, SimulationLiveStateView
+)
+from frontend.simulations.simulation_control_engine import simulation_control_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1234,6 +1239,75 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 151: SIMULATION CONTROL CENTER API ====================
+
+class SimulationActionRequest(BaseModel):
+    action: str = "START"  # START, PAUSE, RESUME, STOP, RESET
+
+class ConfigureSimulationRequest(BaseModel):
+    scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE
+    durationSeconds: int = 120
+    seed: int = 42
+    speedMultiplier: float = 1.0
+
+class AdvanceTickRequest(BaseModel):
+    seconds: int = 15
+
+@app.get("/api/v1/twin/simulation/state")
+def api_get_simulation_state():
+    return {
+        "status": "SIMULATION_STATE_RETRIEVED",
+        "state": simulation_control_engine.live_state.model_dump(),
+        "cliPanel": simulation_control_engine.live_state.render_cli_panel()
+    }
+
+@app.post("/api/v1/twin/simulation/action")
+def api_execute_simulation_action(req: SimulationActionRequest):
+    act = req.action.upper()
+    if act == "START":
+        st = simulation_control_engine.start()
+    elif act == "PAUSE":
+        st = simulation_control_engine.pause()
+    elif act == "RESUME":
+        st = simulation_control_engine.resume()
+    elif act == "STOP":
+        st = simulation_control_engine.stop()
+    elif act == "RESET":
+        st = simulation_control_engine.reset()
+    else:
+        raise HTTPException(status_code=400, detail=f"Invalid action '{req.action}'.")
+
+    return {
+        "status": "SIMULATION_ACTION_EXECUTED",
+        "action": act,
+        "executionState": st.executionState.value,
+        "cliPanel": st.render_cli_panel()
+    }
+
+@app.post("/api/v1/twin/simulation/configure")
+def api_configure_simulation(req: ConfigureSimulationRequest):
+    st = simulation_control_engine.select_scenario(
+        scenario=req.scenario,
+        duration_seconds=req.durationSeconds,
+        seed=req.seed,
+        speed=req.speedMultiplier
+    )
+    return {
+        "status": "SIMULATION_CONFIGURED",
+        "scenario": st.activeScenario.value,
+        "state": st.model_dump()
+    }
+
+@app.post("/api/v1/twin/simulation/tick")
+def api_advance_simulation_tick(req: AdvanceTickRequest):
+    st = simulation_control_engine.advance_ticks(req.seconds)
+    return {
+        "status": "SIMULATION_TICK_ADVANCED",
+        "elapsedSeconds": st.elapsedSeconds,
+        "stage": st.currentStage.value,
+        "cliPanel": st.render_cli_panel()
     }
 
 # ==================== DAY 150: ALERT CENTER & SECURITY OPERATIONS API ====================
