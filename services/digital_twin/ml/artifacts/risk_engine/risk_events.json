@@ -1,80 +1,15 @@
 [
   {
-    "eventId": "REVT-1A812419",
-    "deviceId": "DB-01",
-    "eventType": "RISK_SCORE_SPIKE",
-    "previousRiskLevel": "MEDIUM",
-    "currentRiskLevel": "HIGH",
-    "previousScore": 35.0,
-    "currentScore": 65.0,
-    "scoreDelta": 30.0,
-    "timestamp": "2026-09-15T04:46:26.405746+00:00",
-    "rationale": "Risk score spiked by +30.00 points (35.00 -> 65.00) on DB-01.",
-    "cooldownActive": false
-  },
-  {
-    "eventId": "REVT-8012F8CF",
-    "deviceId": "DB-01",
-    "eventType": "RISK_LEVEL_INCREASED",
-    "previousRiskLevel": "MEDIUM",
-    "currentRiskLevel": "HIGH",
-    "previousScore": 35.0,
-    "currentScore": 65.0,
-    "scoreDelta": 30.0,
-    "timestamp": "2026-09-15T04:46:26.405793+00:00",
-    "rationale": "Risk escalated: MEDIUM -> HIGH on DB-01.",
-    "cooldownActive": false
-  },
-  {
-    "eventId": "REVT-98C4C1C0",
-    "deviceId": "DB-01",
-    "eventType": "HIGH_RISK_REACHED",
-    "previousRiskLevel": "MEDIUM",
-    "currentRiskLevel": "HIGH",
-    "previousScore": 35.0,
-    "currentScore": 65.0,
-    "scoreDelta": 30.0,
-    "timestamp": "2026-09-15T04:46:26.405826+00:00",
-    "rationale": "High risk threshold entered for asset DB-01.",
-    "cooldownActive": false
-  },
-  {
-    "eventId": "REVT-2BA05B43",
-    "deviceId": "DB-01",
-    "eventType": "RISK_LEVEL_INCREASED",
-    "previousRiskLevel": "HIGH",
-    "currentRiskLevel": "CRITICAL",
-    "previousScore": 65.0,
-    "currentScore": 85.0,
-    "scoreDelta": 20.0,
-    "timestamp": "2026-09-15T04:46:26.411194+00:00",
-    "rationale": "Risk escalated: HIGH -> CRITICAL on DB-01.",
-    "cooldownActive": true
-  },
-  {
-    "eventId": "REVT-C51EB2DC",
-    "deviceId": "DB-01",
-    "eventType": "CRITICAL_RISK_REACHED",
-    "previousRiskLevel": "HIGH",
-    "currentRiskLevel": "CRITICAL",
-    "previousScore": 65.0,
-    "currentScore": 85.0,
-    "scoreDelta": 20.0,
-    "timestamp": "2026-09-15T04:46:26.411284+00:00",
-    "rationale": "Critical operational risk threshold breached on asset DB-01.",
-    "cooldownActive": true
-  },
-  {
-    "eventId": "REVT-D0785A6F",
+    "eventId": "REVT-E4F0FE08",
     "deviceId": "DB-01",
     "eventType": "RISK_LEVEL_DECREASED",
     "previousRiskLevel": "CRITICAL",
     "currentRiskLevel": "HIGH",
-    "previousScore": 85.0,
+    "previousScore": 78.4,
     "currentScore": 69.6,
-    "scoreDelta": -15.4,
-    "timestamp": "2026-09-15T04:46:26.429286+00:00",
+    "scoreDelta": -8.8,
+    "timestamp": "2026-09-15T04:55:58.673270+00:00",
     "rationale": "Risk mitigated / recovered: CRITICAL -> HIGH on DB-01.",
-    "cooldownActive": true
+    "cooldownActive": false
   }
 ]

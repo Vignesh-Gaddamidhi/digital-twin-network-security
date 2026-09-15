@@ -238,6 +238,10 @@ from frontend.dashboard.dashboard_state_models import (
     ComponentStatus, NavigationSection, HeaderInfo, DashboardKPISummary, DashboardState
 )
 from frontend.dashboard.dashboard_engine import dashboard_engine
+from frontend.dashboard.kpi_models import (
+    DevicesKPICard, ThreatsKPICard, RiskKPICard, AttacksKPICard, MasterKPISnapshot
+)
+from frontend.dashboard.kpi_summary_engine import kpi_summary_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1198,6 +1202,35 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 142: KPI SUMMARY CARDS API ====================
+
+@app.get("/api/v1/twin/dashboard/kpi/summary")
+def api_get_kpi_summary():
+    snapshot = kpi_summary_engine.aggregate_live_kpis()
+    return {
+        "status": "KPI_SUMMARY_RETRIEVED",
+        "kpi": snapshot.model_dump(),
+        "cliCard": snapshot.to_formatted_cli_card()
+    }
+
+@app.post("/api/v1/twin/dashboard/kpi/refresh")
+def api_refresh_kpi_summary():
+    snapshot = kpi_summary_engine.aggregate_live_kpis()
+    return {
+        "status": "KPI_SUMMARY_REFRESHED",
+        "kpi": snapshot.model_dump(),
+        "refreshedAt": snapshot.lastRefreshedAt
+    }
+
+@app.get("/api/v1/twin/dashboard/kpi/zero-state")
+def api_get_kpi_zero_state():
+    zero = kpi_summary_engine.get_zero_state_kpis()
+    return {
+        "status": "KPI_ZERO_STATE_RETRIEVED",
+        "kpi": zero.model_dump(),
+        "cliCard": zero.to_formatted_cli_card()
     }
 
 # ==================== DAY 141: DASHBOARD ARCHITECTURE & UI FOUNDATION API ====================
