@@ -254,6 +254,10 @@ from frontend.traffic.traffic_models import (
     TrafficTimeRange, TrafficPointDetail, LiveTrafficPanelSnapshot
 )
 from frontend.traffic.traffic_monitoring_engine import traffic_monitoring_engine
+from frontend.threats.threat_models import (
+    DetectionSourceEnum, ThreatTimelineItem, ThreatFilterCriteria, UnifiedIncidentDrillDown
+)
+from frontend.threats.threat_timeline_engine import threat_timeline_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1214,6 +1218,49 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 146: THREAT TIMELINE & SECURITY EVENTS API ====================
+
+@app.get("/api/v1/twin/threats/timeline")
+def api_get_threat_timeline(
+    severity: Optional[RiskLevelTier] = None,
+    detectionSource: Optional[DetectionSourceEnum] = None,
+    eventType: Optional[str] = None,
+    device: Optional[str] = None,
+    minRiskScore: Optional[float] = None
+):
+    criteria = ThreatFilterCriteria(
+        severity=severity,
+        detectionSource=detectionSource,
+        eventType=eventType,
+        device=device,
+        minRiskScore=minRiskScore
+    )
+    events = threat_timeline_engine.get_timeline(criteria)
+    return {
+        "status": "TIMELINE_RETRIEVED",
+        "count": len(events),
+        "events": [e.model_dump() for e in events],
+        "cliTimeline": threat_timeline_engine.render_cli_timeline(events)
+    }
+
+@app.get("/api/v1/twin/threats/drilldown/{eventId}")
+def api_get_threat_drilldown(eventId: str):
+    drill = threat_timeline_engine.get_incident_drilldown(eventId)
+    if not drill:
+        raise HTTPException(status_code=404, detail=f"Incident event '{eventId}' not found.")
+    return {
+        "status": "DRILLDOWN_RETRIEVED",
+        "incident": drill.model_dump()
+    }
+
+@app.post("/api/v1/twin/threats/event/ingest")
+def api_ingest_threat_event(event: ThreatTimelineItem):
+    threat_timeline_engine.ingest_event(event)
+    return {
+        "status": "EVENT_INGESTED",
+        "eventId": event.eventId
     }
 
 # ==================== DAY 145: TRAFFIC MONITORING PANEL API ====================
