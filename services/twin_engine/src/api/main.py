@@ -250,6 +250,10 @@ from frontend.dashboard.device_inspection_models import (
     EpistemicProvenanceEnum, DeviceResourceUtilization, DeviceSearchQuery, LiveDeviceDetailView
 )
 from frontend.dashboard.device_inspection_engine import device_inspection_engine
+from frontend.traffic.traffic_models import (
+    TrafficTimeRange, TrafficPointDetail, LiveTrafficPanelSnapshot
+)
+from frontend.traffic.traffic_monitoring_engine import traffic_monitoring_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1210,6 +1214,35 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 145: TRAFFIC MONITORING PANEL API ====================
+
+@app.get("/api/v1/twin/traffic/panel")
+def api_get_traffic_panel(timeRange: TrafficTimeRange = TrafficTimeRange.RANGE_30M):
+    snapshot = traffic_monitoring_engine.generate_traffic_snapshot(time_range=timeRange)
+    return {
+        "status": "TRAFFIC_PANEL_RETRIEVED",
+        "snapshot": snapshot.model_dump(),
+        "cliChart": snapshot.render_cli_chart()
+    }
+
+@app.get("/api/v1/twin/traffic/drilldown/{pointId}")
+def api_drilldown_traffic_point(pointId: str):
+    detail = traffic_monitoring_engine.drill_down_point(pointId)
+    if not detail:
+        raise HTTPException(status_code=404, detail=f"Traffic sample '{pointId}' not found.")
+    return {
+        "status": "POINT_DRILLDOWN_RETRIEVED",
+        "point": detail.model_dump()
+    }
+
+@app.post("/api/v1/twin/traffic/inject")
+def api_inject_traffic_sample(sample: TrafficPointDetail):
+    traffic_monitoring_engine.ingest_traffic_sample(sample)
+    return {
+        "status": "TRAFFIC_SAMPLE_INJECTED",
+        "pointId": sample.pointId
     }
 
 # ==================== DAY 144: LIVE DIGITAL TWIN STATE & DEVICE INSPECTION API ====================
