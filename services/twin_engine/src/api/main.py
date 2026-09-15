@@ -262,6 +262,10 @@ from frontend.predictions.prediction_models import (
     AttackCategoryEnum, ModelMetadata, ShapFeatureContribution, LivePredictionDetail
 )
 from frontend.predictions.prediction_panel_engine import prediction_panel_engine
+from frontend.risk.risk_dashboard_models import (
+    RiskTierDistribution, DeviceRiskRow, RiskDashboardSnapshot
+)
+from frontend.risk.risk_dashboard_engine import risk_dashboard_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1222,6 +1226,31 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 148: RISK DASHBOARD PANEL API ====================
+
+@app.get("/api/v1/twin/risk/dashboard")
+def api_get_risk_dashboard():
+    try:
+        snapshot = risk_dashboard_engine.generate_risk_snapshot()
+        return {
+            "status": "RISK_DASHBOARD_RETRIEVED",
+            "snapshot": snapshot.model_dump(),
+            "cliPanel": snapshot.render_cli_panel()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"RISK_DASHBOARD_FAILED: {str(e)}")
+
+@app.get("/api/v1/twin/risk/dashboard/device/{deviceId}")
+def api_get_device_risk_entry(deviceId: str):
+    snapshot = risk_dashboard_engine.generate_risk_snapshot()
+    row = next((r for r in snapshot.deviceRiskMatrix if r.deviceId == deviceId), None)
+    if not row:
+        raise HTTPException(status_code=404, detail=f"Device '{deviceId}' not found in risk matrix.")
+    return {
+        "status": "DEVICE_RISK_RETRIEVED",
+        "deviceRisk": row.model_dump()
     }
 
 # ==================== DAY 147: PREDICTIONS PANEL & XAI API ====================
