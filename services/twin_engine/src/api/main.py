@@ -289,6 +289,10 @@ from frontend.topology.three_d_scene_models import (
     CameraStateEnum, WebGLSceneStatusEnum, ThreeDSceneSnapshot
 )
 from frontend.topology.three_d_scene_engine import three_d_scene_engine
+from frontend.topology.device_3d_models import (
+    SelectionStateEnum, LabelDisplayMode, DeviceInspectionDetail3D, DeviceRendererSnapshot
+)
+from frontend.topology.device_3d_renderer_engine import device_3d_renderer_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1298,6 +1302,73 @@ def api_get_master_dashboard_overview():
         "status": "MASTER_DASHBOARD_RETRIEVED",
         "overview": data,
         "cliCommandCenter": cli_render
+    }
+
+# ==================== DAY 157: 3D DEVICES, LABELS & SELECTION API ====================
+
+class SelectDevice3DRequest(BaseModel):
+    deviceId: Optional[str] = None
+    focusCamera: bool = False
+
+class PickDeviceRaycastRequest(BaseModel):
+    screenX: float
+    screenY: float
+    viewportWidth: int = 1280
+    viewportHeight: int = 720
+    focusCamera: bool = False
+
+class LabelVisibilityRequest(BaseModel):
+    visible: bool = True
+
+class LabelModeRequest(BaseModel):
+    mode: LabelDisplayMode = LabelDisplayMode.TYPE_AND_HOSTNAME
+
+@app.get("/api/v1/twin/3d/devices/snapshot")
+def api_get_3d_devices_snapshot():
+    snap = device_3d_renderer_engine.get_renderer_snapshot()
+    return {
+        "status": "3D_DEVICES_SNAPSHOT_RETRIEVED",
+        "snapshot": snap.model_dump()
+    }
+
+@app.post("/api/v1/twin/3d/devices/select")
+def api_select_3d_device_mesh(req: SelectDevice3DRequest):
+    did, detail = device_3d_renderer_engine.select_device(req.deviceId, focus_camera=req.focusCamera)
+    return {
+        "status": "DEVICE_SELECTED" if did else "DEVICE_DESELECTED",
+        "selectedDeviceId": did,
+        "detail": detail.model_dump() if detail else None
+    }
+
+@app.post("/api/v1/twin/3d/devices/pick")
+def api_pick_3d_device_raycast(req: PickDeviceRaycastRequest):
+    picked_id = device_3d_renderer_engine.raycast_pick_device(
+        req.screenX, req.screenY, req.viewportWidth, req.viewportHeight
+    )
+    detail = None
+    if picked_id:
+        _, detail = device_3d_renderer_engine.select_device(picked_id, focus_camera=req.focusCamera)
+
+    return {
+        "status": "DEVICE_PICKED" if picked_id else "NO_DEVICE_INTERSECTED",
+        "pickedDeviceId": picked_id,
+        "detail": detail.model_dump() if detail else None
+    }
+
+@app.post("/api/v1/twin/3d/devices/labels/visibility")
+def api_toggle_3d_labels_visibility(req: LabelVisibilityRequest):
+    visible = device_3d_renderer_engine.set_labels_visibility(req.visible)
+    return {
+        "status": "LABEL_VISIBILITY_UPDATED",
+        "labelsVisible": visible
+    }
+
+@app.post("/api/v1/twin/3d/devices/labels/mode")
+def api_set_3d_labels_mode(req: LabelModeRequest):
+    mode = device_3d_renderer_engine.set_label_display_mode(req.mode)
+    return {
+        "status": "LABEL_MODE_UPDATED",
+        "mode": mode.value
     }
 
 # ==================== DAY 156: THREE.JS FOUNDATION & CAMERA SYSTEM API ====================

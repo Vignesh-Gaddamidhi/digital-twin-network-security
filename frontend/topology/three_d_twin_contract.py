@@ -101,7 +101,7 @@ class DeviceTo3DMapper:
     @classmethod
     def map_archetype(cls, raw_type: str) -> MeshArchetypeEnum:
         t = raw_type.upper()
-        if "FIREWALL" in t:
+        if "FIREWALL" in t or "GATEWAY" in t:
             return MeshArchetypeEnum.FIREWALL
         elif "ROUTER" in t:
             return MeshArchetypeEnum.ROUTER
