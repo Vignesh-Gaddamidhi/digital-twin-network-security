@@ -48,6 +48,7 @@ class Device3DMeshMetadata(BaseModel):
     selectionState: SelectionStateEnum = SelectionStateEnum.UNSELECTED
     baseColorHex: str = "#3B82F6"
     emissiveColorHex: str = "#000000"
+    particlePulseRate: float = 1.0
     isSelectable: bool = True
     isHighlighted: bool = False
     isVisible: bool = True

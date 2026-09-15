@@ -30,11 +30,9 @@ class WebSocketConnectionManager:
         realtime_event_manager.connection_state = RealtimeConnectionState.CONNECTED
         realtime_event_manager.backend_health = BackendHealthState.HEALTHY
 
-        # Start heartbeat loop if not active
         if self._heartbeat_task is None or self._heartbeat_task.done():
             self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
 
-        # Immediately build and return complete snapshot for initial state synchronization
         snapshot = realtime_event_manager.generate_full_twin_snapshot()
         await websocket.send_json({
             "type": "SNAPSHOT",
@@ -43,22 +41,39 @@ class WebSocketConnectionManager:
         return snapshot
 
     def disconnect(self, websocket: WebSocket):
-        """Unregisters disconnected client, updates connection state, and cancels heartbeat daemon if idle."""
+        """Unregisters disconnected client and updates connection state."""
         self.active_connections.discard(websocket)
         if not self.active_connections:
             realtime_event_manager.connection_state = RealtimeConnectionState.DISCONNECTED
             if self._heartbeat_task and not self._heartbeat_task.done():
                 self._heartbeat_task.cancel()
 
+    async def stop_all(self):
+        """Closes all active sockets and cancels background heartbeat loops cleanly."""
+        if self._heartbeat_task and not self._heartbeat_task.done():
+            self._heartbeat_task.cancel()
+            try:
+                await self._heartbeat_task
+            except asyncio.CancelledError:
+                pass
+            self._heartbeat_task = None
+
+        for connection in list(self.active_connections):
+            try:
+                await connection.close()
+            except Exception:
+                pass
+        self.active_connections.clear()
+        realtime_event_manager.connection_state = RealtimeConnectionState.DISCONNECTED
+
     async def broadcast_envelope(self, envelope: RealtimeEventEnvelope) -> int:
         """Broadcasts an incremental delta event envelope to all connected clients."""
         if not self.active_connections:
             return 0
 
-        # Idempotency cache check
         cache_key = f"{envelope.eventId}:{envelope.sequenceNumber}"
         if cache_key in self.processed_event_cache:
-            return 0  # Deduplicated
+            return 0
 
         self.processed_event_cache.add(cache_key)
         if len(self.processed_event_cache) > self.max_cache_size:

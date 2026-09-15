@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-15T09:59:14Z",
+  "timestamp": "2026-09-15T15:29:16Z",
   "phase": "Phase 13: Advanced Attack Prediction",
   "metadata": {
     "datasetVersion": "dataset-v1.0",
@@ -15,8 +15,8 @@
       "recall": 1.0,
       "f1": 1.0,
       "rocAuc": 1.0,
-      "trainTimeMs": 37.19,
-      "inferenceTimeMs": 28.66
+      "trainTimeMs": 18.27,
+      "inferenceTimeMs": 13.04
     },
     {
       "model": "Decision Tree",
@@ -25,8 +25,8 @@
       "recall": 1.0,
       "f1": 1.0,
       "rocAuc": 1.0,
-      "trainTimeMs": 4.38,
-      "inferenceTimeMs": 27.23
+      "trainTimeMs": 2.24,
+      "inferenceTimeMs": 22.19
     },
     {
       "model": "Random Forest",
@@ -35,8 +35,8 @@
       "recall": 1.0,
       "f1": 1.0,
       "rocAuc": 1.0,
-      "trainTimeMs": 451.02,
-      "inferenceTimeMs": 145.33
+      "trainTimeMs": 249.93,
+      "inferenceTimeMs": 115.69
     },
     {
       "model": "Support Vector Machine",
@@ -45,8 +45,8 @@
       "recall": 1.0,
       "f1": 1.0,
       "rocAuc": 1.0,
-      "trainTimeMs": 50.49,
-      "inferenceTimeMs": 27.91
+      "trainTimeMs": 22.44,
+      "inferenceTimeMs": 16.56
     },
     {
       "model": "XGBoost",
@@ -55,8 +55,8 @@
       "recall": 1.0,
       "f1": 1.0,
       "rocAuc": 1.0,
-      "trainTimeMs": 398.99,
-      "inferenceTimeMs": 37.0
+      "trainTimeMs": 256.09,
+      "inferenceTimeMs": 24.3
     }
   ],
   "multiclassPredictionBenchmark": [
@@ -150,8 +150,8 @@
           4
         ]
       ],
-      "trainTimeMs": 34.53,
-      "inferenceTimeMs": 1.33
+      "trainTimeMs": 32.59,
+      "inferenceTimeMs": 0.6
     },
     {
       "model": "MultiClass Random Forest",
@@ -243,8 +243,8 @@
           4
         ]
       ],
-      "trainTimeMs": 412.51,
-      "inferenceTimeMs": 111.0
+      "trainTimeMs": 260.28,
+      "inferenceTimeMs": 111.57
     },
     {
       "model": "MultiClass XGBoost",
@@ -336,16 +336,16 @@
           4
         ]
       ],
-      "trainTimeMs": 501.41,
-      "inferenceTimeMs": 10.75
+      "trainTimeMs": 317.04,
+      "inferenceTimeMs": 5.78
     }
   ],
   "latencyBreakdown": {
     "featureExtractionMs": 1.85,
-    "binaryModelInferenceMs": 27.23,
-    "multiclassModelInferenceMs": 1.33,
+    "binaryModelInferenceMs": 13.04,
+    "multiclassModelInferenceMs": 0.6,
     "riskAssessmentMs": 0.95,
-    "totalPipelineLatencyMs": 30.03
+    "totalPipelineLatencyMs": 15.84
   },
   "selectedBaselineWinner": {
     "threatDetection": "Random Forest",

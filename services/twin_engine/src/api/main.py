@@ -1,3 +1,4 @@
+from frontend.realtime.live_telemetry_engine import live_telemetry_engine, ConnectionLifecycleState
 from frontend.simulations.simulation_models import ScenarioIdentifierEnum
 import sys
 from pathlib import Path
@@ -6655,4 +6656,60 @@ async def api_step_simulation_tick(req: SimulationTickRequest):
         "status": "TICK_PROCESSED",
         "emittedEnvelopesCount": len(envelopes),
         "envelopes": [e.model_dump() for e in envelopes]
+    }
+
+# ==================== DAY 165: LIVE TELEMETRY & CONNECTION API ====================
+
+class UpdateCpuRequest(BaseModel):
+    deviceId: str
+    cpuUtilizationPct: float
+
+class UpdateMemoryRequest(BaseModel):
+    deviceId: str
+    memoryUsedMb: float
+    memoryTotalMb: float = 16384.0
+
+class UpdateTrafficFlowRequest(BaseModel):
+    sourceDeviceId: str
+    destinationDeviceId: str
+    protocol: str = "HTTPS"
+    packetRate: float = 150.0
+    byteRate: float = 76800.0
+
+class UpdateConnectionLifecycleRequest(BaseModel):
+    connectionId: str
+    sourceDeviceId: str
+    destinationDeviceId: str
+    state: ConnectionLifecycleState = ConnectionLifecycleState.ESTABLISHED
+    destinationPort: int = 443
+
+@app.post("/api/v1/twin/realtime/telemetry/cpu")
+async def api_update_device_cpu(req: UpdateCpuRequest):
+    env = await live_telemetry_engine.update_device_cpu(req.deviceId, req.cpuUtilizationPct)
+    return {"status": "CPU_UPDATED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/telemetry/memory")
+async def api_update_device_memory(req: UpdateMemoryRequest):
+    env = await live_telemetry_engine.update_device_memory(req.deviceId, req.memoryUsedMb, req.memoryTotalMb)
+    return {"status": "MEMORY_UPDATED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/telemetry/traffic")
+async def api_update_traffic_flow(req: UpdateTrafficFlowRequest):
+    env = await live_telemetry_engine.update_traffic_flow(
+        req.sourceDeviceId, req.destinationDeviceId, req.protocol, req.packetRate, req.byteRate
+    )
+    return {"status": "TRAFFIC_UPDATED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/connection/lifecycle")
+async def api_update_connection_lifecycle(req: UpdateConnectionLifecycleRequest):
+    env = await live_telemetry_engine.update_connection_lifecycle(
+        req.connectionId, req.sourceDeviceId, req.destinationDeviceId, req.state, req.destinationPort
+    )
+    return {"status": "CONNECTION_LIFECYCLE_UPDATED", "envelope": env.model_dump()}
+
+@app.get("/api/v1/twin/realtime/telemetry/summary")
+def api_get_telemetry_summary():
+    return {
+        "status": "TELEMETRY_SUMMARY_RETRIEVED",
+        "summary": live_telemetry_engine.get_aggregated_summary().model_dump()
     }

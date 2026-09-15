@@ -28,7 +28,7 @@ class SimulationRealtimePipeline:
 
     def get_simulation_status_payload(self) -> SimulationStatusPayload:
         sim = simulation_control_engine.live_state
-        total_duration = getattr(sim, "durationSeconds", getattr(sim, "totalDurationSeconds", 120))
+        total_duration = getattr(sim, "totalDurationSeconds", getattr(sim, "durationSeconds", 120))
         return SimulationStatusPayload(
             simulationId=sim.reproducibility.simulationId,
             scenario=sim.activeScenario.value,
@@ -36,7 +36,7 @@ class SimulationRealtimePipeline:
             currentStage=sim.currentStage.value,
             elapsedSeconds=sim.elapsedSeconds,
             totalDurationSeconds=total_duration,
-            progressPct=getattr(sim, 'progressPercent', getattr(sim, 'progressPct', 0.0))
+            progressPct=getattr(sim, 'progressPct', getattr(sim, 'progressPercent', 0.0))
         )
 
     async def broadcast_status(self) -> RealtimeEventEnvelope:
@@ -49,12 +49,18 @@ class SimulationRealtimePipeline:
         await websocket_connection_manager.broadcast_envelope(env)
         return env
 
-    async def start_simulation(self, scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE) -> Dict[str, Any]:
+    async def start_simulation(
+        self,
+        scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE,
+        duration: Optional[int] = None,
+        duration_seconds: Optional[int] = None
+    ) -> Dict[str, Any]:
         self.active_scenario = scenario
         self.simulation_tick_count = 0
         self.wall_clock_start = datetime.now(timezone.utc)
         
-        simulation_control_engine.select_scenario(scenario=scenario, duration_seconds=120)
+        dur = duration or duration_seconds or 120
+        simulation_control_engine.select_scenario(scenario=scenario, duration_seconds=dur)
         simulation_control_engine.start()
         env = await self.broadcast_status()
         return {"action": "START", "status": env.payload}
@@ -99,7 +105,7 @@ class SimulationRealtimePipeline:
 
         # 2. Compute Scenario-Specific Telemetry Dynamics
         pkt_rate = getattr(sim, "currentPacketsPerSec", 120.0)
-        active_conns = getattr(sim, "currentActiveConnections", getattr(sim, "activeConnections", 42))
+        active_conns = getattr(sim, "currentActiveConnections", 42)
 
         if self.active_scenario == ScenarioIdentifierEnum.TRAFFIC_SPIKE:
             pkt_rate = 1450.0
@@ -131,9 +137,10 @@ class SimulationRealtimePipeline:
         emitted_envelopes.append(traffic_env)
 
         # 4. If in Escalation/Impact stage of attack, mutate Canonical Twin Security State
+        stage_val = sim.currentStage.value if hasattr(sim.currentStage, "value") else str(sim.currentStage)
         if (
             self.active_scenario in (ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE, ScenarioIdentifierEnum.EXFILTRATION_LIKE)
-            and sim.currentStage in (SimulationStageEnum.ESCALATION, SimulationStageEnum.IMPACT)
+            and stage_val in ("ESCALATION", "IMPACT")
         ):
             web_node = attack_path_graph.get_node("WEB-01")
             prev_state = web_node.securityState
