@@ -1,3 +1,4 @@
+from frontend.realtime.live_security_engine import live_security_engine, EarlyWarningStateEnum
 from frontend.realtime.live_telemetry_engine import live_telemetry_engine, ConnectionLifecycleState
 from frontend.simulations.simulation_models import ScenarioIdentifierEnum
 import sys
@@ -6713,3 +6714,83 @@ def api_get_telemetry_summary():
         "status": "TELEMETRY_SUMMARY_RETRIEVED",
         "summary": live_telemetry_engine.get_aggregated_summary().model_dump()
     }
+
+# ==================== DAY 166: LIVE SECURITY INTELLIGENCE API ====================
+
+class EmitThreatRequest(BaseModel):
+    sourceDeviceId: str
+    targetDeviceId: str
+    eventType: str
+    severity: RiskLevelTier = RiskLevelTier.HIGH
+    confidence: float = 0.92
+
+class EmitAlertRequest(BaseModel):
+    sourceDevice: str
+    destinationDevice: str
+    eventType: str
+    severity: RiskLevelTier = RiskLevelTier.CRITICAL
+    riskScore: float = 85.5
+
+class EmitPredictionRequest(BaseModel):
+    deviceId: str
+    currentThreatProbability: float
+    futureThreatProbability: float
+    predictedCategory: str = "LATERAL_MOVEMENT"
+    riskScore: float = 78.4
+
+class EmitEarlyWarningRequest(BaseModel):
+    deviceId: str
+    leadTimeSeconds: int = 42
+    futureThreatProbability: float = 0.88
+    warningState: EarlyWarningStateEnum = EarlyWarningStateEnum.EARLY_WARNING
+
+class UpdateRiskRequest(BaseModel):
+    deviceId: str
+    threatProbability: float
+    criticality: float = 1.0
+    vulnerabilityFactor: float = 0.8
+    impact: float = 1.0
+
+class HighlightAttackPathRequest(BaseModel):
+    pathId: Optional[str] = None
+
+@app.post("/api/v1/twin/realtime/threats/emit")
+async def api_emit_realtime_threat(req: EmitThreatRequest):
+    env = await live_security_engine.emit_threat_update(
+        req.sourceDeviceId, req.targetDeviceId, req.eventType, req.severity, req.confidence
+    )
+    return {"status": "THREAT_EMITTED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/alerts/emit")
+async def api_emit_realtime_alert(req: EmitAlertRequest):
+    env = await live_security_engine.emit_alert_update(
+        req.sourceDevice, req.destinationDevice, req.eventType, req.severity, req.riskScore
+    )
+    return {"status": "ALERT_EMITTED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/predictions/emit")
+async def api_emit_realtime_prediction(req: EmitPredictionRequest):
+    env = await live_security_engine.emit_prediction_update(
+        req.deviceId, req.currentThreatProbability, req.futureThreatProbability,
+        req.predictedCategory, risk_score=req.riskScore
+    )
+    return {"status": "PREDICTION_EMITTED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/early-warning/emit")
+async def api_emit_realtime_early_warning(req: EmitEarlyWarningRequest):
+    env = await live_security_engine.emit_early_warning_update(
+        req.deviceId, req.leadTimeSeconds, req.futureThreatProbability, req.warningState
+    )
+    return {"status": "EARLY_WARNING_EMITTED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/risk/update")
+async def api_update_realtime_risk(req: UpdateRiskRequest):
+    env = await live_security_engine.update_device_risk(
+        req.deviceId, req.threatProbability, req.criticality, req.vulnerabilityFactor, req.impact
+    )
+    return {"status": "RISK_UPDATED", "envelope": env.model_dump()}
+
+@app.post("/api/v1/twin/realtime/attack-paths/highlight")
+async def api_highlight_attack_path(req: HighlightAttackPathRequest):
+    env = await live_security_engine.trigger_live_attack_path_highlight(req.pathId)
+    return {"status": "ATTACK_PATH_HIGHLIGHTED", "envelope": env.model_dump()}
