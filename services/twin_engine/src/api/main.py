@@ -270,6 +270,10 @@ from frontend.attacks.attack_path_dashboard_models import (
     PathFilterTypeEnum, AttackPathItemCard, AttackPathDashboardSnapshot
 )
 from frontend.attacks.attack_path_dashboard_engine import attack_path_dashboard_engine
+from frontend.alerts.alert_center_models import (
+    AlertStatusEnum, SecurityAlertItem, CorrelatedIncidentCampaign, AlertFilterCriteria
+)
+from frontend.alerts.alert_center_engine import alert_center_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1230,6 +1234,60 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 150: ALERT CENTER & SECURITY OPERATIONS API ====================
+
+class UpdateAlertStatusRequest(BaseModel):
+    alertId: str = "ALT-001"
+    newStatus: AlertStatusEnum = AlertStatusEnum.INVESTIGATING
+
+@app.get("/api/v1/twin/alerts/table")
+def api_get_alert_table(
+    severity: Optional[RiskLevelTier] = None,
+    status: Optional[AlertStatusEnum] = None,
+    device: Optional[str] = None
+):
+    criteria = AlertFilterCriteria(severity=severity, status=status, device=device)
+    alerts = alert_center_engine.filter_alerts(criteria)
+    counters = alert_center_engine.get_alert_counters()
+    return {
+        "status": "ALERTS_RETRIEVED",
+        "counters": counters.model_dump(),
+        "alertsCount": len(alerts),
+        "alerts": [a.model_dump() for a in alerts],
+        "cliTable": alert_center_engine.render_cli_alert_table(alerts)
+    }
+
+@app.post("/api/v1/twin/alerts/status/update")
+def api_update_alert_status(req: UpdateAlertStatusRequest):
+    try:
+        updated = alert_center_engine.update_alert_status(req.alertId, req.newStatus)
+        return {
+            "status": "ALERT_STATUS_UPDATED",
+            "alertId": updated.alertId,
+            "newStatus": updated.status.value
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/alerts/drilldown/{alertId}")
+def api_get_alert_drilldown(alertId: str):
+    try:
+        dossier = alert_center_engine.get_8tier_drilldown(alertId)
+        return {
+            "status": "ALERT_DOSSIER_RETRIEVED",
+            "dossier": dossier.model_dump()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.get("/api/v1/twin/alerts/campaigns")
+def api_get_correlated_campaigns():
+    return {
+        "status": "CAMPAIGNS_RETRIEVED",
+        "count": len(alert_center_engine.campaigns),
+        "campaigns": [c.model_dump() for c in alert_center_engine.campaigns]
     }
 
 # ==================== DAY 149: ATTACK PATH DASHBOARD API ====================
