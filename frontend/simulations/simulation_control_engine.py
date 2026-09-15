@@ -96,20 +96,23 @@ class SimulationControlEngine:
         self.live_state.progressPercent = round((self.live_state.elapsedSeconds / self.config.durationSeconds) * 100.0, 1)
         self.live_state.timeDisplay = f"{self._fmt_time(self.live_state.elapsedSeconds)} / {self._fmt_time(self.config.durationSeconds)}"
 
-        # Determine Stage based on progress percentage
         p = self.live_state.progressPercent
         old_stage = self.live_state.currentStage
 
-        if p < 20.0:
+        # For benign NORMAL scenario, maintain benign stage regardless of tick progress
+        if self.config.scenario == ScenarioIdentifierEnum.NORMAL:
             self.live_state.currentStage = SimulationStageEnum.NORMAL
-        elif p < 45.0:
-            self.live_state.currentStage = SimulationStageEnum.EARLY_INDICATORS
-        elif p < 70.0:
-            self.live_state.currentStage = SimulationStageEnum.ESCALATION
-        elif p < 90.0:
-            self.live_state.currentStage = SimulationStageEnum.IMPACT
         else:
-            self.live_state.currentStage = SimulationStageEnum.RECOVERY
+            if p < 20.0:
+                self.live_state.currentStage = SimulationStageEnum.NORMAL
+            elif p < 45.0:
+                self.live_state.currentStage = SimulationStageEnum.EARLY_INDICATORS
+            elif p < 70.0:
+                self.live_state.currentStage = SimulationStageEnum.ESCALATION
+            elif p < 90.0:
+                self.live_state.currentStage = SimulationStageEnum.IMPACT
+            else:
+                self.live_state.currentStage = SimulationStageEnum.RECOVERY
 
         if p >= 100.0:
             self.live_state.executionState = SimulationExecutionState.COMPLETED
@@ -122,10 +125,46 @@ class SimulationControlEngine:
         return self.live_state
 
     def _cascade_dashboard_update(self):
+        from frontend.predictions.prediction_panel_engine import prediction_panel_engine
+        from frontend.predictions.prediction_models import AttackCategoryEnum
+        from services.digital_twin.attack_path.graph.attack_path_graph import attack_path_graph
+        from services.digital_twin.risk.history.risk_state_engine import risk_state_engine
+
         stage = self.live_state.currentStage
         scenario = self.config.scenario
 
-        # Calculate cascaded state parameters based on timeline stage
+        # Explicit handling for benign NORMAL baseline
+        if scenario == ScenarioIdentifierEnum.NORMAL:
+            self.live_state.currentPacketsPerSec = 115.0
+            self.live_state.activeEventsCount = 0
+            self.live_state.predictedThreatProb = 0.04
+            self.live_state.networkRiskScore = 12.0
+            self.live_state.activeAttackPathsCount = 0
+            entry_point_engine.set_simulation_compromise("CLIENT-01", "NORMAL")
+            for nid in attack_path_graph.nodes:
+                attack_path_graph.nodes[nid].riskScore = 5.76
+                attack_path_graph.nodes[nid].securityState = "NORMAL"
+            risk_state_engine.clear()
+            risk_state_engine.record_risk_observation("DB-01", 12.0, "NORMAL-BENIGN")
+            dashboard_engine.update_telemetry_feed(
+                devices_count=len(attack_path_graph.nodes),
+                active_threats=0,
+                network_risk_score=12.0,
+                network_risk_level="LOW",
+                attack_paths_count=0,
+                packets_per_sec=115.0
+            )
+            prediction_panel_engine.generate_prediction_with_xai(
+                target_device="WEB-01",
+                current_prob=0.03,
+                future_prob=0.05,
+                category=AttackCategoryEnum.NORMAL,
+                confidence=0.98,
+                shap_values={"baseline_deviations": 0.01}
+            )
+            return
+
+        # Calculate cascaded state parameters based on timeline stage for active attacks
         if stage == SimulationStageEnum.NORMAL:
             pkt_rate = 120.0
             events_c = 1
@@ -147,6 +186,28 @@ class SimulationControlEngine:
             risk_s = 69.6
             paths_c = 2
             entry_point_engine.set_simulation_compromise("CLIENT-01", "COMPROMISED", scenario_id=scenario.value)
+            if "DB-01" in attack_path_graph.nodes:
+                attack_path_graph.nodes["DB-01"].riskScore = 69.6
+            if "WEB-01" in attack_path_graph.nodes:
+                attack_path_graph.nodes["WEB-01"].riskScore = 60.8
+            risk_state_engine.record_risk_observation("DB-01", 69.6, f"{scenario.value}-ESCALATION")
+
+            cat_map = {
+                ScenarioIdentifierEnum.PORT_ANOMALY: AttackCategoryEnum.PORT_SCAN,
+                ScenarioIdentifierEnum.PORT_SCAN: AttackCategoryEnum.PORT_SCAN,
+                ScenarioIdentifierEnum.TRAFFIC_SPIKE: AttackCategoryEnum.DOS_LIKE,
+                ScenarioIdentifierEnum.DOS_LIKE: AttackCategoryEnum.DOS_LIKE,
+                ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE: AttackCategoryEnum.LATERAL_MOVEMENT_LIKE
+            }
+            assigned_cat = cat_map.get(scenario, AttackCategoryEnum.LATERAL_MOVEMENT_LIKE)
+            prediction_panel_engine.generate_prediction_with_xai(
+                target_device="WEB-01",
+                current_prob=0.72,
+                future_prob=threat_p,
+                category=assigned_cat,
+                confidence=0.92,
+                shap_values={"connection_frequency": 0.31, "destination_diversity": 0.22, "port_activity": 0.18}
+            )
         elif stage == SimulationStageEnum.IMPACT:
             pkt_rate = 1850.0
             events_c = 10

@@ -1,1 +1,41 @@
-[]
+[
+  {
+    "eventId": "REVT-4D6C08FC",
+    "deviceId": "DB-01",
+    "eventType": "RISK_SCORE_SPIKE",
+    "previousRiskLevel": "LOW",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 12.0,
+    "currentScore": 69.6,
+    "scoreDelta": 57.6,
+    "timestamp": "2026-09-15T06:08:02.985149+00:00",
+    "rationale": "Risk score spiked by +57.60 points (12.00 -> 69.60) on DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-C4DDBBFB",
+    "deviceId": "DB-01",
+    "eventType": "RISK_LEVEL_INCREASED",
+    "previousRiskLevel": "LOW",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 12.0,
+    "currentScore": 69.6,
+    "scoreDelta": 57.6,
+    "timestamp": "2026-09-15T06:08:02.985179+00:00",
+    "rationale": "Risk escalated: LOW -> HIGH on DB-01.",
+    "cooldownActive": false
+  },
+  {
+    "eventId": "REVT-2E4C33CB",
+    "deviceId": "DB-01",
+    "eventType": "HIGH_RISK_REACHED",
+    "previousRiskLevel": "LOW",
+    "currentRiskLevel": "HIGH",
+    "previousScore": 12.0,
+    "currentScore": 69.6,
+    "scoreDelta": 57.6,
+    "timestamp": "2026-09-15T06:08:02.985198+00:00",
+    "rationale": "High risk threshold entered for asset DB-01.",
+    "cooldownActive": false
+  }
+]

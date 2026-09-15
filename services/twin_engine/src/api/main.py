@@ -279,11 +279,14 @@ from frontend.simulations.simulation_models import (
     SimulationConfiguration, SimulationLiveStateView
 )
 from frontend.simulations.simulation_control_engine import simulation_control_engine
+from frontend.dashboard.phase18_graduation_orchestrator import phase18_graduation_orchestrator
+from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
     PipelineObservabilityMetrics, UnifiedGlobalSearchResponse, RealtimeDashboardFrame
 )
 from frontend.dashboard.dashboard_integration_engine import dashboard_integration_engine
+from frontend.dashboard.master_dashboard_orchestrator import master_dashboard_orchestrator
 from fastapi import WebSocket, WebSocketDisconnect
 import asyncio
 from frontend.predictions.early_warning_models import (
@@ -1274,6 +1277,61 @@ def api_trigger_warning_cooldown(req: TriggerCooldownRequest):
         "status": "COOLDOWN_TRIGGERED",
         "device": req.targetDevice,
         "durationSeconds": req.durationSeconds
+    }
+
+# ==================== DAY 154: MASTER DASHBOARD & WEEK 22 RELEASE API ====================
+
+@app.get("/api/v1/twin/dashboard/master-overview")
+def api_get_master_dashboard_overview():
+    data = master_dashboard_orchestrator.assemble_full_dashboard()
+    cli_render = master_dashboard_orchestrator.render_cli_soc_command_center()
+    return {
+        "status": "MASTER_DASHBOARD_RETRIEVED",
+        "overview": data,
+        "cliCommandCenter": cli_render
+    }
+
+# ==================== DAY 154: MASTER DASHBOARD INTEGRATION & RELEASE API ====================
+
+class RunScenarioAuditRequest(BaseModel):
+    scenario: ScenarioIdentifierEnum = ScenarioIdentifierEnum.LATERAL_MOVEMENT_LIKE
+
+@app.get("/api/v1/twin/dashboard/master-view")
+def api_get_master_dashboard_view():
+    view = phase18_graduation_orchestrator.get_master_dashboard_view()
+    return {
+        "status": "MASTER_DASHBOARD_VIEW_RETRIEVED",
+        "view": view.model_dump(),
+        "cliScreen": view.render_master_cli_screen()
+    }
+
+@app.post("/api/v1/twin/dashboard/scenarios/run")
+def api_run_dashboard_scenario(req: RunScenarioAuditRequest):
+    res = phase18_graduation_orchestrator.run_end_to_end_scenario(req.scenario)
+    return {
+        "status": "SCENARIO_AUDIT_COMPLETED",
+        "result": res
+    }
+
+@app.post("/api/v1/twin/dashboard/audit/remediation")
+def api_audit_remediation():
+    return {
+        "status": "REMEDIATION_AUDIT_COMPLETED",
+        "audit": phase18_graduation_orchestrator.execute_remediation_audit()
+    }
+
+@app.post("/api/v1/twin/dashboard/audit/isolation")
+def api_audit_isolation():
+    return {
+        "status": "ISOLATION_AUDIT_COMPLETED",
+        "audit": phase18_graduation_orchestrator.execute_isolation_audit()
+    }
+
+@app.get("/api/v1/twin/dashboard/performance/profile")
+def api_get_dashboard_performance():
+    return {
+        "status": "PERFORMANCE_PROFILE_COMPLETED",
+        "timings": phase18_graduation_orchestrator.profile_dashboard_performance()
     }
 
 # ==================== DAY 153: DASHBOARD INTEGRATION & REAL-TIME API ====================

@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 from pydantic import BaseModel, Field
 
 from services.digital_twin.risk.factors.factor_types import RiskLevelTier
