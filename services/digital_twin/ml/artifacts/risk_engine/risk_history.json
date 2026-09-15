@@ -3,29 +3,13 @@
     "deviceId": "ATTACKER-EXT",
     "currentRiskScore": 0.0,
     "currentRiskLevel": "LOW",
-    "riskTrend": "STABLE",
-    "consecutiveObservations": 3,
-    "lastAssessmentAt": "2026-09-15T05:07:10.099497+00:00",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:09:43.419086+00:00",
     "history": [
       {
-        "observationId": "ROBS-5E81BF2C",
-        "timestamp": "2026-09-15T05:07:09.885359+00:00",
-        "riskScore": 0.0,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-ATTACKER-EXT",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-A39C4D25",
-        "timestamp": "2026-09-15T05:07:09.944081+00:00",
-        "riskScore": 0.0,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-ATTACKER-EXT",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-FAC52688",
-        "timestamp": "2026-09-15T05:07:10.099497+00:00",
+        "observationId": "ROBS-00EEC375",
+        "timestamp": "2026-09-15T05:09:43.419086+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
@@ -37,29 +21,13 @@
     "deviceId": "CLIENT-01",
     "currentRiskScore": 5.76,
     "currentRiskLevel": "LOW",
-    "riskTrend": "STABLE",
-    "consecutiveObservations": 3,
-    "lastAssessmentAt": "2026-09-15T05:07:10.102802+00:00",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:09:43.424156+00:00",
     "history": [
       {
-        "observationId": "ROBS-355B516C",
-        "timestamp": "2026-09-15T05:07:09.890362+00:00",
-        "riskScore": 5.76,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-CLIENT-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-D78FA2C8",
-        "timestamp": "2026-09-15T05:07:09.951131+00:00",
-        "riskScore": 5.76,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-CLIENT-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-BBFDC418",
-        "timestamp": "2026-09-15T05:07:10.102802+00:00",
+        "observationId": "ROBS-A2B5EAE3",
+        "timestamp": "2026-09-15T05:09:43.424156+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
@@ -71,29 +39,13 @@
     "deviceId": "WEB-01",
     "currentRiskScore": 60.8,
     "currentRiskLevel": "HIGH",
-    "riskTrend": "STABLE",
-    "consecutiveObservations": 3,
-    "lastAssessmentAt": "2026-09-15T05:07:10.106243+00:00",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:09:43.427441+00:00",
     "history": [
       {
-        "observationId": "ROBS-6AB105AD",
-        "timestamp": "2026-09-15T05:07:09.894888+00:00",
-        "riskScore": 60.8,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-INIT-WEB-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-1218F513",
-        "timestamp": "2026-09-15T05:07:09.957261+00:00",
-        "riskScore": 60.8,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-INIT-WEB-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-5F162404",
-        "timestamp": "2026-09-15T05:07:10.106243+00:00",
+        "observationId": "ROBS-9B6300C7",
+        "timestamp": "2026-09-15T05:09:43.427441+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
@@ -105,29 +57,13 @@
     "deviceId": "DB-01",
     "currentRiskScore": 69.6,
     "currentRiskLevel": "HIGH",
-    "riskTrend": "STABLE",
-    "consecutiveObservations": 3,
-    "lastAssessmentAt": "2026-09-15T05:07:10.108961+00:00",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:09:43.430713+00:00",
     "history": [
       {
-        "observationId": "ROBS-641D57C7",
-        "timestamp": "2026-09-15T05:07:09.899532+00:00",
-        "riskScore": 69.6,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-INIT-DB-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-0291BDDF",
-        "timestamp": "2026-09-15T05:07:09.963661+00:00",
-        "riskScore": 69.6,
-        "riskLevel": "HIGH",
-        "predictionId": "PRED-INIT-DB-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-C8D900C8",
-        "timestamp": "2026-09-15T05:07:10.108961+00:00",
+        "observationId": "ROBS-D4594163",
+        "timestamp": "2026-09-15T05:09:43.430713+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
@@ -139,29 +75,13 @@
     "deviceId": "DNS-SERVER-01",
     "currentRiskScore": 5.76,
     "currentRiskLevel": "LOW",
-    "riskTrend": "STABLE",
-    "consecutiveObservations": 3,
-    "lastAssessmentAt": "2026-09-15T05:07:10.111741+00:00",
+    "riskTrend": "UNKNOWN",
+    "consecutiveObservations": 1,
+    "lastAssessmentAt": "2026-09-15T05:09:43.434731+00:00",
     "history": [
       {
-        "observationId": "ROBS-55D93CB8",
-        "timestamp": "2026-09-15T05:07:09.904173+00:00",
-        "riskScore": 5.76,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-DNS-SERVER-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-6A4B77C0",
-        "timestamp": "2026-09-15T05:07:09.969469+00:00",
-        "riskScore": 5.76,
-        "riskLevel": "LOW",
-        "predictionId": "PRED-INIT-DNS-SERVER-01",
-        "explanationId": null
-      },
-      {
-        "observationId": "ROBS-2AF0B101",
-        "timestamp": "2026-09-15T05:07:10.111741+00:00",
+        "observationId": "ROBS-07BA5987",
+        "timestamp": "2026-09-15T05:09:43.434731+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",

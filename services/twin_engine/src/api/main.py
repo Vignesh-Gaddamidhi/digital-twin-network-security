@@ -246,6 +246,10 @@ from frontend.topology.topology_models import (
     TopologyNodeState, LiveTopologySnapshot, NodeDetailDrawer, ViewportTransform
 )
 from frontend.topology.topology_canvas_engine import topology_canvas_engine
+from frontend.dashboard.device_inspection_models import (
+    EpistemicProvenanceEnum, DeviceResourceUtilization, DeviceSearchQuery, LiveDeviceDetailView
+)
+from frontend.dashboard.device_inspection_engine import device_inspection_engine
 from services.digital_twin.risk.engine.master_risk_orchestrator import (
     master_risk_orchestrator, FinalRiskObject
 )
@@ -1206,6 +1210,41 @@ def api_get_dashboard_shell_context():
             "predictionTime": now_iso,
             "lastUpdated": now_time
         }
+    }
+
+# ==================== DAY 144: LIVE DIGITAL TWIN STATE & DEVICE INSPECTION API ====================
+
+class UpdateDeviceTelemetryRequest(BaseModel):
+    deviceId: str = "WEB-01"
+    utilization: DeviceResourceUtilization
+
+@app.get("/api/v1/twin/devices/inspect/{deviceId}")
+def api_inspect_device_detail(deviceId: str):
+    try:
+        detail = device_inspection_engine.get_live_device_detail(deviceId)
+        return {
+            "status": "DEVICE_INSPECTION_RETRIEVED",
+            "device": detail.model_dump(),
+            "cliPanel": detail.to_formatted_cli_panel()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/api/v1/twin/devices/telemetry/update")
+def api_update_device_telemetry(req: UpdateDeviceTelemetryRequest):
+    device_inspection_engine.update_telemetry(req.deviceId, req.utilization)
+    return {
+        "status": "TELEMETRY_UPDATED",
+        "deviceId": req.deviceId
+    }
+
+@app.post("/api/v1/twin/devices/search")
+def api_search_devices(criteria: DeviceSearchQuery):
+    matches = device_inspection_engine.search_devices(criteria)
+    return {
+        "status": "SEARCH_COMPLETED",
+        "count": len(matches),
+        "results": [m.model_dump() for m in matches]
     }
 
 # ==================== DAY 143: LIVE NETWORK TOPOLOGY CANVAS API ====================
