@@ -1,3 +1,15 @@
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[4]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+from frontend.realtime.realtime_models import (
+    RealtimeEventType, RealtimeConnectionState, DataFreshnessState, BackendHealthState,
+    RealtimeEventEnvelope, TwinStateSnapshot
+)
+from frontend.realtime.realtime_event_manager import realtime_event_manager
+from frontend.realtime.websocket_gateway import websocket_connection_manager
 from datetime import datetime, timezone
 import numpy as np
 import sys
@@ -6549,3 +6561,61 @@ async def websocket_telemetry_stream(websocket: WebSocket):
 @app.get("/api/health")
 def health_check():
     return {"status": "HEALTHY", "phase": "PHASE_7_COMPLETE", "engine": "twin_engine"}
+
+# ==================== DAY 162 & DAY 163: REAL-TIME ARCHITECTURE & WEBSOCKET GATEWAY ====================
+
+class ValidateEnvelopeRequest(BaseModel):
+    eventType: RealtimeEventType
+    payload: Dict[str, Any]
+    deviceId: Optional[str] = None
+
+@app.get("/api/v1/twin/realtime/snapshot")
+def api_get_realtime_twin_snapshot():
+    snap = realtime_event_manager.generate_full_twin_snapshot()
+    return {
+        "status": "TWIN_SNAPSHOT_GENERATED",
+        "snapshot": snap.model_dump()
+    }
+
+@app.get("/api/v1/twin/realtime/envelope/schema")
+def api_get_envelope_schema():
+    return {
+        "status": "SCHEMA_RETRIEVED",
+        "supportedEventTypes": [e.value for e in RealtimeEventType],
+        "connectionStates": [c.value for c in RealtimeConnectionState],
+        "freshnessStates": [f.value for f in DataFreshnessState],
+        "backendStates": [b.value for b in BackendHealthState],
+        "currentSequenceNumber": realtime_event_manager.current_sequence
+    }
+
+@app.post("/api/v1/twin/realtime/envelope/validate")
+def api_validate_envelope(req: ValidateEnvelopeRequest):
+    env = realtime_event_manager.build_envelope(
+        event_type=req.eventType,
+        payload=req.payload,
+        device_id=req.deviceId
+    )
+    return {
+        "status": "ENVELOPE_VALIDATED",
+        "envelope": env.model_dump()
+    }
+
+@app.get("/api/v1/twin/realtime/gateway/status")
+def api_get_websocket_gateway_status():
+    return {
+        "status": "GATEWAY_STATUS_RETRIEVED",
+        "gateway": websocket_connection_manager.connection_status()
+    }
+
+@app.websocket("/api/v1/twin/realtime/ws/live")
+async def websocket_live_gateway_endpoint(websocket: WebSocket):
+    await websocket_connection_manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            if data == "PING":
+                await websocket.send_text("PONG")
+    except WebSocketDisconnect:
+        websocket_connection_manager.disconnect(websocket)
+    except Exception:
+        websocket_connection_manager.disconnect(websocket)
