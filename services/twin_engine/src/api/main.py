@@ -298,6 +298,10 @@ from frontend.topology.link_3d_models import (
     TrafficParticleState, NetworkLink3D, LinkRendererSnapshot
 )
 from frontend.topology.link_3d_renderer_engine import link_3d_renderer_engine
+from frontend.topology.security_3d_models import (
+    DeviceSecurity3DVisual, SecurityRendererSnapshot
+)
+from frontend.topology.security_3d_renderer_engine import security_3d_renderer_engine
 from frontend.dashboard.master_dashboard_view import MasterDashboardViewSnapshot
 from frontend.dashboard.integration_models import (
     ConnectionStateEnum, SubsystemStatusEnum, SubsystemHealthPanel,
@@ -1308,6 +1312,27 @@ def api_get_master_dashboard_overview():
         "overview": data,
         "cliCommandCenter": cli_render
     }
+
+# ==================== DAY 159: 3D SECURITY STATE & RISK VISUALIZATION API ====================
+
+@app.get("/api/v1/twin/3d/security/snapshot")
+def api_get_3d_security_snapshot():
+    snap = security_3d_renderer_engine.get_snapshot()
+    return {
+        "status": "3D_SECURITY_SNAPSHOT_RETRIEVED",
+        "snapshot": snap.model_dump()
+    }
+
+@app.get("/api/v1/twin/3d/security/device/{deviceId}")
+def api_get_3d_device_security(deviceId: str):
+    try:
+        vis = security_3d_renderer_engine.get_device_security_visual(deviceId)
+        return {
+            "status": "DEVICE_3D_SECURITY_RETRIEVED",
+            "securityVisual": vis.model_dump()
+        }
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 # ==================== DAY 158: 3D NETWORK LINKS & TRAFFIC PARTICLES API ====================
 
