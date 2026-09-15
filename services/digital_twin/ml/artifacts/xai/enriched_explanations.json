@@ -1,8 +1,8 @@
 [
   {
-    "explanationId": "EXP-46C0042E",
+    "explanationId": "EXP-F5816AC8",
     "predictionId": "PRED-PORT-SCAN-123",
-    "timestamp": "2026-09-15T05:05:59.250886+00:00",
+    "timestamp": "2026-09-15T06:48:55.721327+00:00",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "PORT_SCAN",
@@ -82,9 +82,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-88917EC9",
-    "predictionId": "PRED-D49F5D61",
-    "timestamp": "2026-09-15T05:06:10.237343+00:00",
+    "explanationId": "EXP-D8E29B5E",
+    "predictionId": "PRED-B6C197BB",
+    "timestamp": "2026-09-15T06:48:59.291488+00:00",
     "threatProbability": 0.28,
     "threatProbabilityFormatted": "28.0%",
     "predictedCategory": "NORMAL",
@@ -133,9 +133,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-03257748",
-    "predictionId": "PRED-51D8FF3A",
-    "timestamp": "2026-09-15T05:06:10.577016+00:00",
+    "explanationId": "EXP-D5605D64",
+    "predictionId": "PRED-E17E0E54",
+    "timestamp": "2026-09-15T06:48:59.389776+00:00",
     "threatProbability": 0.44,
     "threatProbabilityFormatted": "44.0%",
     "predictedCategory": "NORMAL",
@@ -205,9 +205,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-3B7B363D",
-    "predictionId": "PRED-44577F56",
-    "timestamp": "2026-09-15T05:06:10.975037+00:00",
+    "explanationId": "EXP-533B75A6",
+    "predictionId": "PRED-C8BF766D",
+    "timestamp": "2026-09-15T06:48:59.483705+00:00",
     "threatProbability": 0.67,
     "threatProbabilityFormatted": "67.0%",
     "predictedCategory": "NORMAL",
@@ -267,9 +267,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-2D3F47C2",
-    "predictionId": "PRED-E4AC830E",
-    "timestamp": "2026-09-15T05:06:11.380136+00:00",
+    "explanationId": "EXP-2C79796F",
+    "predictionId": "PRED-9B932752",
+    "timestamp": "2026-09-15T06:48:59.579344+00:00",
     "threatProbability": 0.36,
     "threatProbabilityFormatted": "36.0%",
     "predictedCategory": "NORMAL",
@@ -329,9 +329,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-7B683E52",
-    "predictionId": "PRED-04E9DDF5",
-    "timestamp": "2026-09-15T05:06:11.664309+00:00",
+    "explanationId": "EXP-FAA70731",
+    "predictionId": "PRED-3DBDACB7",
+    "timestamp": "2026-09-15T06:48:59.676200+00:00",
     "threatProbability": 0.1,
     "threatProbabilityFormatted": "10.0%",
     "predictedCategory": "NORMAL",
@@ -391,9 +391,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-B596D3AA",
-    "predictionId": "PRED-55EE085A",
-    "timestamp": "2026-09-15T05:06:12.066697+00:00",
+    "explanationId": "EXP-BA5D1CE1",
+    "predictionId": "PRED-2A73A217",
+    "timestamp": "2026-09-15T06:48:59.786623+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "PORT_SCAN",
@@ -463,9 +463,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-34A16542",
-    "predictionId": "PRED-F367375D",
-    "timestamp": "2026-09-15T05:06:12.426358+00:00",
+    "explanationId": "EXP-F420662E",
+    "predictionId": "PRED-19D6B89D",
+    "timestamp": "2026-09-15T06:48:59.893658+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DOS_LIKE",
@@ -545,9 +545,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-3D0A1CBA",
-    "predictionId": "PRED-11225551",
-    "timestamp": "2026-09-15T05:06:12.763677+00:00",
+    "explanationId": "EXP-A3DC7750",
+    "predictionId": "PRED-95886173",
+    "timestamp": "2026-09-15T06:49:00.004231+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DNS_ANOMALY",
@@ -607,9 +607,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-BC933E3E",
-    "predictionId": "PRED-8691F2BC",
-    "timestamp": "2026-09-15T05:06:13.117913+00:00",
+    "explanationId": "EXP-852FBDE4",
+    "predictionId": "PRED-97470F86",
+    "timestamp": "2026-09-15T06:49:00.146087+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "BEACONING",
@@ -679,9 +679,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-FB3837B0",
-    "predictionId": "PRED-C36102D1",
-    "timestamp": "2026-09-15T05:06:13.557827+00:00",
+    "explanationId": "EXP-D5B47E4C",
+    "predictionId": "PRED-6141AFE2",
+    "timestamp": "2026-09-15T06:49:00.271327+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "LATERAL_MOVEMENT_LIKE",
@@ -751,9 +751,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-6B4073FE",
-    "predictionId": "PRED-378A602F",
-    "timestamp": "2026-09-15T05:06:13.998229+00:00",
+    "explanationId": "EXP-100BE50A",
+    "predictionId": "PRED-EABD6D3A",
+    "timestamp": "2026-09-15T06:49:00.404897+00:00",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "EXFILTRATION_LIKE",
@@ -833,9 +833,9 @@
     "limitations": "This explanation describes model behaviour and does not prove that an attack occurred."
   },
   {
-    "explanationId": "EXP-D22635A2",
+    "explanationId": "EXP-7055CAA9",
     "predictionId": "PRED-MODESTY",
-    "timestamp": "2026-09-15T05:06:47.147925+00:00",
+    "timestamp": "2026-09-15T06:49:16.756885+00:00",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "PORT_SCAN",

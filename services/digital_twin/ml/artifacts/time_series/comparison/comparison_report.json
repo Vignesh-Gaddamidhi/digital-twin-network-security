@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-15T05:05:22Z",
+  "timestamp": "2026-09-15T06:48:27Z",
   "datasetVersion": "seq-v1.0",
   "featureVersion": "ts-feat-v1.0",
   "sequenceLength": 5,
@@ -15,8 +15,8 @@
       "leadTimeSeconds": 50.0,
       "leadTimeFormatted": "50.0 seconds",
       "parameterCount": 6817,
-      "trainingTimeMs": 161.89,
-      "inferenceTimeMs": 0.279,
+      "trainingTimeMs": 70.77,
+      "inferenceTimeMs": 0.044,
       "modelSizeBytes": 28614
     },
     {
@@ -29,8 +29,8 @@
       "leadTimeSeconds": 15.0,
       "leadTimeFormatted": "15.0 seconds",
       "parameterCount": 5249,
-      "trainingTimeMs": 281.13,
-      "inferenceTimeMs": 2.289,
+      "trainingTimeMs": 127.47,
+      "inferenceTimeMs": 1.78,
       "modelSizeBytes": 23651
     }
   ],

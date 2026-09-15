@@ -5,83 +5,83 @@
     "currentRiskLevel": "HIGH",
     "riskTrend": "VOLATILE",
     "consecutiveObservations": 10,
-    "lastAssessmentAt": "2026-09-15T06:08:03.135355+00:00",
+    "lastAssessmentAt": "2026-09-15T06:49:31.983402+00:00",
     "history": [
       {
-        "observationId": "ROBS-CBAA23D1",
-        "timestamp": "2026-09-15T06:08:02.975941+00:00",
+        "observationId": "ROBS-A4F289D0",
+        "timestamp": "2026-09-15T06:49:31.908799+00:00",
         "riskScore": 12.0,
         "riskLevel": "LOW",
         "predictionId": "NORMAL-BENIGN",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-ECCAB539",
-        "timestamp": "2026-09-15T06:08:02.985034+00:00",
+        "observationId": "ROBS-5F19709F",
+        "timestamp": "2026-09-15T06:49:31.914431+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-8B7A511F",
-        "timestamp": "2026-09-15T06:08:03.000510+00:00",
+        "observationId": "ROBS-A43B814B",
+        "timestamp": "2026-09-15T06:49:31.918425+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "TRAFFIC_SPIKE-ESCALATION",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-F86376DD",
-        "timestamp": "2026-09-15T06:08:03.015754+00:00",
+        "observationId": "ROBS-882241EE",
+        "timestamp": "2026-09-15T06:49:31.925668+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-E4DB8DC6",
-        "timestamp": "2026-09-15T06:08:03.028116+00:00",
+        "observationId": "ROBS-B956899A",
+        "timestamp": "2026-09-15T06:49:31.932910+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PORT_ANOMALY-ESCALATION",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-38714F83",
-        "timestamp": "2026-09-15T06:08:03.042347+00:00",
+        "observationId": "ROBS-92F7FD4D",
+        "timestamp": "2026-09-15T06:49:31.940925+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-C1AD437B",
-        "timestamp": "2026-09-15T06:08:03.065400+00:00",
+        "observationId": "ROBS-192EA9D5",
+        "timestamp": "2026-09-15T06:49:31.950817+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-CA4DD43F",
-        "timestamp": "2026-09-15T06:08:03.089592+00:00",
+        "observationId": "ROBS-3E8DB618",
+        "timestamp": "2026-09-15T06:49:31.962505+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-081FBC40",
-        "timestamp": "2026-09-15T06:08:03.110412+00:00",
+        "observationId": "ROBS-C340512B",
+        "timestamp": "2026-09-15T06:49:31.973462+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-0A2C74DB",
-        "timestamp": "2026-09-15T06:08:03.135355+00:00",
+        "observationId": "ROBS-9185EC81",
+        "timestamp": "2026-09-15T06:49:31.983402+00:00",
         "riskScore": 69.6,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-DB-01",
@@ -95,59 +95,59 @@
     "currentRiskLevel": "LOW",
     "riskTrend": "STABLE",
     "consecutiveObservations": 7,
-    "lastAssessmentAt": "2026-09-15T06:08:03.123341+00:00",
+    "lastAssessmentAt": "2026-09-15T06:49:31.978511+00:00",
     "history": [
       {
-        "observationId": "ROBS-C95F0414",
-        "timestamp": "2026-09-15T06:08:02.979276+00:00",
+        "observationId": "ROBS-E178FFAB",
+        "timestamp": "2026-09-15T06:49:31.910571+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-458CDB91",
-        "timestamp": "2026-09-15T06:08:03.008046+00:00",
+        "observationId": "ROBS-740B3F8F",
+        "timestamp": "2026-09-15T06:49:31.920635+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-E4B9E5B9",
-        "timestamp": "2026-09-15T06:08:03.031250+00:00",
+        "observationId": "ROBS-91F4AEC3",
+        "timestamp": "2026-09-15T06:49:31.934935+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-11BF861D",
-        "timestamp": "2026-09-15T06:08:03.055253+00:00",
+        "observationId": "ROBS-CA2F0AB4",
+        "timestamp": "2026-09-15T06:49:31.945670+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-EAB758E1",
-        "timestamp": "2026-09-15T06:08:03.075980+00:00",
+        "observationId": "ROBS-6F8B5D5D",
+        "timestamp": "2026-09-15T06:49:31.957658+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-80E78D4C",
-        "timestamp": "2026-09-15T06:08:03.101008+00:00",
+        "observationId": "ROBS-C6151093",
+        "timestamp": "2026-09-15T06:49:31.967051+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-C61085CE",
-        "timestamp": "2026-09-15T06:08:03.123341+00:00",
+        "observationId": "ROBS-9AD2F355",
+        "timestamp": "2026-09-15T06:49:31.978511+00:00",
         "riskScore": 0.0,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-ATTACKER-EXT",
@@ -161,59 +161,59 @@
     "currentRiskLevel": "LOW",
     "riskTrend": "STABLE",
     "consecutiveObservations": 7,
-    "lastAssessmentAt": "2026-09-15T06:08:03.127806+00:00",
+    "lastAssessmentAt": "2026-09-15T06:49:31.980178+00:00",
     "history": [
       {
-        "observationId": "ROBS-09C4D97D",
-        "timestamp": "2026-09-15T06:08:02.981272+00:00",
+        "observationId": "ROBS-4D07FEAD",
+        "timestamp": "2026-09-15T06:49:31.911791+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-F470815F",
-        "timestamp": "2026-09-15T06:08:03.011249+00:00",
+        "observationId": "ROBS-5AB53976",
+        "timestamp": "2026-09-15T06:49:31.923230+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-73A9303B",
-        "timestamp": "2026-09-15T06:08:03.034822+00:00",
+        "observationId": "ROBS-63DEFDBD",
+        "timestamp": "2026-09-15T06:49:31.936669+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-2F1D7A93",
-        "timestamp": "2026-09-15T06:08:03.059097+00:00",
+        "observationId": "ROBS-644815CA",
+        "timestamp": "2026-09-15T06:49:31.947669+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-0E7B5F0D",
-        "timestamp": "2026-09-15T06:08:03.079083+00:00",
+        "observationId": "ROBS-43F05EDC",
+        "timestamp": "2026-09-15T06:49:31.959230+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-92DE67A4",
-        "timestamp": "2026-09-15T06:08:03.105025+00:00",
+        "observationId": "ROBS-47A489AD",
+        "timestamp": "2026-09-15T06:49:31.968599+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-54967B8E",
-        "timestamp": "2026-09-15T06:08:03.127806+00:00",
+        "observationId": "ROBS-B4465F98",
+        "timestamp": "2026-09-15T06:49:31.980178+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-CLIENT-01",
@@ -227,59 +227,59 @@
     "currentRiskLevel": "HIGH",
     "riskTrend": "STABLE",
     "consecutiveObservations": 7,
-    "lastAssessmentAt": "2026-09-15T06:08:03.130964+00:00",
+    "lastAssessmentAt": "2026-09-15T06:49:31.981782+00:00",
     "history": [
       {
-        "observationId": "ROBS-9C772B09",
-        "timestamp": "2026-09-15T06:08:02.982799+00:00",
+        "observationId": "ROBS-925F1CA4",
+        "timestamp": "2026-09-15T06:49:31.912940+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-545B7F29",
-        "timestamp": "2026-09-15T06:08:03.013846+00:00",
+        "observationId": "ROBS-A0AC75ED",
+        "timestamp": "2026-09-15T06:49:31.924494+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-A35AB94D",
-        "timestamp": "2026-09-15T06:08:03.039824+00:00",
+        "observationId": "ROBS-F15B2FA9",
+        "timestamp": "2026-09-15T06:49:31.938740+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-57BCFE6E",
-        "timestamp": "2026-09-15T06:08:03.062403+00:00",
+        "observationId": "ROBS-9313BCA6",
+        "timestamp": "2026-09-15T06:49:31.949226+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-A3561313",
-        "timestamp": "2026-09-15T06:08:03.082549+00:00",
+        "observationId": "ROBS-280FFCB1",
+        "timestamp": "2026-09-15T06:49:31.960750+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-06A9B58A",
-        "timestamp": "2026-09-15T06:08:03.107529+00:00",
+        "observationId": "ROBS-A012E7B1",
+        "timestamp": "2026-09-15T06:49:31.970864+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-6C3D6FDD",
-        "timestamp": "2026-09-15T06:08:03.130964+00:00",
+        "observationId": "ROBS-590A72B1",
+        "timestamp": "2026-09-15T06:49:31.981782+00:00",
         "riskScore": 60.8,
         "riskLevel": "HIGH",
         "predictionId": "PRED-INIT-WEB-01",
@@ -293,59 +293,59 @@
     "currentRiskLevel": "LOW",
     "riskTrend": "STABLE",
     "consecutiveObservations": 7,
-    "lastAssessmentAt": "2026-09-15T06:08:03.138823+00:00",
+    "lastAssessmentAt": "2026-09-15T06:49:31.985179+00:00",
     "history": [
       {
-        "observationId": "ROBS-F465E2C8",
-        "timestamp": "2026-09-15T06:08:02.993734+00:00",
+        "observationId": "ROBS-95690697",
+        "timestamp": "2026-09-15T06:49:31.915676+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-0AA2ECDB",
-        "timestamp": "2026-09-15T06:08:03.020444+00:00",
+        "observationId": "ROBS-10123401",
+        "timestamp": "2026-09-15T06:49:31.926998+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-D2B8906C",
-        "timestamp": "2026-09-15T06:08:03.047343+00:00",
+        "observationId": "ROBS-C74F4CC2",
+        "timestamp": "2026-09-15T06:49:31.942645+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-52C4165A",
-        "timestamp": "2026-09-15T06:08:03.068881+00:00",
+        "observationId": "ROBS-E9AD1F11",
+        "timestamp": "2026-09-15T06:49:31.952443+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-0E90C4EA",
-        "timestamp": "2026-09-15T06:08:03.093736+00:00",
+        "observationId": "ROBS-A05C6045",
+        "timestamp": "2026-09-15T06:49:31.964179+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-20193B3A",
-        "timestamp": "2026-09-15T06:08:03.114491+00:00",
+        "observationId": "ROBS-F90F63CD",
+        "timestamp": "2026-09-15T06:49:31.975119+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
         "explanationId": null
       },
       {
-        "observationId": "ROBS-2CB27A81",
-        "timestamp": "2026-09-15T06:08:03.138823+00:00",
+        "observationId": "ROBS-17DDABCC",
+        "timestamp": "2026-09-15T06:49:31.985179+00:00",
         "riskScore": 5.76,
         "riskLevel": "LOW",
         "predictionId": "PRED-INIT-DNS-SERVER-01",
