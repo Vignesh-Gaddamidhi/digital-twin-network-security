@@ -64,3 +64,35 @@ class CanonicalResponseContract(BaseModel):
     result: ResponseResultRecord = Field(default_factory=ResponseResultRecord)
     auditEntryId: Optional[str] = None
     executionStatus: ResponseStatusEnum = ResponseStatusEnum.RECOMMENDED
+
+    @property
+    def status(self) -> ResponseStatusEnum:
+        return self.executionStatus
+
+    @property
+    def executionMode(self) -> ExecutionModeEnum:
+        return self.mode
+
+    @property
+    def resultSummary(self) -> str:
+        return self.result.message
+
+class ResponseExecutionRecord(BaseModel):
+    responseId: str = Field(default_factory=generate_canonical_response_id)
+    recommendationId: str = ""
+    actionType: ResponseActionType = ResponseActionType.ISOLATE_DEVICE
+    affectedDevice: str = ""
+    affectedLink: Optional[str] = None
+    affectedService: Optional[str] = None
+    reason: str = ""
+    triggeringAlert: str = ""
+    triggeringPrediction: str = ""
+    riskScore: float = 0.0
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    previousState: str = "NORMAL"
+    newState: str = "ISOLATED"
+    operator: str = "AUTO_DEFENDER_SIMULATOR"
+    executionMode: ExecutionModeEnum = ExecutionModeEnum.SIMULATION
+    status: ResponseStatusEnum = ResponseStatusEnum.RECOMMENDED
+    resultSummary: str = "Initialized"
+    auditEntryId: Optional[str] = None
