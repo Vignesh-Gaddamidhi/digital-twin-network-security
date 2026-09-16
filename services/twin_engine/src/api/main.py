@@ -1,3 +1,5 @@
+from frontend.response.safe_response_engine import safe_response_engine
+from frontend.response.response_models import ResponseActionType, ExecutionMode, SimulatedResponseRecord
 from frontend.realtime.phase20_graduation_orchestrator import phase20_graduation_orchestrator
 from frontend.realtime.realtime_store_engine import realtime_store_engine
 from frontend.realtime.live_security_engine import live_security_engine, EarlyWarningStateEnum
@@ -6851,4 +6853,49 @@ def api_get_realtime_performance_profile():
     return {
         "status": "REALTIME_PERFORMANCE_PROFILED",
         "metrics": perf
+    }
+
+# ==================== DAY 169: SAFE AUTOMATED RESPONSE SIMULATION API ====================
+
+class RecommendationRequest(BaseModel):
+    deviceId: str
+    riskScore: float
+    predictedCategory: str = "LATERAL_MOVEMENT"
+
+class ExecuteResponseRequest(BaseModel):
+    actionType: ResponseActionType
+    deviceId: str
+    triggeringAlertId: str = "ALT-AUTO-001"
+    triggeringPredictionId: str = "PRD-AUTO-001"
+    riskScore: float = 85.0
+    operator: str = "SOC_ANALYST"
+    reason: Optional[str] = None
+
+class RollbackResponseRequest(BaseModel):
+    responseId: str
+
+@app.post("/api/v1/twin/response/recommend")
+def api_recommend_response(req: RecommendationRequest):
+    rec = safe_response_engine.generate_recommendation(req.deviceId, req.riskScore, req.predictedCategory)
+    return {"status": "RECOMMENDATION_GENERATED", "recommendation": rec.model_dump()}
+
+@app.post("/api/v1/twin/response/execute")
+async def api_execute_simulated_response(req: ExecuteResponseRequest):
+    record = await safe_response_engine.execute_simulated_response(
+        req.actionType, req.deviceId, req.triggeringAlertId, req.triggeringPredictionId,
+        req.riskScore, req.operator, req.reason
+    )
+    return {"status": "SIMULATED_RESPONSE_EXECUTED", "record": record.model_dump()}
+
+@app.post("/api/v1/twin/response/rollback")
+async def api_rollback_simulated_response(req: RollbackResponseRequest):
+    record = await safe_response_engine.rollback_response(req.responseId)
+    return {"status": "RESPONSE_ROLLED_BACK", "record": record.model_dump()}
+
+@app.get("/api/v1/twin/response/ledger")
+def api_get_response_ledger():
+    return {
+        "status": "RESPONSE_LEDGER_RETRIEVED",
+        "totalRecords": len(safe_response_engine.response_ledger),
+        "ledger": [r.model_dump() for r in safe_response_engine.response_ledger]
     }
