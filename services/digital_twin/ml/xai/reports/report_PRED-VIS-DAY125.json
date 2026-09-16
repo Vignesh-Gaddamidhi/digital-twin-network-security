@@ -1,20 +1,20 @@
 {
-  "reportId": "REP-XAI-A02C1E60",
+  "reportId": "REP-XAI-5DF684EF",
   "auditTrail": {
-    "auditId": "AUDIT-D2788342",
-    "explanationId": "SHAP-B7FE1077",
+    "auditId": "AUDIT-2AD04439",
+    "explanationId": "SHAP-F719D063",
     "predictionId": "PRED-VIS-DAY125",
     "modelVersion": "rf-v1.0",
     "datasetVersion": "dataset-v1.0",
     "featureVersion": "feature-v1.0",
-    "timestamp": "2026-09-16T05:53:15.240366+00:00",
+    "timestamp": "2026-09-16T06:01:19.220291+00:00",
     "inputHash": "18e176bba4921b35ccf1de32cc4a195ca98940c18245527a67e31fc4baadc82f",
     "explanationMethod": "SHAP_TreeExplainer",
     "shapVersion": "0.52.0",
     "featureImportanceMethod": "TREE_IMPORTANCE"
   },
   "cardData": {
-    "cardId": "CARD-E3338719",
+    "cardId": "CARD-307E28E9",
     "predictionId": "PRED-VIS-DAY125",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",

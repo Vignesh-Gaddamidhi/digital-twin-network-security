@@ -1,0 +1,21 @@
+{
+  "baselineId": "run-p7-17090dff-stage-cb36ea",
+  "scenarioName": "Normal-stage-cb36ea",
+  "seed": 97034,
+  "durationSeconds": 3,
+  "totalEventsCount": 3,
+  "totalBytesTransferred": 11510,
+  "totalPacketsTransferred": 6,
+  "protocolDistribution": {
+    "HTTPS": 2,
+    "ICMP": 1
+  },
+  "portDistribution": {
+    "443": 2
+  },
+  "destinationDistribution": {
+    "web-01": 2,
+    "server-01": 1
+  },
+  "generatedAt": "2026-09-16T06:01:52.586277+00:00"
+}

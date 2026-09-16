@@ -14,7 +14,7 @@
     "loss": "binary_crossentropy",
     "epochsTrained": 25,
     "earlyStopped": true,
-    "trainingDurationMs": 44.15,
+    "trainingDurationMs": 55.08,
     "randomSeed": 42
   }
 }

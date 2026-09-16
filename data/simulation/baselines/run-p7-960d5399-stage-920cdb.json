@@ -1,0 +1,24 @@
+{
+  "baselineId": "run-p7-960d5399-stage-920cdb",
+  "scenarioName": "Normal-stage-920cdb",
+  "seed": 26383,
+  "durationSeconds": 5,
+  "totalEventsCount": 5,
+  "totalBytesTransferred": 10599,
+  "totalPacketsTransferred": 10,
+  "protocolDistribution": {
+    "HTTPS": 1,
+    "HTTP": 2,
+    "DNS": 2
+  },
+  "portDistribution": {
+    "443": 1,
+    "80": 2,
+    "53": 2
+  },
+  "destinationDistribution": {
+    "web-01": 3,
+    "dns-01": 2
+  },
+  "generatedAt": "2026-09-16T06:01:58.829291+00:00"
+}

@@ -1,0 +1,24 @@
+{
+  "baselineId": "run-p7-960d5399-stage-645810",
+  "scenarioName": "Normal-stage-645810",
+  "seed": 40143,
+  "durationSeconds": 5,
+  "totalEventsCount": 5,
+  "totalBytesTransferred": 19539,
+  "totalPacketsTransferred": 13,
+  "protocolDistribution": {
+    "HTTPS": 2,
+    "SSH": 1,
+    "ICMP": 2
+  },
+  "portDistribution": {
+    "443": 2,
+    "22": 1
+  },
+  "destinationDistribution": {
+    "web-01": 2,
+    "server-01": 2,
+    "db-01": 1
+  },
+  "generatedAt": "2026-09-16T06:01:58.821060+00:00"
+}
