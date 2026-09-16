@@ -1,3 +1,6 @@
+from security.response.models.response import CanonicalResponseContract
+from security.response.engine.twin_state_mutation_engine import twin_state_mutation_engine
+from security.response.engine.response_action_executor import response_action_executor, SecurityPostureLevelEnum
 from security.response.engine.recommendation_engine import response_recommendation_engine, RecommendationStatusEnum
 from security.response.audit.response_audit import response_audit_ledger
 from security.response.simulation.response_simulator import response_simulator
@@ -6952,3 +6955,79 @@ def api_update_recommendation_status(req: UpdateRecommendationStatusRequest):
     if not updated:
         raise HTTPException(status_code=404, detail="Recommendation ID not found")
     return {"status": "RECOMMENDATION_STATUS_UPDATED", "recommendation": updated.model_dump()}
+
+# ==================== DAY 172: SIMULATED RESPONSE ACTIONS API ====================
+
+class IsolateDeviceRequest(BaseModel):
+    deviceId: str
+
+class BlockConnectionRequest(BaseModel):
+    sourceDevice: str
+    destinationDevice: str
+    linkId: Optional[str] = None
+
+class DisableServiceRequest(BaseModel):
+    deviceId: str
+    serviceName: str
+
+class QuarantineEndpointRequest(BaseModel):
+    deviceId: str
+
+class IncreaseSecurityLevelRequest(BaseModel):
+    deviceId: str
+    posture: SecurityPostureLevelEnum = SecurityPostureLevelEnum.ELEVATED
+
+class MarkDeviceAtRiskRequest(BaseModel):
+    deviceId: str
+
+@app.post("/api/v1/twin/response/action/isolate")
+def api_action_isolate_device(req: IsolateDeviceRequest):
+    out = response_action_executor.execute_isolate_device(req.deviceId)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+@app.post("/api/v1/twin/response/action/block-connection")
+def api_action_block_connection(req: BlockConnectionRequest):
+    out = response_action_executor.execute_block_connection(req.sourceDevice, req.destinationDevice, req.linkId)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+@app.post("/api/v1/twin/response/action/disable-service")
+def api_action_disable_service(req: DisableServiceRequest):
+    out = response_action_executor.execute_disable_service(req.deviceId, req.serviceName)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+@app.post("/api/v1/twin/response/action/quarantine")
+def api_action_quarantine_endpoint(req: QuarantineEndpointRequest):
+    out = response_action_executor.execute_quarantine_endpoint(req.deviceId)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+@app.post("/api/v1/twin/response/action/security-level")
+def api_action_increase_security_level(req: IncreaseSecurityLevelRequest):
+    out = response_action_executor.execute_increase_security_level(req.deviceId, req.posture)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+@app.post("/api/v1/twin/response/action/mark-at-risk")
+def api_action_mark_device_at_risk(req: MarkDeviceAtRiskRequest):
+    out = response_action_executor.execute_mark_device_at_risk(req.deviceId)
+    return {"status": "ACTION_EXECUTED", "result": out.model_dump()}
+
+# ==================== DAY 173: TWIN STATE MUTATION & WEBSOCKET API ====================
+
+class ExecuteTransitionRequest(BaseModel):
+    contract: CanonicalResponseContract
+
+@app.post("/api/v1/twin/response/execute-transition")
+async def api_execute_twin_transition(req: ExecuteTransitionRequest):
+    record = await twin_state_mutation_engine.apply_response_to_twin_and_broadcast(req.contract)
+    return {"status": "TRANSITION_APPLIED", "record": record.model_dump()}
+
+@app.get("/api/v1/twin/response/history")
+def api_get_transition_history(device_id: Optional[str] = None):
+    if device_id:
+        history = twin_state_mutation_engine.get_history_for_device(device_id)
+    else:
+        history = twin_state_mutation_engine.get_latest_transitions(limit=50)
+    return {
+        "status": "TRANSITION_HISTORY_RETRIEVED",
+        "total": len(history),
+        "history": [h.model_dump() for h in history]
+    }

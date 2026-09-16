@@ -23,6 +23,7 @@ class RealtimeEventType(str, Enum):
     EARLY_WARNING_UPDATE = "EARLY_WARNING_UPDATE"
     TWIN_STATE_UPDATE = "TWIN_STATE_UPDATE"
     HEARTBEAT = "HEARTBEAT"
+    RESPONSE_UPDATE = "RESPONSE_UPDATE"
     ERROR = "ERROR"
 
 class RealtimeConnectionState(str, Enum):
@@ -185,3 +186,13 @@ class TwinStateSnapshot(BaseModel):
     attackPaths: List[Dict[str, Any]] = Field(default_factory=list)
     simulation: Dict[str, Any] = Field(default_factory=dict)
     earlyWarnings: Dict[str, Any] = Field(default_factory=dict)
+class ResponseUpdatePayload(BaseModel):
+    responseId: str
+    action: str
+    affectedDevice: str
+    previousState: str
+    newState: str
+    resultStatus: str = "SUCCESS"
+    mode: str = "SIMULATION"
+    details: Dict[str, Any] = Field(default_factory=dict)
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())

@@ -174,6 +174,19 @@ class RealtimeStoreEngine:
             did = p.get("targetDeviceId")
             self.earlyWarnings[did] = p
 
+        elif etype == RealtimeEventType.RESPONSE_UPDATE:
+            did = p.get("affectedDevice")
+            new_st = p.get("newState")
+            if did in self.devices:
+                self.devices[did].securityState = new_st
+            # Sever attack path if host is isolated
+            if new_st in ("ISOLATED", "QUARANTINED"):
+                for ap in self.attackPaths:
+                    if did in ap.get("nodeSequence", []):
+                        ap["reachability"] = "BLOCKED"
+                        ap["status"] = "BLOCKED"
+            self._add_notification("INFO", "Defensive Action Simulated", f"[{p.get('action')}] applied to {did}. State: {new_st}")
+
         elif etype == RealtimeEventType.ERROR:
             self.backendState = BackendHealthState.BACKEND_ERROR
             self._add_notification("CRITICAL", "Backend Error", f"[{p.get('errorCode')}] {p.get('errorMessage')}")
