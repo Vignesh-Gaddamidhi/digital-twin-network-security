@@ -46,7 +46,7 @@ class ResponseRecommendationEngine:
         evidence.extend([f"XAI Driver: {f}" for f in features])
 
         # 2. Heuristic Playbook Mapping (Ordered by Specificity)
-        if risk_score >= 80.0 or current_state == "COMPROMISED" or predicted_category in ("DATA_EXFILTRATION", "RANSOMWARE"):
+        if risk_score >= 70.0 or current_state == "COMPROMISED" or predicted_category in ("LATERAL_MOVEMENT", "DATA_EXFILTRATION", "RANSOMWARE"):
             action = ResponseActionType.ISOLATE_DEVICE
             priority = RecommendationPriorityEnum.CRITICAL
             reason = f"Critical threat {predicted_category} and elevated risk ({risk_score:.1f}) require full device containment."

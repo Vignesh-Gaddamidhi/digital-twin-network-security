@@ -7,19 +7,19 @@ An end-to-end security modeling platform combining network programming, syntheti
 
 ## Phase Progress Roadmap
 
-### Ã¢Å“â€¦ Phase 1: Network Fundamentals (Week 1 Ã¢â‚¬â€ Days 1 to 7)
+### ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Phase 1: Network Fundamentals (Week 1 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Days 1 to 7)
 - OSI 7-Layer & TCP/IP models, IP addressing, Subnetting, Ethernet framing.
 - Protocols: ARP, DHCP, DNS, TCP, UDP, HTTP, HTTPS, Routing, NAT, Firewalls.
 - Canonical Network Inventory (Devices D001 through D005).
 
-### Ã¢Å“â€¦ Phase 2: Network Programming & Traffic Pipeline (Week 2 Ã¢â‚¬â€ Days 8 to 14)
+### ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Phase 2: Network Programming & Traffic Pipeline (Week 2 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Days 8 to 14)
 - Python Sockets: TCP client/server state machines; UDP datagram transmission.
 - Scapy Crafting: Layer composition (`Ether / IP / TCP / Payload`), field manipulation, Shannon entropy.
 - Telemetry & PCAP: Binary PCAP parsing, protocol classifier (`DNS`, `HTTP`, `TLS`), JSON serialization.
 - Generators & Monitored Flows: Behavioral profiles (`WEB_BROWSING`, `DNS_HEARTBEAT`, `ICMP_PING`), PPS/BPS rate meters.
 - Closed-loop pipeline from traffic synthesis to Digital Twin API ingest.
 
-### Ã¢Å“â€¦ Phase 3: Cybersecurity Fundamentals & Anomaly Detection (Week 3 Ã¢â‚¬â€ Days 15 to 21)
+### ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Phase 3: Cybersecurity Fundamentals & Anomaly Detection (Week 3 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Days 15 to 21)
 - Security Governance: Dynamic CIA Triad degradation modeling on virtual nodes.
 - Risk Modeling: Dynamic composite risk equations, attack surface analysis, CVSS scoring.
 - Detection Systems: Hybrid IDS/IPS engine (signature rules + statistical thresholds), Suricata EVE logs.
@@ -27,7 +27,7 @@ An end-to-end security modeling platform combining network programming, syntheti
 - MITRE ATT&CK: Kill-chain taxonomy mapping (`TA0043`, `TA0002`, `TA0006`, `TA0008`) with confidence scores.
 - Anomaly Detector: Standalone `network_anomaly_detector` service with standard-score ($Z$-score) continuous scoring $[0, 100]$.
 
-### Ã¢Å“â€¦ Phase 4: Digital Twin Fundamentals & Core Assembly (Week 4 Ã¢â‚¬â€ Days 22 to 28)
+### ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Phase 4: Digital Twin Fundamentals & Core Assembly (Week 4 ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Days 22 to 28)
 - Concept Formulation: Formal definition $\mathcal{DT}(t) = \langle \mathcal{G}, \mathcal{S}, \mathcal{V}, \mathcal{R}, \Phi \rangle$, 9-stage lifecycle.
 - Device Digital Twin: Multi-homed interface modeling, OS kernel profiles, port registries, service daemons.
 - Network Topology: Directed multigraph modeling in NetworkX, Dijkstra shortest path, articulation points.

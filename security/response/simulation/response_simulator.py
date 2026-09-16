@@ -49,15 +49,18 @@ class ResponseSimulator:
             action = ResponseActionType.MARK_DEVICE_AT_RISK
             reason = f"Anomaly detected; host tagged as at-risk."
 
+        level = RiskLevelTier.CRITICAL if risk_score >= 80 else RiskLevelTier.HIGH if risk_score >= 60 else RiskLevelTier.MEDIUM
         return ResponseRecommendation(
-            actionType=action,
-            targetDeviceId=device_id,
-            confidenceScore=0.95,
+            alertId=alert_id,
+            predictionId=prediction_id,
+            deviceId=device_id,
             riskScore=risk_score,
+            riskLevel=level,
+            recommendedAction=action,
             reason=reason,
-            triggeringAlertId=alert_id,
-            triggeringPredictionId=prediction_id,
-            xaiExplanationSnippet=explanation
+            evidence=[explanation],
+            confidence=0.95,
+            simulationRequired=True
         )
 
     def create_canonical_response_contract(
@@ -66,9 +69,13 @@ class ResponseSimulator:
         operator: str = "AUTOMATED_SIMULATION",
         mode: ExecutionModeEnum = ExecutionModeEnum.SIMULATION
     ) -> CanonicalResponseContract:
-        did = recommendation.targetDeviceId
+        did = recommendation.deviceId or getattr(recommendation, "targetDeviceId", None) or "WEB-01"
+        action = getattr(recommendation, "recommendedAction", getattr(recommendation, "actionType", ResponseActionType.ISOLATE_DEVICE))
+        alert_id = recommendation.alertId or getattr(recommendation, "triggeringAlertId", None) or "ALT-001"
+        prediction_id = recommendation.predictionId or getattr(recommendation, "triggeringPredictionId", None) or "PRD-001"
+
         prev_st = attack_path_graph.nodes[did].securityState if did in attack_path_graph.nodes else "NORMAL"
-        _, target_st, _ = state_transition_engine.resolve_target_state(recommendation.actionType, prev_st)
+        _, target_st, _ = state_transition_engine.resolve_target_state(action, prev_st)
 
         # Risk Breakdown calculation (P * C * V * I = score)
         threat_prob = round(recommendation.riskScore / 80.0, 2)  # calibrated scale
@@ -93,7 +100,7 @@ class ResponseSimulator:
         )
 
         alert_ref = TriggeringAlertReference(
-            alertId=recommendation.triggeringAlertId,
+            alertId=alert_id,
             eventType="UNAUTHORIZED_ACCESS",
             severity=RiskLevelTier.CRITICAL if calculated_score >= 80 else RiskLevelTier.HIGH,
             confidence=0.94,
@@ -101,7 +108,7 @@ class ResponseSimulator:
         )
 
         pred_ref = TriggeringPredictionReference(
-            predictionId=recommendation.triggeringPredictionId,
+            predictionId=prediction_id,
             threatProbability=threat_prob,
             predictedCategory="LATERAL_MOVEMENT",
             categoryConfidence=0.92
@@ -109,7 +116,7 @@ class ResponseSimulator:
 
         return CanonicalResponseContract(
             responseId=generate_canonical_response_id(),
-            action=recommendation.actionType,
+            action=action,
             reason=recommendation.reason,
             triggeringAlert=alert_ref,
             triggeringPrediction=pred_ref,
