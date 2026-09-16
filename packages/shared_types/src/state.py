@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import model_validator, BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
 import uuid
@@ -28,6 +28,19 @@ class SecurityStateModel(BaseModel):
     last_evaluated: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 class StateTransitionRecord(BaseModel):
+
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_transition(cls, data):
+        if isinstance(data, dict):
+            d = dict(data)
+            trig = d.get("trigger_source") or d.get("trigger") or "MANUAL"
+            d["trigger_source"] = trig
+            d["trigger"] = trig
+            if "risk_score" not in d:
+                d["risk_score"] = float(d.get("compositeRiskScore") or d.get("riskScore") or 0.0)
+            return d
+        return data
     history_id: str = Field(default_factory=lambda: f"hist-{uuid.uuid4().hex[:8]}")
     device_id: str
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
