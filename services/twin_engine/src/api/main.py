@@ -1,3 +1,4 @@
+from security.response.audit.response_audit import response_audit_trail_engine, AuditFilterCriteria
 from security.response.models.response import CanonicalResponseContract
 from security.response.engine.twin_state_mutation_engine import twin_state_mutation_engine
 from security.response.engine.response_action_executor import response_action_executor, SecurityPostureLevelEnum
@@ -7030,4 +7031,25 @@ def api_get_transition_history(device_id: Optional[str] = None):
         "status": "TRANSITION_HISTORY_RETRIEVED",
         "total": len(history),
         "history": [h.model_dump() for h in history]
+    }
+
+# ==================== DAY 174: RESPONSE AUDIT TRAIL & LINEAGE API ====================
+
+@app.post("/api/v1/twin/response/audit/query")
+def api_query_audit_trail(criteria: Optional[AuditFilterCriteria] = None):
+    results = response_audit_trail_engine.query_audit_history(criteria)
+    return {
+        "status": "AUDIT_RECORDS_RETRIEVED",
+        "totalRecords": len(results),
+        "records": [r.model_dump() for r in results]
+    }
+
+@app.get("/api/v1/twin/response/audit/lineage")
+def api_get_intelligence_lineage(response_id: str):
+    chain = response_audit_trail_engine.get_full_intelligence_chain(response_id)
+    if not chain:
+        raise HTTPException(status_code=404, detail="Response ID not found in forensic ledger")
+    return {
+        "status": "LINEAGE_RECONSTRUCTED",
+        "lineage": chain
     }
