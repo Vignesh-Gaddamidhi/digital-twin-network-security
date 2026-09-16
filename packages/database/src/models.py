@@ -133,6 +133,12 @@ class Device(Base):
     in_connections = relationship("NetworkConnection", foreign_keys="NetworkConnection.destination_device_id", back_populates="dest_device", cascade="all, delete-orphan")
     out_edges = relationship("TopologyEdge", foreign_keys="TopologyEdge.source_device_id", back_populates="source_device", cascade="all, delete-orphan")
     in_edges = relationship("TopologyEdge", foreign_keys="TopologyEdge.destination_device_id", back_populates="dest_device", cascade="all, delete-orphan")
+    alerts = relationship("Alert", back_populates="affected_device", cascade="all, delete-orphan")
+    predictions = relationship("Prediction", back_populates="device", cascade="all, delete-orphan")
+    temporal_predictions = relationship("TemporalPrediction", back_populates="device", cascade="all, delete-orphan")
+    risk_assessments = relationship("RiskAssessment", back_populates="device", cascade="all, delete-orphan")
+    source_attack_paths = relationship("AttackPath", foreign_keys="AttackPath.source_device_id", back_populates="source_device", cascade="all, delete-orphan")
+    dest_attack_paths = relationship("AttackPath", foreign_keys="AttackPath.destination_device_id", back_populates="dest_device", cascade="all, delete-orphan")
 
 class DeviceInterface(Base):
     __tablename__ = "interfaces"
@@ -286,6 +292,8 @@ class SecurityEvent(Base):
     status = Column(String, default="UNRESOLVED", nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
+    ids_events = relationship("IdsEvent", back_populates="security_event")
+
 class IdsEvent(Base):
     __tablename__ = "ids_events"
 
@@ -302,6 +310,10 @@ class IdsEvent(Base):
     sensor = Column(String, default="SURICATA", nullable=False)
     raw_reference = Column(Text, nullable=True)
     security_event_id = Column(String, ForeignKey("security_events.event_id", ondelete="SET NULL"), nullable=True)
+
+    security_event = relationship("SecurityEvent", back_populates="ids_events")
+
+# ==================== SOC INTELLIGENCE ====================
 
 class Alert(Base):
     __tablename__ = "alerts"
@@ -327,6 +339,10 @@ class Alert(Base):
     incident_id = Column(String, ForeignKey("incidents.incident_id", ondelete="SET NULL"), nullable=True)
     security_event_id = Column(String, ForeignKey("security_events.event_id", ondelete="SET NULL"), nullable=True)
 
+    affected_device = relationship("Device", back_populates="alerts")
+    incident = relationship("Incident", back_populates="alerts")
+    predictions = relationship("Prediction", back_populates="alert")
+
 class Incident(Base):
     __tablename__ = "incidents"
 
@@ -338,6 +354,117 @@ class Incident(Base):
     assigned_operator = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    alerts = relationship("Alert", back_populates="incident")
+    predictions = relationship("Prediction", back_populates="incident")
+    risk_assessments = relationship("RiskAssessment", back_populates="incident")
+    attack_paths = relationship("AttackPath", back_populates="incident")
+
+class Prediction(Base):
+    __tablename__ = "predictions"
+
+    prediction_id = Column(String, primary_key=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    source = Column(String, nullable=True)
+    destination = Column(String, nullable=True)
+    threat_probability = Column(Float, nullable=False)
+    threat_class = Column(String, nullable=False)
+    predicted_category = Column(String, nullable=False)
+    category_confidence = Column(Float, nullable=False)
+    risk_score = Column(Float, default=0.0, nullable=False)
+    risk_level = Column(String, default="MEDIUM", nullable=False)
+    model_name = Column(String, nullable=False)
+    model_version = Column(String, nullable=False)
+    feature_version = Column(String, default="v1.0", nullable=False)
+    evidence = Column(Text, nullable=True)
+    prediction_status = Column(String, default="ACTIVE", nullable=False)
+
+    alert_id = Column(String, ForeignKey("alerts.alert_id", ondelete="SET NULL"), nullable=True)
+    incident_id = Column(String, ForeignKey("incidents.incident_id", ondelete="SET NULL"), nullable=True)
+
+    device = relationship("Device", back_populates="predictions")
+    alert = relationship("Alert", back_populates="predictions")
+    incident = relationship("Incident", back_populates="predictions")
+    xai_explanation = relationship("XaiExplanation", back_populates="prediction", uselist=False, cascade="all, delete-orphan")
+
+class TemporalPrediction(Base):
+    __tablename__ = "temporal_predictions"
+
+    prediction_id = Column(String, primary_key=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    current_threat_probability = Column(Float, nullable=False)
+    future_threat_probability = Column(Float, nullable=False)
+    prediction_horizon = Column(String, default="30s", nullable=False)
+    lead_time = Column(Float, nullable=False)
+    impact_stage = Column(String, nullable=False)
+    warning_status = Column(SAEnum(ThreatWarningStatusEnum, name="ThreatWarningStatus", native_enum=True), default=ThreatWarningStatusEnum.WATCH, nullable=False)
+    model_name = Column(String, nullable=False)
+    model_version = Column(String, nullable=False)
+    feature_version = Column(String, default="v1.0", nullable=False)
+
+    device = relationship("Device", back_populates="temporal_predictions")
+
+class XaiExplanation(Base):
+    __tablename__ = "xai_explanations"
+
+    explanation_id = Column(String, primary_key=True)
+    prediction_id = Column(String, ForeignKey("predictions.prediction_id", ondelete="CASCADE"), unique=True, nullable=False)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    model_name = Column(String, nullable=False)
+    model_version = Column(String, nullable=False)
+    base_value = Column(Float, nullable=False)
+    prediction_probability = Column(Float, nullable=False)
+    feature_values = Column(JSONB, nullable=False)
+    feature_importance = Column(JSONB, nullable=False)
+    shap_contributions = Column(JSONB, nullable=False)
+    human_explanation = Column(Text, nullable=False)
+    explanation_type = Column(String, default="TreeSHAP", nullable=False)
+
+    prediction = relationship("Prediction", back_populates="xai_explanation")
+
+class RiskAssessment(Base):
+    __tablename__ = "risk_assessments"
+
+    risk_id = Column(String, primary_key=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    threat_probability = Column(Float, nullable=False)
+    asset_criticality = Column(Float, nullable=False)
+    vulnerability_factor = Column(Float, nullable=False)
+    attack_impact = Column(Float, nullable=False)
+    risk_score = Column(Float, nullable=False)
+    risk_level = Column(String, nullable=False)
+    source = Column(String, default="CANONICAL_ENGINE", nullable=False)
+
+    incident_id = Column(String, ForeignKey("incidents.incident_id", ondelete="SET NULL"), nullable=True)
+
+    device = relationship("Device", back_populates="risk_assessments")
+    incident = relationship("Incident", back_populates="risk_assessments")
+
+class AttackPath(Base):
+    __tablename__ = "attack_paths"
+
+    attack_path_id = Column(String, primary_key=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    source_device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    destination_device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    path = Column(ARRAY(String), default=list, nullable=False)
+    risk_score = Column(Float, nullable=False)
+    vulnerabilities = Column(ARRAY(String), default=list, nullable=False)
+    exposure = Column(String, default="INTERNAL", nullable=False)
+    reachability = Column(String, default="POSSIBLE", nullable=False)
+    status = Column(SAEnum(AttackPathStatusEnum, name="AttackPathStatus", native_enum=True), default=AttackPathStatusEnum.POSSIBLE, nullable=False)
+    evidence = Column(Text, nullable=True)
+
+    incident_id = Column(String, ForeignKey("incidents.incident_id", ondelete="SET NULL"), nullable=True)
+
+    source_device = relationship("Device", foreign_keys=[source_device_id], back_populates="source_attack_paths")
+    dest_device = relationship("Device", foreign_keys=[destination_device_id], back_populates="dest_attack_paths")
+    incident = relationship("Incident", back_populates="attack_paths")
+
+# ==================== GOVERNANCE ====================
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
