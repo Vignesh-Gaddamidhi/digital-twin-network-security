@@ -1,3 +1,7 @@
+from security.response.audit.response_audit import response_audit_ledger
+from security.response.simulation.response_simulator import response_simulator
+from security.response.models.recommendation import ResponseRecommendation
+from security.response.models.action import ResponseActionType, ExecutionModeEnum
 from frontend.response.safe_response_engine import safe_response_engine
 from frontend.response.response_models import ResponseActionType, ExecutionMode, SimulatedResponseRecord
 from frontend.realtime.phase20_graduation_orchestrator import phase20_graduation_orchestrator
@@ -6857,45 +6861,45 @@ def api_get_realtime_performance_profile():
 
 # ==================== DAY 169: SAFE AUTOMATED RESPONSE SIMULATION API ====================
 
-class RecommendationRequest(BaseModel):
+class RecommendResponseRequest(BaseModel):
     deviceId: str
     riskScore: float
-    predictedCategory: str = "LATERAL_MOVEMENT"
+    alertId: str
+    predictionId: str
+    category: str = "LATERAL_MOVEMENT"
+    explanation: str = "Observed suspicious traversal attempt."
 
 class ExecuteResponseRequest(BaseModel):
-    actionType: ResponseActionType
-    deviceId: str
-    triggeringAlertId: str = "ALT-AUTO-001"
-    triggeringPredictionId: str = "PRD-AUTO-001"
-    riskScore: float = 85.0
-    operator: str = "SOC_ANALYST"
-    reason: Optional[str] = None
-
-class RollbackResponseRequest(BaseModel):
-    responseId: str
+    recommendation: ResponseRecommendation
+    executionMode: ExecutionModeEnum = ExecutionModeEnum.SIMULATION
+    operator: str = "SECURITY_LEAD_OPERATOR"
 
 @app.post("/api/v1/twin/response/recommend")
-def api_recommend_response(req: RecommendationRequest):
-    rec = safe_response_engine.generate_recommendation(req.deviceId, req.riskScore, req.predictedCategory)
+def api_generate_response_recommendation(req: RecommendResponseRequest):
+    rec = response_simulator.generate_recommendation_from_intelligence(
+        device_id=req.deviceId,
+        risk_score=req.riskScore,
+        alert_id=req.alertId,
+        prediction_id=req.predictionId,
+        category=req.category,
+        explanation=req.explanation
+    )
     return {"status": "RECOMMENDATION_GENERATED", "recommendation": rec.model_dump()}
 
-@app.post("/api/v1/twin/response/execute")
+@app.post("/api/v1/twin/response/simulate")
 async def api_execute_simulated_response(req: ExecuteResponseRequest):
-    record = await safe_response_engine.execute_simulated_response(
-        req.actionType, req.deviceId, req.triggeringAlertId, req.triggeringPredictionId,
-        req.riskScore, req.operator, req.reason
+    res = await response_simulator.execute_simulated_response(
+        recommendation=req.recommendation,
+        execution_mode=req.executionMode,
+        operator=req.operator
     )
-    return {"status": "SIMULATED_RESPONSE_EXECUTED", "record": record.model_dump()}
+    return {"status": "RESPONSE_SIMULATED", "record": res.model_dump()}
 
-@app.post("/api/v1/twin/response/rollback")
-async def api_rollback_simulated_response(req: RollbackResponseRequest):
-    record = await safe_response_engine.rollback_response(req.responseId)
-    return {"status": "RESPONSE_ROLLED_BACK", "record": record.model_dump()}
-
-@app.get("/api/v1/twin/response/ledger")
-def api_get_response_ledger():
+@app.get("/api/v1/twin/response/audit/ledger")
+def api_get_response_audit_ledger():
+    entries = response_audit_ledger.get_latest_entries(limit=50)
     return {
-        "status": "RESPONSE_LEDGER_RETRIEVED",
-        "totalRecords": len(safe_response_engine.response_ledger),
-        "ledger": [r.model_dump() for r in safe_response_engine.response_ledger]
+        "status": "AUDIT_LEDGER_RETRIEVED",
+        "totalEntries": len(entries),
+        "entries": [e.model_dump() for e in entries]
     }
