@@ -1,43 +1,77 @@
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["twin"]
 }
 
 generator client {
   provider             = "prisma-client-py"
-  previewFeatures      = ["multiSchema"]
   recursive_type_depth = 5
 }
 
 // ==========================================
 // 1. IDENTITY & ACCESS MANAGEMENT (RBAC)
 // ==========================================
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+  SUSPENDED
+}
+
 model User {
   id           String     @id @default(uuid())
   username     String     @unique
+  displayName  String     @map("display_name")
   email        String     @unique
-  fullName     String     @map("full_name")
-  role         String     @default("SOC_ANALYST")
-  status       String     @default("ACTIVE")
+  passwordHash String     @map("password_hash")
+  roleId       String     @map("role_id")
+  status       UserStatus @default(ACTIVE)
+  lastActivity DateTime?  @map("last_activity")
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  role         Role       @relation(fields: [roleId], references: [id])
   auditLogs    AuditLog[]
 
   @@map("users")
-  @@schema("twin")
 }
 
 model Role {
-  id          String   @id @default(uuid())
-  name        String   @unique
-  description String?
-  permissions String[]
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  users           User[]
+  rolePermissions RolePermission[]
 
   @@map("roles")
-  @@schema("twin")
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  assignedAt   DateTime   @default(now()) @map("assigned_at")
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
 }
 
 // ==========================================
@@ -68,7 +102,6 @@ model Device {
   inConnections    NetworkConnection[]  @relation("DestDevice")
 
   @@map("devices")
-  @@schema("twin")
 }
 
 model DeviceInterface {
@@ -85,7 +118,6 @@ model DeviceInterface {
   device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@map("device_interfaces")
-  @@schema("twin")
 }
 
 model DeviceService {
@@ -100,7 +132,6 @@ model DeviceService {
   device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@map("device_services")
-  @@schema("twin")
 }
 
 model DevicePort {
@@ -115,7 +146,6 @@ model DevicePort {
   device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@map("device_ports")
-  @@schema("twin")
 }
 
 model DeviceRoute {
@@ -130,7 +160,6 @@ model DeviceRoute {
   device          Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@map("device_routes")
-  @@schema("twin")
 }
 
 model NetworkConnection {
@@ -150,7 +179,6 @@ model NetworkConnection {
   destDevice          Device   @relation("DestDevice", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
 
   @@map("network_connections")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -166,7 +194,6 @@ model TelemetryRecord {
   timestamp   DateTime @default(now())
 
   @@map("telemetry_records")
-  @@schema("twin")
 }
 
 model TrafficFlow {
@@ -183,7 +210,6 @@ model TrafficFlow {
   timestamp     DateTime @default(now())
 
   @@map("traffic_flows")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -204,7 +230,6 @@ model SecurityEvent {
   timestamp       DateTime @default(now())
 
   @@map("security_events")
-  @@schema("twin")
 }
 
 model Alert {
@@ -224,7 +249,6 @@ model Alert {
   incident        Incident? @relation(fields: [incidentId], references: [id])
 
   @@map("alerts")
-  @@schema("twin")
 }
 
 model Incident {
@@ -241,7 +265,6 @@ model Incident {
   alerts           Alert[]
 
   @@map("incidents")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -264,7 +287,6 @@ model ThreatPrediction {
   xaiExplanation     XaiExplanation?
 
   @@map("threat_predictions")
-  @@schema("twin")
 }
 
 model XaiExplanation {
@@ -280,7 +302,6 @@ model XaiExplanation {
   prediction         ThreatPrediction @relation(fields: [predictionId], references: [id], onDelete: Cascade)
 
   @@map("xai_explanations")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -298,7 +319,6 @@ model RiskAssessment {
   calculatedAt       DateTime @default(now()) @map("calculated_at")
 
   @@map("risk_assessments")
-  @@schema("twin")
 }
 
 model AttackPath {
@@ -313,7 +333,6 @@ model AttackPath {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("attack_paths")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -330,7 +349,6 @@ model SimulationRun {
   completedAt     DateTime? @map("completed_at")
 
   @@map("simulation_runs")
-  @@schema("twin")
 }
 
 model Vulnerability {
@@ -348,7 +366,6 @@ model Vulnerability {
   device          Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
   @@map("vulnerabilities")
-  @@schema("twin")
 }
 
 // ==========================================
@@ -371,5 +388,4 @@ model AuditLog {
   user           User?    @relation(fields: [userId], references: [id])
 
   @@map("audit_logs")
-  @@schema("twin")
 }
