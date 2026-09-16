@@ -1,7 +1,7 @@
 [
   {
-    "alertId": "ALT-XAI-501E84D3",
-    "timestamp": "2026-09-16T03:55:52.498486+00:00",
+    "alertId": "ALT-XAI-3E6BFDF5",
+    "timestamp": "2026-09-16T05:09:30.815656+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-PORT_SCAN",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -17,7 +17,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-4320303B",
+    "explanationId": "EXP-9BBD4AEE",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -45,8 +45,8 @@
     "status": "ACTIVE"
   },
   {
-    "alertId": "ALT-XAI-6FA7F437",
-    "timestamp": "2026-09-16T03:55:52.608474+00:00",
+    "alertId": "ALT-XAI-9EB98CCC",
+    "timestamp": "2026-09-16T05:09:30.941561+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-DOS_LIKE",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -62,7 +62,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-B117A666",
+    "explanationId": "EXP-8517C2B4",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -103,8 +103,8 @@
     "status": "ACTIVE"
   },
   {
-    "alertId": "ALT-XAI-2CFCD3E0",
-    "timestamp": "2026-09-16T03:55:52.718648+00:00",
+    "alertId": "ALT-XAI-8B644AA6",
+    "timestamp": "2026-09-16T05:09:31.047766+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-DNS_ANOMALY",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -120,7 +120,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-23CE0D0C",
+    "explanationId": "EXP-FDB57209",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -141,8 +141,8 @@
     "status": "ACTIVE"
   },
   {
-    "alertId": "ALT-XAI-98864DE9",
-    "timestamp": "2026-09-16T03:55:52.824627+00:00",
+    "alertId": "ALT-XAI-31851B8A",
+    "timestamp": "2026-09-16T05:09:31.193426+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-BEACONING",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -158,7 +158,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-442B5459",
+    "explanationId": "EXP-18F9058C",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -186,8 +186,8 @@
     "status": "ACTIVE"
   },
   {
-    "alertId": "ALT-XAI-953CA92F",
-    "timestamp": "2026-09-16T03:55:52.935025+00:00",
+    "alertId": "ALT-XAI-E365AF15",
+    "timestamp": "2026-09-16T05:09:31.319655+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-LATERAL_MOVEMENT_LIKE",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -203,7 +203,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-CC336404",
+    "explanationId": "EXP-CD1F7A9F",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
@@ -231,8 +231,8 @@
     "status": "ACTIVE"
   },
   {
-    "alertId": "ALT-XAI-BA9A60E6",
-    "timestamp": "2026-09-16T03:55:53.267616+00:00",
+    "alertId": "ALT-XAI-BBFB1B9F",
+    "timestamp": "2026-09-16T05:09:31.430379+00:00",
     "source": "ATTACKER-HOST",
     "destination": "VICTIM-EXFILTRATION_LIKE",
     "eventType": "ML_ATTACK_PREDICTION",
@@ -248,7 +248,7 @@
     "futureThreatProbabilityFormatted": "87.0%",
     "earlyWarningStatus": "HIGH_CONFIDENCE_WARNING",
     "leadTimeFormatted": "35.0 seconds",
-    "explanationId": "EXP-D99B0CDA",
+    "explanationId": "EXP-0488FF2C",
     "topContributingFeatures": [
       {
         "featureName": "port_80_ratio",
