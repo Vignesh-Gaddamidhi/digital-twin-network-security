@@ -1,12 +1,14 @@
 import sys
 import asyncio
 from pathlib import Path
+from sqlalchemy import select, delete
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from packages.database.src.db_connection import db_manager
+from packages.database.src.models import Device, NetworkConnection, TopologyEdge, PortStateEnum
 from packages.database.src.twin_persistence_repository import twin_persistence_repo
 from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
 
@@ -14,9 +16,6 @@ async def run_day185_suite():
     print("=" * 80)
     print("       WEEK 27 - DAY 185: DIGITAL TWIN DATABASE PERSISTENCE AUDIT")
     print("================================================================================\n")
-
-    await db_manager.connect()
-    prisma = db_manager.client
 
     # 1. Device Aggregate Persistence
     print("[1/5] Auditing Structured Device Persistence (WEB-01)...")
@@ -93,7 +92,7 @@ async def run_day185_suite():
     )
     assert conn.id == "CONN-WEB-DB-01"
     print(f"    Connection ID      : {conn.id}")
-    print(f"    Endpoints          : {conn.sourceDeviceId}:{conn.sourcePort} -> {conn.destinationDeviceId}:{conn.destinationPort}")
+    print(f"    Endpoints          : {conn.source_device_id}:{conn.source_port} -> {conn.destination_device_id}:{conn.destination_port}")
     print("    [PASS] Network connection registered with relational foreign keys.")
 
     # 4. Topology Edge Persistence (G = (V, E))
@@ -140,15 +139,15 @@ async def run_day185_suite():
     )
     print("    [PASS] Universal identity invariant confirmed without divergence.")
 
-    # Clean Up Test Records
+    # Clean Up Test Records via SQLAlchemy Session
     print("\n[*] Cleaning Up Test Records...")
-    await prisma.topologyedge.delete(where={"id": "EDGE-WEB-DB-TCP"})
-    await prisma.networkconnection.delete(where={"id": "CONN-WEB-DB-01"})
-    await prisma.device.delete(where={"id": "DB-01"})
-    await prisma.device.delete(where={"id": "WEB-01"})
+    async with db_manager.session() as sess:
+        await sess.execute(delete(TopologyEdge).where(TopologyEdge.id == "EDGE-WEB-DB-TCP"))
+        await sess.execute(delete(NetworkConnection).where(NetworkConnection.id == "CONN-WEB-DB-01"))
+        await sess.execute(delete(Device).where(Device.id.in_(["DB-01", "WEB-01"])))
+        await sess.flush()
     print("    [PASS] Ephemeral test records removed.")
 
-    await db_manager.disconnect()
     print("\n" + "=" * 80)
     print("       ALL DAY 185 DIGITAL TWIN PERSISTENCE TESTS PASSED CLEANLY")
     print("================================================================================")

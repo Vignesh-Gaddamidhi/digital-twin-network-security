@@ -2,12 +2,11 @@ import sys
 import asyncio
 from pathlib import Path
 
-# Add project root to sys.path
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from packages.database.src.db_connection import db_manager
+from packages.database.src.db_connection import db_manager, Base
 from packages.database.src.identity_repository import identity_repository
 
 CANONICAL_PERMISSIONS = [
@@ -63,8 +62,11 @@ CANONICAL_ROLES = {
 }
 
 async def seed_rbac_data():
-    """Seeds canonical roles, permissions, and initial admin operator into PostgreSQL."""
-    await db_manager.connect()
+    engine = await db_manager.connect()
+    async with engine.begin() as conn:
+        # Create all tables directly in PostgreSQL
+        await conn.run_sync(Base.metadata.create_all)
+    
     print("[*] Seeding Granular Security Permissions...")
     perm_map = {}
     for name, desc in CANONICAL_PERMISSIONS:
@@ -76,8 +78,6 @@ async def seed_rbac_data():
     for role_name, config in CANONICAL_ROLES.items():
         r = await identity_repository.create_role(role_name, config["description"])
         role_map[role_name] = r.id
-
-        # Bind role permissions
         for p_name in config["permissions"]:
             if p_name in perm_map:
                 await identity_repository.assign_permission_to_role(r.id, perm_map[p_name])

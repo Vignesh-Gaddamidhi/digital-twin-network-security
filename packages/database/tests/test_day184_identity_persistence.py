@@ -30,7 +30,7 @@ async def run_day184_suite():
     print("\n[2/5] Auditing Role & Permission Join Mapping (Role: SOC_ANALYST)...")
     analyst_role = await identity_repository.get_role_by_name("SOC_ANALYST")
     assert analyst_role is not None
-    perms = [rp.permission.name for rp in analyst_role.rolePermissions]
+    perms = [p.name for p in analyst_role.permissions]
     print(f"    Role Name          : {analyst_role.name}")
     print(f"    Permissions Count  : {len(perms)}")
     print(f"    Sample Permissions : {', '.join(perms[:4])}")
@@ -41,6 +41,10 @@ async def run_day184_suite():
 
     # 3. User Creation with Role Binding
     print("\n[3/5] Auditing User Account Creation & Role Association...")
+    existing_user = await identity_repository.get_user_by_username("mwright_test")
+    if existing_user:
+        await identity_repository.delete_user(existing_user.id)
+
     test_user = await identity_repository.create_user(
         username="mwright_test",
         display_name="Marcus Wright",
@@ -65,18 +69,17 @@ async def run_day184_suite():
         status="LOCKED",
         last_activity=datetime.now(timezone.utc)
     )
-    assert updated_user.displayName == "Marcus Wright (Lead)"
+    assert updated_user.display_name == "Marcus Wright (Lead)"
     assert updated_user.status == "LOCKED"
-    assert updated_user.lastActivity is not None
-    print(f"    Updated Display   : {updated_user.displayName}")
+    assert updated_user.last_activity is not None
+    print(f"    Updated Display   : {updated_user.display_name}")
     print(f"    Updated Status    : {updated_user.status}")
     print("    [PASS] User state mutation and last_activity tracking verified.")
 
     # 5. Cleanup Test Artifacts
     print("\n[5/5] Cleaning Up Ephemeral Test Records...")
-    prisma = db_manager.client
-    await prisma.user.delete(where={"id": test_user.id})
-    deleted_check = await identity_repository.get_user(test_user.id)
+    await identity_repository.delete_user(test_user.id)
+    deleted_check = await identity_repository.get_user_by_username("mwright_test")
     assert deleted_check is None
     print("    [PASS] Test user successfully deleted.")
 
