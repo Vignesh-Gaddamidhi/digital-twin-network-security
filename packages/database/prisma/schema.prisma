@@ -77,75 +77,96 @@ model RolePermission {
 // ==========================================
 // 2. NETWORK DIGITAL TWIN INVENTORY
 // ==========================================
+
+enum PortState {
+  OPEN
+  CLOSED
+  FILTERED
+  UNKNOWN
+}
+
 model Device {
-  id               String               @id
+  id               String            @id
   hostname         String
-  deviceType       String               @map("device_type")
-  networkZone      String               @map("network_zone")
-  primaryIp        String               @map("primary_ip")
-  macAddress       String?              @map("mac_address")
-  operatingSystem  String?              @map("operating_system")
+  deviceType       String            @map("device_type")
+  networkZone      String            @map("network_zone")
+  primaryIp        String            @map("primary_ip")
+  ipAddresses      String[]          @default([]) @map("ip_addresses")
+  macAddresses     String[]          @default([]) @map("mac_addresses")
+  operatingSystem  String?           @map("operating_system")
   role             String?
-  securityState    String               @default("NORMAL") @map("security_state")
-  operationalState String               @default("HEALTHY") @map("operational_state")
-  riskScore        Float                @default(0.0) @map("risk_score")
-  isCompromised    Boolean              @default(false) @map("is_compromised")
-  createdAt        DateTime             @default(now()) @map("created_at")
-  updatedAt        DateTime             @updatedAt @map("updated_at")
-  
+  securityState    String            @default("NORMAL") @map("security_state")
+  operationalState String            @default("HEALTHY") @map("operational_state")
+  riskScore        Float             @default(0.0) @map("risk_score")
+  isCompromised    Boolean           @default(false) @map("is_compromised")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
   interfaces       DeviceInterface[]
   services         DeviceService[]
   ports            DevicePort[]
   routes           DeviceRoute[]
   vulnerabilities  Vulnerability[]
-  outConnections   NetworkConnection[]  @relation("SourceDevice")
-  inConnections    NetworkConnection[]  @relation("DestDevice")
+  outConnections   NetworkConnection[] @relation("SourceDevice")
+  inConnections    NetworkConnection[] @relation("DestDevice")
+  outEdges         TopologyEdge[]      @relation("SourceEdgeDevice")
+  inEdges          TopologyEdge[]      @relation("DestEdgeDevice")
 
   @@map("devices")
 }
 
 model DeviceInterface {
-  id           String   @id @default(uuid())
-  deviceId     String   @map("device_id")
-  interfaceId  String   @map("interface_id")
-  ipAddress    String   @map("ip_address")
-  subnetMask   String   @default("255.255.255.0") @map("subnet_mask")
-  subnetCidr   String?  @map("subnet_cidr")
-  macAddress   String?  @map("mac_address")
-  isUp         Boolean  @default(true) @map("is_up")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id            String   @id @default(uuid())
+  deviceId      String   @map("device_id")
+  interfaceName String   @map("interface_name")
+  macAddress    String?  @map("mac_address")
+  ipAddress     String   @map("ip_address")
+  subnet        String?  @default("255.255.255.0")
+  gateway       String?
+  status        String   @default("UP")
+  speed         String?  @default("1Gbps")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device        Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  @@map("device_interfaces")
+  @@unique([deviceId, interfaceName])
+  @@map("interfaces")
 }
 
 model DeviceService {
-  id           String   @id @default(uuid())
-  deviceId     String   @map("device_id")
-  name         String
-  port         Int
-  protocol     String   @default("TCP")
-  status       String   @default("RUNNING")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id            String   @id @default(uuid())
+  deviceId      String   @map("device_id")
+  name          String
+  protocol      String   @default("TCP")
+  port          Int
+  status        String   @default("RUNNING")
+  version       String?  @default("1.0.0")
+  securityState String   @default("NORMAL") @map("security_state")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device        Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  @@map("device_services")
+  @@unique([deviceId, name, port, protocol])
+  @@map("services")
 }
 
 model DevicePort {
-  id           String   @id @default(uuid())
-  deviceId     String   @map("device_id")
-  portNumber   Int      @map("port_number")
-  protocol     String   @default("TCP")
-  state        String   @default("OPEN")
-  serviceName  String?  @map("service_name")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id         String    @id @default(uuid())
+  deviceId   String    @map("device_id")
+  portNumber Int       @map("port_number")
+  protocol   String    @default("TCP")
+  state      PortState @default(OPEN)
+  service    String?
+  exposure   String    @default("INTERNAL")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
-  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device     Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
-  @@map("device_ports")
+  @@unique([deviceId, portNumber, protocol])
+  @@map("ports")
 }
 
 model DeviceRoute {
@@ -163,22 +184,41 @@ model DeviceRoute {
 }
 
 model NetworkConnection {
+  id                  String    @id
+  sourceDeviceId      String    @map("source_device_id")
+  destinationDeviceId String    @map("destination_device_id")
+  protocol            String    @default("TCP")
+  sourcePort          Int?      @map("source_port")
+  destinationPort     Int?      @map("destination_port")
+  status              String    @default("ACTIVE")
+  firstSeen           DateTime  @default(now()) @map("first_seen")
+  lastSeen            DateTime  @default(now()) @map("last_seen")
+  connectionCount     Int       @default(1) @map("connection_count")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  sourceDevice        Device    @relation("SourceDevice", fields: [sourceDeviceId], references: [id], onDelete: Cascade)
+  destDevice          Device    @relation("DestDevice", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
+
+  @@map("connections")
+}
+
+model TopologyEdge {
   id                  String   @id
   sourceDeviceId      String   @map("source_device_id")
   destinationDeviceId String   @map("destination_device_id")
+  edgeType            String   @default("LOGICAL") @map("edge_type")
   protocol            String   @default("TCP")
-  port                Int?
   status              String   @default("ACTIVE")
-  bandwidthMbps       Float    @default(1000.0) @map("bandwidth_mbps")
-  latencyMs           Float    @default(1.0) @map("latency_ms")
-  packetLossPct       Float    @default(0.0) @map("packet_loss_pct")
+  weight              Float    @default(1.0)
+  metadata            Json?    @default("{}")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
-  sourceDevice        Device   @relation("SourceDevice", fields: [sourceDeviceId], references: [id], onDelete: Cascade)
-  destDevice          Device   @relation("DestDevice", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
+  sourceDevice        Device   @relation("SourceEdgeDevice", fields: [sourceDeviceId], references: [id], onDelete: Cascade)
+  destDevice          Device   @relation("DestEdgeDevice", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
 
-  @@map("network_connections")
+  @@map("topology_edges")
 }
 
 // ==========================================
