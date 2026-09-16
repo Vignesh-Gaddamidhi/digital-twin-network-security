@@ -2,6 +2,28 @@ from typing import List, Optional, Dict, Any
 from enum import Enum
 from pydantic import BaseModel, Field, model_validator
 
+class ConnectionTypeEnum(str, Enum):
+
+    DIRECT = "DIRECT"
+    LOGICAL = "LOGICAL"
+    ROUTED = "ROUTED"
+    BRIDGED = "BRIDGED"
+    WIRELESS = "WIRELESS"
+    TUNNEL = "TUNNEL"
+    PHYSICAL = "PHYSICAL"
+    VIRTUAL = "VIRTUAL"
+    VPN = "VPN"
+
+class ProtocolEnum(str, Enum):
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
+    IP = "IP"
+    HTTP = "HTTP"
+    HTTPS = "HTTPS"
+    DNS = "DNS"
+    SSH = "SSH"
+
 class ConnectionStatusEnum(str, Enum):
     ACTIVE = "ACTIVE"
     BLOCKED = "BLOCKED"
@@ -73,3 +95,29 @@ class TopologyValidationResult(BaseModel):
             d["traversed_devices"] = hops
             return d
         return data
+
+class TopologySummarySnapshotModel(BaseModel):
+    total_devices: int = 0
+    total_connections: int = 0
+    active_connections: int = 0
+    degraded_connections: int = 0
+    blocked_connections: int = 0
+    zones_represented: List[str] = Field(default_factory=list)
+    average_latency_ms: float = 0.0
+    isolated_nodes: List[str] = Field(default_factory=list)
+    is_valid: bool = True
+    errors: List[str] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_summary(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            if "total_nodes" in d and "total_devices" not in d:
+                d["total_devices"] = d["total_nodes"]
+            if "total_edges" in d and "total_connections" not in d:
+                d["total_connections"] = d["total_edges"]
+            return d
+        return data
+
+TopologySummarySnapshot = TopologySummarySnapshotModel

@@ -12,3 +12,6 @@ frontend/.next/
 frontend/next-env.d.ts
 
 data/simulation/attack_runs/
+
+.env
+

@@ -18,6 +18,12 @@ class NetworkZoneEnum(str, Enum):
     DATABASE = "DATABASE"
     MANAGEMENT = "MANAGEMENT"
 
+class RouteStatusEnum(str, Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    UNREACHABLE = "UNREACHABLE"
+    DEGRADED = "DEGRADED"
+
 class NetworkInterfaceConfig(BaseModel):
     interface_id: str = Field(default="")
     ip_address: str = Field(default="")
@@ -165,3 +171,23 @@ class NetworkDeviceModel(BaseModel):
     @property
     def deviceId(self) -> str:
         return self.id
+class RouteStatusEnum(str, Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    UNREACHABLE = "UNREACHABLE"
+    DEGRADED = "DEGRADED"
+
+class ForwardingDecisionResult(BaseModel):
+    model_config = {"extra": "allow"}
+
+    action: str = Field(default="FORWARD")  # FORWARD, DROP, REJECT, LOCAL_DELIVERY
+    destination_ip: str = Field(default="")
+    next_hop: Optional[str] = None
+    interface_id: Optional[str] = None
+    matched_route: Optional[Any] = None
+    hop_count: int = 0
+    traversed_devices: List[str] = Field(default_factory=list)
+    path_hops: List[str] = Field(default_factory=list)
+    total_latency_ms: float = 0.0
+    status: str = Field(default="SUCCESS")
+    reason: Optional[str] = None
