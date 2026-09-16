@@ -111,6 +111,10 @@ model Device {
   inConnections    NetworkConnection[] @relation("DestDevice")
   outEdges         TopologyEdge[]      @relation("SourceEdgeDevice")
   inEdges          TopologyEdge[]      @relation("DestEdgeDevice")
+  telemetries      Telemetry[]
+  outFlows         TrafficFlow[]       @relation("FlowSourceDevice")
+  inFlows          TrafficFlow[]       @relation("FlowDestDevice")
+  securityEvents   SecurityEvent[]
 
   @@map("devices")
 }
@@ -224,70 +228,126 @@ model TopologyEdge {
 // ==========================================
 // 3. TELEMETRY & NETWORK FLOWS
 // ==========================================
-model TelemetryRecord {
-  id          String   @id @default(uuid())
-  deviceId    String   @map("device_id")
-  cpuUsagePct Float    @map("cpu_usage_pct")
-  memUsagePct Float    @map("mem_usage_pct")
-  pps         Float
-  bps         Float
-  timestamp   DateTime @default(now())
+model Telemetry {
+  id                 String   @id @default(uuid())
+  deviceId           String   @map("device_id")
+  timestamp          DateTime @default(now())
+  cpuUsage           Float    @map("cpu_usage")
+  memoryUsage        Float    @map("memory_usage")
+  networkUtilization Float    @default(0.0) @map("network_utilization")
+  packetRate         Float    @map("packet_rate")
+  byteRate           Float    @map("byte_rate")
+  activeConnections  Int      @default(0) @map("active_connections")
+  securityState      String   @default("NORMAL") @map("security_state")
+  riskScore          Float    @default(0.0) @map("risk_score")
+  source             String   @default("TWIN_AGENT")
 
-  @@map("telemetry_records")
+  device             Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, timestamp(sort: Desc)])
+  @@index([timestamp(sort: Desc)])
+  @@map("telemetry")
 }
 
 model TrafficFlow {
-  id            String   @id @default(uuid())
-  sourceIp      String   @map("source_ip")
-  destIp        String   @map("dest_ip")
-  sourcePort    Int      @map("source_port")
-  destPort      Int      @map("dest_port")
-  protocol      String
-  packetCount   Int      @map("packet_count")
-  byteCount     BigInt   @map("byte_count")
-  durationSec   Float    @map("duration_sec")
-  anomalyFlag   Boolean  @default(false) @map("anomaly_flag")
-  timestamp     DateTime @default(now())
+  id                  String   @id @default(uuid())
+  timestamp           DateTime @default(now())
+  sourceDeviceId      String?  @map("source_device_id")
+  destinationDeviceId String?  @map("destination_device_id")
+  sourceIp            String   @map("source_ip")
+  destinationIp       String   @map("destination_ip")
+  sourcePort          Int      @map("source_port")
+  destinationPort     Int      @map("destination_port")
+  protocol            String   @default("TCP")
+  packetCount         Int      @map("packet_count")
+  byteCount           BigInt   @map("byte_count")
+  flowDuration        Float    @default(0.0) @map("flow_duration")
+  connectionCount     Int      @default(1) @map("connection_count")
+  status              String   @default("ESTABLISHED")
 
+  sourceDevice        Device?  @relation("FlowSourceDevice", fields: [sourceDeviceId], references: [id], onDelete: SetNull)
+  destDevice          Device?  @relation("FlowDestDevice", fields: [destinationDeviceId], references: [id], onDelete: SetNull)
+
+  @@index([timestamp(sort: Desc)])
+  @@index([sourceIp, destinationIp])
+  @@index([protocol])
+  @@index([destinationPort])
   @@map("traffic_flows")
 }
 
 // ==========================================
-// 4. SECURITY EVENTS, ALERTS & INCIDENTS
+// 4. SECURITY EVENTS, IDS & ALERTS
 // ==========================================
 model SecurityEvent {
-  id              String   @id
-  eventType       String   @map("event_type")
-  sourceEngine    String   @map("source_engine")
-  severity        String
-  sourceIp        String   @map("source_ip")
-  destIp          String   @map("dest_ip")
-  sourcePort      Int?     @map("source_port")
-  destPort        Int?     @map("dest_port")
-  protocol        String   @default("TCP")
-  rawPayload      String?  @map("raw_payload")
-  isCorrelated    Boolean  @default(false) @map("is_correlated")
+  eventId         String   @id @map("event_id")
   timestamp       DateTime @default(now())
+  source          String
+  destination     String
+  deviceId        String?  @map("device_id")
+  protocol        String   @default("TCP")
+  port            Int?
+  eventType       String   @map("event_type")
+  severity        String   @default("INFO")
+  detectionSource String   @map("detection_source")
+  detectionType   String   @map("detection_type")
+  confidence      Float    @default(1.0)
+  evidence        String?
+  status          String   @default("UNRESOLVED")
+  createdAt       DateTime @default(now()) @map("created_at")
 
+  device          Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  idsEvents       IdsEvent[]
+
+  @@index([timestamp(sort: Desc)])
+  @@index([deviceId])
+  @@index([eventType])
+  @@index([severity])
   @@map("security_events")
 }
 
+model IdsEvent {
+  id              String         @id @default(uuid())
+  timestamp       DateTime       @default(now())
+  source          String
+  destination     String
+  protocol        String         @default("TCP")
+  port            Int?
+  signature       String
+  signatureId     Int            @map("signature_id")
+  severity        String         @default("HIGH")
+  category        String         @default("ATTEMPTED_ADMIN")
+  sensor          String         @default("SURICATA")
+  rawReference    String?        @map("raw_reference")
+  securityEventId String?        @map("security_event_id")
+
+  securityEvent   SecurityEvent? @relation(fields: [securityEventId], references: [eventId], onDelete: SetNull)
+
+  @@index([timestamp(sort: Desc)])
+  @@index([signatureId])
+  @@index([sensor])
+  @@map("ids_events")
+}
+
 model Alert {
-  id              String   @id
-  timestamp       DateTime @default(now())
+  id              String    @id
+  timestamp       DateTime  @default(now())
   severity        String
-  eventType       String   @map("event_type")
-  detectionSource String   @map("detection_source")
+  eventType       String    @map("event_type")
+  detectionSource String    @map("detection_source")
   confidence      Float
-  riskScore       Float    @map("risk_score")
-  riskLevel       String   @map("risk_level")
-  affectedDevice  String   @map("affected_device")
-  status          String   @default("NEW")
+  riskScore       Float     @map("risk_score")
+  riskLevel       String    @map("risk_level")
+  affectedDevice  String    @map("affected_device")
+  status          String    @default("NEW")
   evidence        String?
-  incidentId      String?  @map("incident_id")
+  incidentId      String?   @map("incident_id")
 
   incident        Incident? @relation(fields: [incidentId], references: [id])
 
+  @@index([timestamp(sort: Desc)])
+  @@index([severity])
+  @@index([status])
+  @@index([affectedDevice])
   @@map("alerts")
 }
 
@@ -379,13 +439,13 @@ model AttackPath {
 // 7. SIMULATION & VULNERABILITY ARCHIVE
 // ==========================================
 model SimulationRun {
-  id              String   @id
-  scenarioType    String   @map("scenario_type")
-  status          String   @default("COMPLETED")
-  speedMultiplier Float    @default(1.0) @map("speed_multiplier")
-  horizonSeconds  Int      @default(30) @map("horizon_seconds")
-  eventsEmitted   Int      @default(0) @map("events_emitted")
-  startedAt       DateTime @default(now()) @map("started_at")
+  id              String    @id
+  scenarioType    String    @map("scenario_type")
+  status          String    @default("COMPLETED")
+  speedMultiplier Float     @default(1.0) @map("speed_multiplier")
+  horizonSeconds  Int       @default(30) @map("horizon_seconds")
+  eventsEmitted   Int       @default(0) @map("events_emitted")
+  startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
 
   @@map("simulation_runs")
