@@ -1,12 +1,14 @@
 import sys
 import asyncio
 from pathlib import Path
+from sqlalchemy import delete
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from packages.database.src.db_connection import db_manager
+from packages.database.src.models import Device
 from packages.database.src.device_repository import device_repository
 from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
 
@@ -17,7 +19,7 @@ async def run_day183_suite():
 
     # 1. Test Database Connectivity
     print("[1/4] Connecting to Neon Cloud PostgreSQL Instance...")
-    prisma = await db_manager.connect()
+    await db_manager.connect()
     assert db_manager.is_connected is True
     print("    [PASS] Connected successfully via SSL.")
 
@@ -36,7 +38,7 @@ async def run_day183_suite():
     assert saved.id == "SRV-NEON-01"
     print(f"    Saved Device ID    : {saved.id}")
     print(f"    Saved Hostname     : {saved.hostname}")
-    print(f"    Saved Network Zone : {saved.networkZone}")
+    print(f"    Saved Network Zone : {saved.network_zone}")
     print("    [PASS] Device entity upserted to PostgreSQL.")
 
     # 3. Test Query Retrieval
@@ -45,15 +47,17 @@ async def run_day183_suite():
     assert queried is not None
     assert queried.id == "SRV-NEON-01"
     print(f"    Retrieved ID       : {queried.id}")
-    print(f"    Security State     : {queried.securityState}")
+    print(f"    Security State     : {queried.security_state}")
     print("    [PASS] Relational query retrieval verified.")
 
     # 4. Clean Up Test Record & Disconnect
     print("\n[4/4] Cleaning Up Test Artifacts & Closing Connection...")
-    await prisma.device.delete(where={"id": "SRV-NEON-01"})
+    async with db_manager.session() as sess:
+        await sess.execute(delete(Device).where(Device.id == "SRV-NEON-01"))
+        await sess.flush()
     await db_manager.disconnect()
     assert db_manager.is_connected is False
-    print("    [PASS] Test artifact cleaned and Prisma client disconnected.")
+    print("    [PASS] Test artifact cleaned and session disconnected.")
 
     print("\n" + "=" * 80)
     print("       ALL DAY 183 POSTGRESQL PERSISTENCE FOUNDATION TESTS PASSED")

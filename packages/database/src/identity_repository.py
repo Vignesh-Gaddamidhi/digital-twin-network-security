@@ -1,15 +1,17 @@
 import uuid
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any
 import bcrypt
 from datetime import datetime, timezone
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
 
 from packages.database.src.db_connection import db_manager
-from packages.database.src.models import User, Role, Permission, UserStatusEnum
+from packages.database.src.models import (
+    User, Role, Permission, RolePermission, UserStatusEnum
+)
 
 class IdentityRepository:
-    """Data Access Layer for Users, Roles, Permissions, and RBAC mapping."""
+    """SQLAlchemy 2.0 DAL for Users, Roles, Permissions, and RBAC mapping."""
 
     @staticmethod
     def hash_password(password: str) -> str:
@@ -38,7 +40,7 @@ class IdentityRepository:
     @staticmethod
     async def list_permissions() -> List[Permission]:
         async with db_manager.session() as sess:
-            res = await sess.execute(select(Permission).order_by(Permission.name))
+            res = await sess.execute(select(Permission).order_by(Permission.name.asc()))
             return list(res.scalars().all())
 
     # ==================== ROLES ====================
@@ -62,7 +64,9 @@ class IdentityRepository:
             res = await sess.execute(
                 select(Role)
                 .where(Role.id == role_id)
-                .options(selectinload(Role.permissions))
+                .options(
+                    selectinload(Role.role_permissions).selectinload(RolePermission.permission)
+                )
             )
             return res.scalar_one_or_none()
 
@@ -72,7 +76,9 @@ class IdentityRepository:
             res = await sess.execute(
                 select(Role)
                 .where(Role.name == name)
-                .options(selectinload(Role.permissions))
+                .options(
+                    selectinload(Role.role_permissions).selectinload(RolePermission.permission)
+                )
             )
             return res.scalar_one_or_none()
 
@@ -81,27 +87,28 @@ class IdentityRepository:
         async with db_manager.session() as sess:
             res = await sess.execute(
                 select(Role)
-                .options(selectinload(Role.permissions))
-                .order_by(Role.name)
+                .options(
+                    selectinload(Role.role_permissions).selectinload(RolePermission.permission)
+                )
+                .order_by(Role.name.asc())
             )
             return list(res.scalars().all())
 
     @staticmethod
-    async def assign_permission_to_role(role_id: str, permission_id: str) -> None:
+    async def assign_permission_to_role(role_id: str, permission_id: str) -> RolePermission:
         async with db_manager.session() as sess:
-            role_res = await sess.execute(
-                select(Role)
-                .where(Role.id == role_id)
-                .options(selectinload(Role.permissions))
+            res = await sess.execute(
+                select(RolePermission).where(
+                    RolePermission.role_id == role_id,
+                    RolePermission.permission_id == permission_id
+                )
             )
-            role = role_res.scalar_one_or_none()
-
-            perm_res = await sess.execute(select(Permission).where(Permission.id == permission_id))
-            perm = perm_res.scalar_one_or_none()
-
-            if role and perm and perm not in role.permissions:
-                role.permissions.append(perm)
-                await sess.flush()
+            rp = res.scalar_one_or_none()
+            if not rp:
+                rp = RolePermission(role_id=role_id, permission_id=permission_id)
+                sess.add(rp)
+            await sess.flush()
+            return rp
 
     # ==================== USERS ====================
 
@@ -112,11 +119,10 @@ class IdentityRepository:
         email: str,
         password: str,
         role_id: str,
-        status: Union[str, UserStatusEnum] = UserStatusEnum.ACTIVE
+        status: str = "ACTIVE"
     ) -> User:
         hashed = IdentityRepository.hash_password(password)
-        if isinstance(status, str):
-            status = UserStatusEnum(status.upper())
+        st_enum = UserStatusEnum(status.upper()) if isinstance(status, str) else status
 
         async with db_manager.session() as sess:
             user = User(
@@ -126,11 +132,12 @@ class IdentityRepository:
                 email=email,
                 password_hash=hashed,
                 role_id=role_id,
-                status=status
+                status=st_enum
             )
             sess.add(user)
             await sess.flush()
-
+            
+            # Eager load role
             res = await sess.execute(
                 select(User)
                 .where(User.id == user.id)
@@ -145,7 +152,9 @@ class IdentityRepository:
                 select(User)
                 .where(User.id == user_id)
                 .options(
-                    selectinload(User.role).selectinload(Role.permissions)
+                    selectinload(User.role)
+                    .selectinload(Role.role_permissions)
+                    .selectinload(RolePermission.permission)
                 )
             )
             return res.scalar_one_or_none()
@@ -176,18 +185,16 @@ class IdentityRepository:
         display_name: Optional[str] = None,
         email: Optional[str] = None,
         role_id: Optional[str] = None,
-        status: Optional[Union[str, UserStatusEnum]] = None,
+        status: Optional[str] = None,
         last_activity: Optional[datetime] = None
-    ) -> Optional[User]:
+    ) -> User:
         async with db_manager.session() as sess:
             res = await sess.execute(
-                select(User)
-                .where(User.id == user_id)
-                .options(selectinload(User.role))
+                select(User).where(User.id == user_id).options(selectinload(User.role))
             )
             user = res.scalar_one_or_none()
             if not user:
-                return None
+                raise ValueError(f"User {user_id} not found.")
 
             if display_name is not None:
                 user.display_name = display_name
@@ -202,15 +209,5 @@ class IdentityRepository:
 
             await sess.flush()
             return user
-
-    @staticmethod
-    async def delete_user(user_id: str) -> bool:
-        async with db_manager.session() as sess:
-            res = await sess.execute(select(User).where(User.id == user_id))
-            user = res.scalar_one_or_none()
-            if user:
-                await sess.delete(user)
-                return True
-            return False
 
 identity_repository = IdentityRepository()

@@ -52,6 +52,34 @@ class AttackPathStatusEnum(str, enum.Enum):
     HISTORICAL = "HISTORICAL"
     UNVERIFIED = "UNVERIFIED"
 
+class SimulationStatusEnum(str, enum.Enum):
+    CREATED = "CREATED"
+    RUNNING = "RUNNING"
+    PAUSED = "PAUSED"
+    COMPLETED = "COMPLETED"
+    STOPPED = "STOPPED"
+    FAILED = "FAILED"
+    RESET = "RESET"
+
+class VulnerabilityStatusEnum(str, enum.Enum):
+    OPEN = "OPEN"
+    MITIGATED = "MITIGATED"
+    ACCEPTED = "ACCEPTED"
+    FALSE_POSITIVE = "FALSE_POSITIVE"
+    UNKNOWN = "UNKNOWN"
+
+class ExecutionModeEnum(str, enum.Enum):
+    SIMULATION = "SIMULATION"
+    REAL = "REAL"
+
+class AuditActionEnum(str, enum.Enum):
+    ISOLATE_DEVICE = "ISOLATE_DEVICE"
+    BLOCK_CONNECTION = "BLOCK_CONNECTION"
+    DISABLE_SERVICE = "DISABLE_SERVICE"
+    QUARANTINE_ENDPOINT = "QUARANTINE_ENDPOINT"
+    INCREASE_SECURITY_LEVEL = "INCREASE_SECURITY_LEVEL"
+    MARK_DEVICE_AT_RISK = "MARK_DEVICE_AT_RISK"
+
 # ==================== IDENTITY ====================
 
 class User(Base):
@@ -69,7 +97,6 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
     role = relationship("Role", back_populates="users")
-    audit_logs = relationship("AuditLog", back_populates="user")
 
 class Role(Base):
     __tablename__ = "roles"
@@ -139,6 +166,7 @@ class Device(Base):
     risk_assessments = relationship("RiskAssessment", back_populates="device", cascade="all, delete-orphan")
     source_attack_paths = relationship("AttackPath", foreign_keys="AttackPath.source_device_id", back_populates="source_device", cascade="all, delete-orphan")
     dest_attack_paths = relationship("AttackPath", foreign_keys="AttackPath.destination_device_id", back_populates="dest_device", cascade="all, delete-orphan")
+    vulnerabilities = relationship("Vulnerability", back_populates="device", cascade="all, delete-orphan")
 
 class DeviceInterface(Base):
     __tablename__ = "interfaces"
@@ -464,22 +492,141 @@ class AttackPath(Base):
     dest_device = relationship("Device", foreign_keys=[destination_device_id], back_populates="dest_attack_paths")
     incident = relationship("Incident", back_populates="attack_paths")
 
-# ==================== GOVERNANCE ====================
+# ==================== DAY 188: SIMULATION, VULNERABILITY, AUDIT & ML GOVERNANCE ====================
+
+class Simulation(Base):
+    __tablename__ = "simulations"
+
+    simulation_id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    scenario = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    default_configuration = Column(JSONB, default=dict, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    runs = relationship("SimulationRun", back_populates="simulation", cascade="all, delete-orphan")
+
+class SimulationRun(Base):
+    __tablename__ = "simulation_runs"
+
+    run_id = Column(String, primary_key=True)
+    simulation_id = Column(String, ForeignKey("simulations.simulation_id", ondelete="CASCADE"), nullable=False)
+    scenario = Column(String, nullable=False)
+    start_time = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    end_time = Column(DateTime(timezone=True), nullable=True)
+    status = Column(SAEnum(SimulationStatusEnum, name="SimulationRunStatus", native_enum=True), default=SimulationStatusEnum.CREATED, nullable=False)
+    seed = Column(Integer, default=42, nullable=False)
+    speed = Column(Float, default=1.0, nullable=False)
+    tick_interval = Column(Float, default=1.0, nullable=False)
+    duration = Column(Float, default=60.0, nullable=False)
+    prediction_horizon = Column(Integer, default=30, nullable=False)
+    event_count = Column(Integer, default=0, nullable=False)
+    result = Column(JSONB, default=dict, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    simulation = relationship("Simulation", back_populates="runs")
+    events = relationship("SimulationEvent", back_populates="run", cascade="all, delete-orphan")
+
+class SimulationEvent(Base):
+    __tablename__ = "simulation_events"
+
+    event_id = Column(String, primary_key=True)
+    run_id = Column(String, ForeignKey("simulation_runs.run_id", ondelete="CASCADE"), nullable=False)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    device_id = Column(String, nullable=False)
+    event_type = Column(String, nullable=False)
+    protocol = Column(String, default="TCP", nullable=False)
+    source = Column(String, nullable=False)
+    destination = Column(String, nullable=False)
+    payload_metadata = Column(JSONB, default=dict, nullable=True)
+    result = Column(String, default="PROCESSED", nullable=False)
+
+    run = relationship("SimulationRun", back_populates="events")
+
+class Vulnerability(Base):
+    __tablename__ = "vulnerabilities"
+
+    vulnerability_id = Column(String, primary_key=True)
+    device_id = Column(String, ForeignKey("devices.id", ondelete="CASCADE"), nullable=False)
+    identifier = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    severity = Column(String, nullable=False)
+    cvss_score = Column(Float, nullable=False)
+    affected_service = Column(String, nullable=True)
+    affected_port = Column(Integer, nullable=True)
+    status = Column(SAEnum(VulnerabilityStatusEnum, name="VulnerabilityStatus", native_enum=True), default=VulnerabilityStatusEnum.OPEN, nullable=False)
+    evidence = Column(Text, nullable=True)
+    discovered_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    device = relationship("Device", back_populates="vulnerabilities")
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
 
-    id = Column(String, primary_key=True)
+    audit_id = Column(String, primary_key=True)
     timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    operator = Column(String, nullable=False)
-    action = Column(String, nullable=False)
+    operator_id = Column(String, nullable=False)
+    action = Column(SAEnum(AuditActionEnum, name="ResponseActionType", native_enum=True), nullable=False)
     object_type = Column(String, nullable=False)
     object_id = Column(String, nullable=False)
+    reason = Column(Text, nullable=True)
     previous_state = Column(String, nullable=True)
     new_state = Column(String, nullable=False)
-    mode = Column(String, default="SIMULATION", nullable=False)
+    mode = Column(SAEnum(ExecutionModeEnum, name="ExecutionMode", native_enum=True), default=ExecutionModeEnum.SIMULATION, nullable=False)
     result = Column(String, default="SUCCESS", nullable=False)
-    reason = Column(Text, nullable=True)
-    user_id = Column(String, ForeignKey("users.id"), nullable=True)
 
-    user = relationship("User", back_populates="audit_logs")
+class Dataset(Base):
+    __tablename__ = "datasets"
+
+    dataset_id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    version = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    source = Column(String, nullable=False)
+    feature_version = Column(String, default="v1.0", nullable=False)
+    row_count = Column(Integer, nullable=False)
+    feature_count = Column(Integer, nullable=False)
+    label_definition = Column(JSONB, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+class MLExperiment(Base):
+    __tablename__ = "ml_experiments"
+
+    experiment_id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    model_name = Column(String, nullable=False)
+    model_version = Column(String, nullable=False)
+    dataset_id = Column(String, ForeignKey("datasets.dataset_id", ondelete="SET NULL"), nullable=True)
+    feature_version = Column(String, default="v1.0", nullable=False)
+    training_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    parameters = Column(JSONB, nullable=False)
+    accuracy = Column(Float, nullable=False)
+    precision = Column(Float, nullable=False)
+    recall = Column(Float, nullable=False)
+    f1_score = Column(Float, nullable=False)
+    roc_auc = Column(Float, nullable=False)
+    training_time = Column(Float, nullable=False)
+    inference_time = Column(Float, nullable=False)
+    confusion_matrix = Column(JSONB, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+class MLModel(Base):
+    __tablename__ = "ml_models"
+
+    model_id = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    version = Column(String, nullable=False)
+    model_type = Column(String, nullable=False)
+    dataset_id = Column(String, ForeignKey("datasets.dataset_id", ondelete="SET NULL"), nullable=True)
+    feature_version = Column(String, default="v1.0", nullable=False)
+    training_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    metrics = Column(JSONB, nullable=False)
+    model_size = Column(Float, nullable=False)
+    inference_latency = Column(Float, nullable=False)
+    status = Column(String, default="PRODUCTION", nullable=False)
+    artifact_reference = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)

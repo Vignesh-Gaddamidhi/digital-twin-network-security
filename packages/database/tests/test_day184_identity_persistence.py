@@ -2,13 +2,16 @@ import sys
 import asyncio
 from pathlib import Path
 from datetime import datetime, timezone
+from sqlalchemy import delete
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from packages.database.src.db_connection import db_manager
+from packages.database.src.models import User
 from packages.database.src.identity_repository import identity_repository
+from packages.database.src.seed_rbac import seed_rbac_data
 
 async def run_day184_suite():
     print("=" * 80)
@@ -16,6 +19,13 @@ async def run_day184_suite():
     print("================================================================================\n")
 
     await db_manager.connect()
+
+    # Ensure canonical roles and permissions exist
+    analyst_role = await identity_repository.get_role_by_name("SOC_ANALYST")
+    if analyst_role is None:
+        print("[*] Roles not found. Running seed_rbac_data()...")
+        await seed_rbac_data()
+        analyst_role = await identity_repository.get_role_by_name("SOC_ANALYST")
 
     # 1. Bcrypt Password Hashing & Verification
     print("[1/5] Auditing Password Security & Bcrypt Hashing...")
@@ -28,9 +38,8 @@ async def run_day184_suite():
 
     # 2. Role & Granular Permission Linkage
     print("\n[2/5] Auditing Role & Permission Join Mapping (Role: SOC_ANALYST)...")
-    analyst_role = await identity_repository.get_role_by_name("SOC_ANALYST")
     assert analyst_role is not None
-    perms = [p.name for p in analyst_role.permissions]
+    perms = [rp.permission.name for rp in analyst_role.role_permissions]
     print(f"    Role Name          : {analyst_role.name}")
     print(f"    Permissions Count  : {len(perms)}")
     print(f"    Sample Permissions : {', '.join(perms[:4])}")
@@ -43,7 +52,9 @@ async def run_day184_suite():
     print("\n[3/5] Auditing User Account Creation & Role Association...")
     existing_user = await identity_repository.get_user_by_username("mwright_test")
     if existing_user:
-        await identity_repository.delete_user(existing_user.id)
+        async with db_manager.session() as sess:
+            await sess.execute(delete(User).where(User.id == existing_user.id))
+            await sess.flush()
 
     test_user = await identity_repository.create_user(
         username="mwright_test",
@@ -70,7 +81,7 @@ async def run_day184_suite():
         last_activity=datetime.now(timezone.utc)
     )
     assert updated_user.display_name == "Marcus Wright (Lead)"
-    assert updated_user.status == "LOCKED"
+    assert str(updated_user.status).endswith("LOCKED")
     assert updated_user.last_activity is not None
     print(f"    Updated Display   : {updated_user.display_name}")
     print(f"    Updated Status    : {updated_user.status}")
@@ -78,8 +89,10 @@ async def run_day184_suite():
 
     # 5. Cleanup Test Artifacts
     print("\n[5/5] Cleaning Up Ephemeral Test Records...")
-    await identity_repository.delete_user(test_user.id)
-    deleted_check = await identity_repository.get_user_by_username("mwright_test")
+    async with db_manager.session() as sess:
+        await sess.execute(delete(User).where(User.id == test_user.id))
+        await sess.flush()
+    deleted_check = await identity_repository.get_user(test_user.id)
     assert deleted_check is None
     print("    [PASS] Test user successfully deleted.")
 

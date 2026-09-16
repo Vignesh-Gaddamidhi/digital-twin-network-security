@@ -2,12 +2,14 @@ import sys
 import asyncio
 from pathlib import Path
 from datetime import datetime, timezone
+from sqlalchemy import delete
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from packages.database.src.db_connection import db_manager
+from packages.database.src.models import Device, Telemetry, TrafficFlow, SecurityEvent, IdsEvent
 from packages.database.src.twin_persistence_repository import twin_persistence_repo
 from packages.database.src.telemetry_event_repository import telemetry_event_repo
 from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
@@ -16,9 +18,6 @@ async def run_day186_suite():
     print("=" * 80)
     print("       WEEK 27 - DAY 186: TELEMETRY & SECURITY EVENTS PERSISTENCE AUDIT")
     print("================================================================================\n")
-
-    await db_manager.connect()
-    prisma = db_manager.client
 
     # Seed baseline target device
     test_device = NetworkDeviceModel(
@@ -47,9 +46,9 @@ async def run_day186_suite():
         source="TWIN_AGENT"
     )
     assert t1.id is not None
-    assert t1.deviceId == "WEB-01"
+    assert t1.device_id == "WEB-01"
     print(f"    Telemetry Frame ID : {t1.id}")
-    print(f"    Metrics Recorded   : CPU={t1.cpuUsage}% | Mem={t1.memoryUsage}% | Pps={t1.packetRate}")
+    print(f"    Metrics Recorded   : CPU={t1.cpu_usage}% | Mem={t1.memory_usage}% | Pps={t1.packet_rate}")
     print("    [PASS] Device telemetry persisted with relational linkage.")
 
     # 2. NetFlow / Traffic Flow Records
@@ -70,8 +69,8 @@ async def run_day186_suite():
     assert flow.id is not None
     assert flow.protocol == "HTTPS"
     print(f"    Flow ID            : {flow.id}")
-    print(f"    Flow Vector        : {flow.sourceIp}:{flow.sourcePort} -> {flow.destinationIp}:{flow.destinationPort} ({flow.protocol})")
-    print(f"    Volume Logged      : {flow.packetCount} pkts / {flow.byteCount} bytes")
+    print(f"    Flow Vector        : {flow.source_ip}:{flow.source_port} -> {flow.destination_ip}:{flow.destination_port} ({flow.protocol})")
+    print(f"    Volume Logged      : {flow.packet_count} pkts / {flow.byte_count} bytes")
     print("    [PASS] Network traffic flow persisted.")
 
     # 3. Canonical Security Event Persistence
@@ -90,10 +89,10 @@ async def run_day186_suite():
         confidence=0.99,
         evidence="Observed connection starvation holding 1,200 keep-alive slots"
     )
-    assert sec_ev.eventId == "EVT-20260916-0001"
+    assert sec_ev.event_id == "EVT-20260916-0001"
     assert sec_ev.severity == "CRITICAL"
-    print(f"    Security Event ID  : {sec_ev.eventId}")
-    print(f"    Event Classification: {sec_ev.eventType} ({sec_ev.severity})")
+    print(f"    Security Event ID  : {sec_ev.event_id}")
+    print(f"    Event Classification: {sec_ev.event_type} ({sec_ev.severity})")
     print("    [PASS] Canonical security event persisted.")
 
     # 4. IDS Event Persistence & Relational Linkage
@@ -109,14 +108,14 @@ async def run_day186_suite():
         protocol="TCP",
         port=80,
         raw_reference="eve-log-record-offset-9812",
-        security_event_id=sec_ev.eventId
+        security_event_id=sec_ev.event_id
     )
     assert ids_ev.id is not None
-    assert ids_ev.signatureId == 200142
-    assert ids_ev.securityEventId == "EVT-20260916-0001"
+    assert ids_ev.signature_id == 200142
+    assert ids_ev.security_event_id == "EVT-20260916-0001"
     print(f"    IDS Event ID       : {ids_ev.id}")
-    print(f"    Signature Matched  : SID:{ids_ev.signatureId} '{ids_ev.signature}'")
-    print(f"    Linked SIEM Event  : {ids_ev.securityEventId}")
+    print(f"    Signature Matched  : SID:{ids_ev.signature_id} '{ids_ev.signature}'")
+    print(f"    Linked SIEM Event  : {ids_ev.security_event_id}")
     print("    [PASS] IDS Event persisted with distinct identity and parent event linkage.")
 
     # 5. Indexed Query Verification
@@ -129,19 +128,20 @@ async def run_day186_suite():
 
     ids_list = await telemetry_event_repo.list_ids_events(limit=10)
     assert len(ids_list) >= 1
-    assert ids_list[0].securityEvent is not None
+    assert ids_list[0].security_event is not None
     print("    [PASS] Indexed query filters resolved without full table scans.")
 
-    # Clean Up Test Records
+    # Clean Up Test Records via SQLAlchemy Session
     print("\n[*] Cleaning Up Ephemeral Telemetry & Event Records...")
-    await prisma.idsevent.delete(where={"id": ids_ev.id})
-    await prisma.securityevent.delete(where={"eventId": sec_ev.eventId})
-    await prisma.trafficflow.delete(where={"id": flow.id})
-    await prisma.telemetry.delete(where={"id": t1.id})
-    await prisma.device.delete(where={"id": "WEB-01"})
+    async with db_manager.session() as sess:
+        await sess.execute(delete(IdsEvent).where(IdsEvent.id == ids_ev.id))
+        await sess.execute(delete(SecurityEvent).where(SecurityEvent.event_id == sec_ev.event_id))
+        await sess.execute(delete(TrafficFlow).where(TrafficFlow.id == flow.id))
+        await sess.execute(delete(Telemetry).where(Telemetry.id == t1.id))
+        await sess.execute(delete(Device).where(Device.id == "WEB-01"))
+        await sess.flush()
     print("    [PASS] Cleaned test artifacts.")
 
-    await db_manager.disconnect()
     print("\n" + "=" * 80)
     print("       ALL DAY 186 TELEMETRY & EVENT PERSISTENCE TESTS PASSED CLEANLY")
     print("================================================================================")

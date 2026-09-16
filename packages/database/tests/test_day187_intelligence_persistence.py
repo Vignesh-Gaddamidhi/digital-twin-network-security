@@ -2,12 +2,17 @@ import sys
 import asyncio
 from pathlib import Path
 from datetime import datetime, timezone
+from sqlalchemy import select, delete
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from packages.database.src.db_connection import db_manager
+from packages.database.src.models import (
+    Device, Incident, Alert, Prediction, TemporalPrediction,
+    XaiExplanation, RiskAssessment, AttackPath
+)
 from packages.database.src.twin_persistence_repository import twin_persistence_repo
 from packages.database.src.soc_intelligence_repository import soc_intelligence_repo
 from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
@@ -16,9 +21,6 @@ async def run_day187_suite():
     print("=" * 80)
     print("       WEEK 27 - DAY 187: SOC INTELLIGENCE & INVESTIGATION CHAIN AUDIT")
     print("================================================================================\n")
-
-    await db_manager.connect()
-    prisma = db_manager.client
 
     # 1. Seed Network Twin Devices for Foreign-Key Integrity
     print("[1/7] Seeding Baseline Devices (CLIENT-01, WEB-01, DB-01)...")
@@ -41,9 +43,9 @@ async def run_day187_suite():
         description="CVE-2026-RCE exploit on WEB-01 followed by unauthorized port 3306 queries toward DB-01.",
         assigned_operator="SOC_SENIOR_ANALYST"
     )
-    assert inc.incidentId == "INC-2026-0916-001"
-    print(f"    Incident ID        : {inc.incidentId}")
-    print(f"    Assigned Operator  : {inc.assignedOperator}")
+    assert inc.incident_id == "INC-2026-0916-001"
+    print(f"    Incident ID        : {inc.incident_id}")
+    print(f"    Assigned Operator  : {inc.assigned_operator}")
     print("    [PASS] Incident record persisted.")
 
     # 3. Alert Lifecycle & Incident Association
@@ -62,12 +64,11 @@ async def run_day187_suite():
         risk_level="CRITICAL",
         status="INVESTIGATING",
         evidence="Payload 'UNION SELECT 1, @@version' in URI parameters",
-        incident_id=inc.incidentId
+        incident_id=inc.incident_id
     )
-    assert alt.alertId == "ALT-20260916-001"
-    assert alt.status == "INVESTIGATING"
-    print(f"    Alert ID           : {alt.alertId} ({alt.status})")
-    print(f"    Affected Device    : {alt.affectedDeviceId}")
+    assert alt.alert_id == "ALT-20260916-001"
+    print(f"    Alert ID           : {alt.alert_id} ({alt.status})")
+    print(f"    Affected Device    : {alt.affected_device_id}")
     print("    [PASS] Alert persisted with foreign-key link to incident.")
 
     # 4. Predictions & Temporal Early Warnings
@@ -83,10 +84,10 @@ async def run_day187_suite():
         model_version="v2.4.0",
         risk_score=85.0,
         risk_level="CRITICAL",
-        alert_id=alt.alertId,
-        incident_id=inc.incidentId
+        alert_id=alt.alert_id,
+        incident_id=inc.incident_id
     )
-    assert pred.predictionId == "PRD-2026-001"
+    assert pred.prediction_id == "PRD-2026-001"
 
     temporal = await soc_intelligence_repo.record_temporal_prediction(
         prediction_id="TPRD-2026-001",
@@ -98,16 +99,15 @@ async def run_day187_suite():
         warning_status="HIGH_CONFIDENCE_WARNING",
         prediction_horizon="30s"
     )
-    assert temporal.futureThreatProbability > temporal.currentThreatProbability
-    assert temporal.warningStatus == "HIGH_CONFIDENCE_WARNING"
-    print(f"    Prediction ID      : {pred.predictionId} (Prob={pred.threatProbability})")
-    print(f"    Temporal Lead Time : {temporal.leadTime}s (P_future={temporal.futureThreatProbability})")
+    assert temporal.future_threat_probability > temporal.current_threat_probability
+    print(f"    Prediction ID      : {pred.prediction_id} (Prob={pred.threat_probability})")
+    print(f"    Temporal Lead Time : {temporal.lead_time}s (P_future={temporal.future_threat_probability})")
     print("    [PASS] Predictions and temporal forecasts verified.")
 
     # 5. TreeSHAP Explainable AI (XAI) Persistence
     print("\n[5/7] Auditing TreeSHAP Forensic Attribution Persistence...")
     xai = await soc_intelligence_repo.record_xai_explanation(
-        prediction_id=pred.predictionId,
+        prediction_id=pred.prediction_id,
         model_name="RandomForest+LSTM_Ensemble",
         model_version="v2.4.0",
         base_value=0.120,
@@ -117,15 +117,14 @@ async def run_day187_suite():
         shap_contributions={"flow_pkts_per_sec": 0.384, "dst_port_diversity_entropy": 0.292, "syn_flag_ratio": 0.168},
         human_explanation="Anomalous packet rate and destination port diversity triggered lateral movement classifier."
     )
-    assert xai.predictionId == pred.predictionId
-    assert xai.baseValue == 0.120
-    print(f"    Explanation ID     : {xai.explanationId}")
-    print(f"    Attributed Cause   : {xai.humanExplanation}")
+    assert xai.prediction_id == pred.prediction_id
+    assert xai.base_value == 0.120
+    print(f"    Explanation ID     : {xai.explanation_id}")
+    print(f"    Attributed Cause   : {xai.human_explanation}")
     print("    [PASS] XAI Shapley attributions persisted.")
 
     # 6. Quantitative Risk & Attack Path Discovery
     print("\n[6/7] Auditing Quantitative Risk Scoring (P*C*V*I) & Attack Paths...")
-    # P=0.98, C=1.0, V=0.8, I=1.0 -> Risk = 78.4
     risk = await soc_intelligence_repo.record_risk_assessment(
         device_id="WEB-01",
         threat_probability=0.98,
@@ -133,11 +132,11 @@ async def run_day187_suite():
         vulnerability_factor=0.8,
         attack_impact=1.0,
         source="CANONICAL_ENGINE",
-        incident_id=inc.incidentId
+        incident_id=inc.incident_id
     )
-    assert risk.riskScore == 78.4
-    assert risk.riskLevel == "HIGH"
-    print(f"    Calculated Risk    : {risk.riskScore} ({risk.riskLevel})")
+    assert risk.risk_score == 78.4
+    assert risk.risk_level == "HIGH"
+    print(f"    Calculated Risk    : {risk.risk_score} ({risk.risk_level})")
 
     path = await soc_intelligence_repo.record_attack_path(
         attack_path_id="PATH-2026-001",
@@ -149,9 +148,9 @@ async def run_day187_suite():
         status="ACTIVE_SIMULATED",
         reachability="REACHABLE",
         evidence="Observed lateral hop from compromised Web tier to internal DB",
-        incident_id=inc.incidentId
+        incident_id=inc.incident_id
     )
-    assert path.attackPathId == "PATH-2026-001"
+    assert path.attack_path_id == "PATH-2026-001"
     print(f"    Attack Vector      : {' -> '.join(path.path)}")
     print(f"    Vector Status      : {path.status}")
     print("    [PASS] Quantitative risk and attack path graph persisted.")
@@ -162,32 +161,31 @@ async def run_day187_suite():
     assert chain is not None
     assert len(chain.alerts) == 1
     assert len(chain.predictions) == 1
-    assert chain.predictions[0].xaiExplanation is not None
-    assert len(chain.riskAssessments) == 1
-    assert len(chain.attackPaths) == 1
+    assert chain.predictions[0].xai_explanation is not None
+    assert len(chain.risk_assessments) == 1
+    assert len(chain.attack_paths) == 1
 
     print(f"    Incident Scope     : {chain.title}")
-    print(f"    Correlated Alert   : {chain.alerts[0].alertId} ({chain.alerts[0].eventType})")
-    print(f"    Attached ML Model  : {chain.predictions[0].modelName} (Category={chain.predictions[0].predictedCategory})")
-    print(f"    Forensic Reason    : {chain.predictions[0].xaiExplanation.humanExplanation}")
-    print(f"    Attack Path Vector : {' -> '.join(chain.attackPaths[0].path)}")
+    print(f"    Correlated Alert   : {chain.alerts[0].alert_id} ({chain.alerts[0].event_type})")
+    print(f"    Attached ML Model  : {chain.predictions[0].model_name} (Category={chain.predictions[0].predicted_category})")
+    print(f"    Forensic Reason    : {chain.predictions[0].xai_explanation.human_explanation}")
+    print(f"    Attack Path Vector : {' -> '.join(chain.attack_paths[0].path)}")
     print("    [PASS] Full 7-stage investigation story successfully loaded from database.")
 
     # Cleanup Ephemeral Test Records
     print("\n[*] Cleaning Up Ephemeral Test Records...")
-    await prisma.xaiexplanation.delete(where={"predictionId": pred.predictionId})
-    await prisma.prediction.delete(where={"predictionId": pred.predictionId})
-    await prisma.temporalprediction.delete(where={"predictionId": temporal.predictionId})
-    await prisma.alert.delete(where={"alertId": alt.alertId})
-    await prisma.attackpath.delete(where={"attackPathId": path.attackPathId})
-    await prisma.riskassessment.delete(where={"riskId": risk.riskId})
-    await prisma.incident.delete(where={"incidentId": inc.incidentId})
-    await prisma.device.delete(where={"id": "DB-01"})
-    await prisma.device.delete(where={"id": "WEB-01"})
-    await prisma.device.delete(where={"id": "CLIENT-01"})
+    async with db_manager.session() as sess:
+        await sess.execute(delete(XaiExplanation).where(XaiExplanation.prediction_id == pred.prediction_id))
+        await sess.execute(delete(TemporalPrediction).where(TemporalPrediction.prediction_id == temporal.prediction_id))
+        await sess.execute(delete(Prediction).where(Prediction.prediction_id == pred.prediction_id))
+        await sess.execute(delete(Alert).where(Alert.alert_id == alt.alert_id))
+        await sess.execute(delete(AttackPath).where(AttackPath.attack_path_id == path.attack_path_id))
+        await sess.execute(delete(RiskAssessment).where(RiskAssessment.risk_id == risk.risk_id))
+        await sess.execute(delete(Incident).where(Incident.incident_id == inc.incident_id))
+        await sess.execute(delete(Device).where(Device.id.in_(["CLIENT-01", "WEB-01", "DB-01"])))
+        await sess.flush()
     print("    [PASS] Test artifacts cleanly removed.")
 
-    await db_manager.disconnect()
     print("\n" + "=" * 80)
     print("       ALL DAY 187 SOC INTELLIGENCE PERSISTENCE TESTS PASSED CLEANLY")
     print("================================================================================")

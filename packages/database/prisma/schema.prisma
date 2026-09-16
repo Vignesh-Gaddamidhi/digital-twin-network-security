@@ -121,6 +121,7 @@ model Device {
   riskAssessments  RiskAssessment[]
   srcAttackPaths   AttackPath[]        @relation("AttackPathSource")
   dstAttackPaths   AttackPath[]        @relation("AttackPathDestination")
+  simulationEvents SimulationEvent[]
 
   @@map("devices")
 }
@@ -555,56 +556,224 @@ model AttackPath {
 }
 
 // ==========================================
-// 7. SIMULATION & VULNERABILITIES
+// 7. SIMULATION ENGINE
 // ==========================================
-model SimulationRun {
-  id              String    @id
-  scenarioType    String    @map("scenario_type")
-  status          String    @default("COMPLETED")
-  speedMultiplier Float     @default(1.0) @map("speed_multiplier")
-  horizonSeconds  Int       @default(30) @map("horizon_seconds")
-  eventsEmitted   Int       @default(0) @map("events_emitted")
-  startedAt       DateTime  @default(now()) @map("started_at")
-  completedAt     DateTime? @map("completed_at")
 
+enum SimulationRunStatus {
+  CREATED
+  RUNNING
+  PAUSED
+  COMPLETED
+  STOPPED
+  FAILED
+  RESET
+}
+
+model Simulation {
+  simulationId         String          @id @map("simulation_id")
+  name                 String
+  scenario             String          @unique
+  description          String?
+  defaultConfiguration Json            @default("{}") @map("default_configuration")
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+
+  runs                 SimulationRun[]
+
+  @@map("simulations")
+}
+
+model SimulationRun {
+  runId             String              @id @map("run_id")
+  simulationId      String              @map("simulation_id")
+  scenario          String
+  startTime         DateTime            @default(now()) @map("start_time")
+  endTime           DateTime?           @map("end_time")
+  status            SimulationRunStatus @default(CREATED)
+  seed              Int                 @default(42)
+  speed             Float               @default(1.0)
+  tickInterval      Float               @default(0.1) @map("tick_interval")
+  duration          Int                 @default(60)
+  predictionHorizon String              @default("30s") @map("prediction_horizon")
+  eventCount        Int                 @default(0) @map("event_count")
+  result            Json?               @default("{}")
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  simulation        Simulation          @relation(fields: [simulationId], references: [simulationId], onDelete: Cascade)
+  events            SimulationEvent[]
+
+  @@index([status])
+  @@index([scenario])
+  @@index([startTime(sort: Desc)])
   @@map("simulation_runs")
 }
 
+model SimulationEvent {
+  eventId         String        @id @map("event_id")
+  runId           String        @map("run_id")
+  timestamp       DateTime      @default(now())
+  deviceId        String?       @map("device_id")
+  eventType       String        @map("event_type")
+  protocol        String        @default("TCP")
+  source          String
+  destination     String
+  payloadMetadata Json?         @default("{}") @map("payload_metadata")
+  result          String        @default("DELIVERED")
+
+  simulationRun   SimulationRun @relation(fields: [runId], references: [runId], onDelete: Cascade)
+  device          Device?       @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([runId])
+  @@index([deviceId])
+  @@index([timestamp(sort: Desc)])
+  @@map("simulation_events")
+}
+
+// ==========================================
+// 8. VULNERABILITY ARCHIVE
+// ==========================================
+
+enum VulnerabilityStatus {
+  OPEN
+  MITIGATED
+  ACCEPTED
+  FALSE_POSITIVE
+  UNKNOWN
+}
+
 model Vulnerability {
-  id              String   @id
-  deviceId        String   @map("device_id")
-  cveId           String   @map("cve_id")
-  severity        String
-  cvssScore       Float    @map("cvss_score")
+  vulnerabilityId String              @id @map("vulnerability_id")
+  deviceId        String              @map("device_id")
+  identifier      String              @map("identifier")
+  title           String
   description     String?
-  status          String   @default("OPEN")
-  remediation     String?
-  discoveredAt    DateTime @default(now()) @map("discovered_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  severity        String              @default("HIGH")
+  cvssScore       Float               @default(7.5) @map("cvss_score")
+  affectedService String?             @map("affected_service")
+  affectedPort    Int?                @map("affected_port")
+  status          VulnerabilityStatus @default(OPEN)
+  evidence        String?
+  discoveredAt    DateTime            @default(now()) @map("discovered_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
 
-  device          Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  device          Device              @relation(fields: [deviceId], references: [id], onDelete: Cascade)
 
+  @@index([deviceId])
+  @@index([severity])
+  @@index([status])
+  @@index([identifier])
   @@map("vulnerabilities")
 }
 
 // ==========================================
-// 8. GOVERNANCE & FORENSIC AUDIT TRAIL
+// 9. GOVERNANCE & IMMUTABLE RESPONSE AUDIT
 // ==========================================
+
+enum ResponseActionType {
+  ISOLATE_DEVICE
+  BLOCK_CONNECTION
+  DISABLE_SERVICE
+  QUARANTINE_ENDPOINT
+  INCREASE_SECURITY_LEVEL
+  MARK_DEVICE_AT_RISK
+}
+
+enum ExecutionMode {
+  SIMULATION
+  REAL
+}
+
 model AuditLog {
-  id             String   @id
-  timestamp      DateTime @default(now())
-  operator       String
-  action         String
-  objectType     String   @map("object_type")
-  objectId       String   @map("object_id")
-  previousState  String?  @map("previous_state")
-  newState       String   @map("new_state")
-  mode           String   @default("SIMULATION")
-  result         String   @default("SUCCESS")
-  reason         String?
-  userId         String?  @map("user_id")
+  auditId       String             @id @map("audit_id")
+  timestamp     DateTime           @default(now())
+  operatorId    String             @map("operator_id")
+  action        ResponseActionType
+  objectType    String             @map("object_type")
+  objectId      String             @map("object_id")
+  reason        String?
+  previousState String?            @map("previous_state")
+  newState      String             @map("new_state")
+  mode          ExecutionMode      @default(SIMULATION)
+  result        String             @default("SUCCESS")
 
-  user           User?    @relation(fields: [userId], references: [id])
+  user          User?              @relation(fields: [operatorId], references: [id])
 
+  @@index([operatorId])
+  @@index([action])
+  @@index([mode])
+  @@index([timestamp(sort: Desc)])
   @@map("audit_logs")
+}
+
+// ==========================================
+// 10. ML GOVERNANCE & EXPERIMENTS
+// ==========================================
+
+model Dataset {
+  datasetId       String        @id @map("dataset_id")
+  name            String
+  version         String
+  description     String?
+  source          String        @default("CIC-IDS2017")
+  featureVersion  String        @default("v1.0") @map("feature_version")
+  rowCount        Int           @map("row_count")
+  featureCount    Int           @map("feature_count")
+  labelDefinition Json          @map("label_definition")
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  experiments     Experiment[]
+  models          Model[]
+
+  @@unique([name, version])
+  @@map("datasets")
+}
+
+model Experiment {
+  experimentId    String   @id @map("experiment_id")
+  name            String
+  description     String?
+  modelName       String   @map("model_name")
+  modelVersion    String   @map("model_version")
+  datasetId       String   @map("dataset_id")
+  featureVersion  String   @default("v1.0") @map("feature_version")
+  trainingDate    DateTime @default(now()) @map("training_date")
+  parameters      Json     @default("{}")
+  accuracy        Float
+  precision       Float
+  recall          Float
+  f1Score         Float    @map("f1_score")
+  rocAuc          Float    @map("roc_auc")
+  trainingTime    Float    @map("training_time")
+  inferenceTime   Float    @map("inference_time")
+  confusionMatrix Json     @map("confusion_matrix")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  dataset         Dataset  @relation(fields: [datasetId], references: [datasetId], onDelete: Cascade)
+
+  @@index([modelName])
+  @@index([f1Score(sort: Desc)])
+  @@map("ml_experiments")
+}
+
+model Model {
+  modelId           String   @id @map("model_id")
+  name              String
+  version           String
+  modelType         String   @map("model_type")
+  datasetId         String   @map("dataset_id")
+  featureVersion    String   @default("v1.0") @map("feature_version")
+  trainingDate      DateTime @default(now()) @map("training_date")
+  metrics           Json     @map("metrics")
+  modelSize         String   @map("model_size")
+  inferenceLatency  String   @map("inference_latency")
+  status            String   @default("ACTIVE")
+  artifactReference String   @map("artifact_reference")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  dataset           Dataset  @relation(fields: [datasetId], references: [datasetId], onDelete: Cascade)
+
+  @@unique([name, version])
+  @@index([name])
+  @@index([status])
+  @@map("ml_models")
 }
