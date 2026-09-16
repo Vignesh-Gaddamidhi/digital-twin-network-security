@@ -1,3 +1,4 @@
+from security.response.engine.recommendation_engine import response_recommendation_engine, RecommendationStatusEnum
 from security.response.audit.response_audit import response_audit_ledger
 from security.response.simulation.response_simulator import response_simulator
 from security.response.models.recommendation import ResponseRecommendation
@@ -6903,3 +6904,51 @@ def api_get_response_audit_ledger():
         "totalEntries": len(entries),
         "entries": [e.model_dump() for e in entries]
     }
+
+# ==================== DAY 171: RESPONSE RECOMMENDATION ENGINE API ====================
+
+class FormulateRecommendationRequest(BaseModel):
+    alertId: str
+    predictionId: str
+    deviceId: str
+    riskScore: float
+    predictedCategory: str = "LATERAL_MOVEMENT"
+    predictionConfidence: float = 0.94
+    xaiFeatures: Optional[List[str]] = None
+    targetLinkId: Optional[str] = None
+    targetService: Optional[str] = None
+
+class UpdateRecommendationStatusRequest(BaseModel):
+    recommendationId: str
+    newStatus: RecommendationStatusEnum
+
+@app.post("/api/v1/twin/response/recommend/formulate")
+def api_formulate_response_recommendation(req: FormulateRecommendationRequest):
+    rec = response_recommendation_engine.formulate_recommendation(
+        alert_id=req.alertId,
+        prediction_id=req.predictionId,
+        device_id=req.deviceId,
+        risk_score=req.riskScore,
+        predicted_category=req.predictedCategory,
+        prediction_confidence=req.predictionConfidence,
+        xai_features=req.xaiFeatures,
+        target_link_id=req.targetLinkId,
+        target_service=req.targetService
+    )
+    return {"status": "RECOMMENDATION_FORMULATED", "recommendation": rec.model_dump()}
+
+@app.get("/api/v1/twin/response/recommend/pending")
+def api_get_pending_recommendations():
+    recs = response_recommendation_engine.get_pending_recommendations()
+    return {
+        "status": "PENDING_RECOMMENDATIONS_RETRIEVED",
+        "totalPending": len(recs),
+        "recommendations": [r.model_dump() for r in recs]
+    }
+
+@app.post("/api/v1/twin/response/recommend/status")
+def api_update_recommendation_status(req: UpdateRecommendationStatusRequest):
+    updated = response_recommendation_engine.transition_status(req.recommendationId, req.newStatus)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Recommendation ID not found")
+    return {"status": "RECOMMENDATION_STATUS_UPDATED", "recommendation": updated.model_dump()}
