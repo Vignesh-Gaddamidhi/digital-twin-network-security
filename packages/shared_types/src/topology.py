@@ -1,73 +1,75 @@
-from enum import Enum
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field, field_validator
-from datetime import datetime, timezone
-import uuid
-
-class ConnectionTypeEnum(str, Enum):
-    PHYSICAL = "PHYSICAL"
-    LOGICAL = "LOGICAL"
-    NETWORK = "NETWORK"
-    SERVICE = "SERVICE"
+from enum import Enum
+from pydantic import BaseModel, Field, model_validator
 
 class ConnectionStatusEnum(str, Enum):
     ACTIVE = "ACTIVE"
-    DEGRADED = "DEGRADED"
     BLOCKED = "BLOCKED"
-    TERMINATED = "TERMINATED"
-
-class ProtocolEnum(str, Enum):
-    TCP = "TCP"
-    UDP = "UDP"
-    ICMP = "ICMP"
-    ETHERNET = "ETHERNET"
-    ANY = "ANY"
+    DEGRADED = "DEGRADED"
+    DISABLED = "DISABLED"
 
 class NetworkConnectionModel(BaseModel):
-    id: str = Field(..., min_length=2, description="Unique connection ID (e.g., conn-001)")
-    sourceDevice: str = Field(..., min_length=1, description="Originating device ID")
-    destinationDevice: str = Field(..., min_length=1, description="Target device ID")
-    sourceInterface: Optional[str] = Field(default=None, description="Source NIC interface (e.g., eth0)")
-    destinationInterface: Optional[str] = Field(default=None, description="Destination NIC interface (e.g., eth0)")
-    protocol: ProtocolEnum = Field(default=ProtocolEnum.TCP)
-    sourcePort: Optional[int] = Field(default=None, ge=1, le=65535)
-    destinationPort: Optional[int] = Field(default=None, ge=1, le=65535)
-    connectionType: ConnectionTypeEnum = Field(default=ConnectionTypeEnum.NETWORK)
+    id: str = Field(default="")
+    connection_id: Optional[str] = None
+    sourceDevice: str = Field(default="")
+    source_device: Optional[str] = None
+    destinationDevice: str = Field(default="")
+    destination_device: Optional[str] = None
+    protocol: str = Field(default="TCP")
+    port: Optional[int] = None
+    connection_type: Optional[str] = Field(default="DIRECT")
+    connectionType: Optional[str] = Field(default="DIRECT")
     status: ConnectionStatusEnum = Field(default=ConnectionStatusEnum.ACTIVE)
-    bandwidth: float = Field(default=1000.0, ge=0.0, description="Bandwidth line rate in Mbps")
-    latency: float = Field(default=1.0, ge=0.0, description="Propagation latency in ms")
-    lastUpdated: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    bandwidth_mbps: float = Field(default=1000.0)
+    latency_ms: float = Field(default=1.0)
+    packet_loss_pct: float = Field(default=0.0)
 
-    @field_validator("destinationDevice")
+    @model_validator(mode="before")
     @classmethod
-    def check_no_self_loop(cls, v: str, info) -> str:
-        if "sourceDevice" in info.data and v == info.data["sourceDevice"]:
-            raise ValueError(f"Self-loop connections are not permitted: '{v}' -> '{v}'")
-        return v
+    def _compat_conn(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            cid = d.get("id") or d.get("connection_id") or ""
+            d["id"] = cid
+            d["connection_id"] = cid
 
-# Backward compatibility aliases for Twin Core
+            src = d.get("sourceDevice") or d.get("source_device") or d.get("source") or ""
+            d["sourceDevice"] = src
+            d["source_device"] = src
+
+            dst = d.get("destinationDevice") or d.get("destination_device") or d.get("destination") or ""
+            d["destinationDevice"] = dst
+            d["destination_device"] = dst
+
+            ctype = d.get("connection_type") or d.get("connectionType") or "DIRECT"
+            d["connection_type"] = ctype
+            d["connectionType"] = ctype
+
+            return d
+        return data
+
 ConnectionEntity = NetworkConnectionModel
 
 class TopologyValidationResult(BaseModel):
-    is_connected: bool
+    is_valid: bool = True
+    errors: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
+    isolated_nodes: List[str] = Field(default_factory=list)
+    total_nodes: int = 0
+    total_edges: int = 0
+    traversed_devices: List[str] = Field(default_factory=list)
     path_hops: List[str] = Field(default_factory=list)
     hop_count: int = 0
     total_latency_ms: float = 0.0
-    traversed_devices: List[str] = Field(default_factory=list)
+    path_found: bool = True
 
-class NetworkTopologySchema(BaseModel):
-    topology_id: str = Field(default_factory=lambda: f"topo-{uuid.uuid4().hex[:8]}")
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    device_count: int
-    connection_count: int
-    connections: List[NetworkConnectionModel]
-    subnets_count: int
-    critical_bridges: List[str] = Field(default_factory=list)
-class TopologySummarySnapshotModel(BaseModel):
-    nodes: int
-    edges: int
-    zones: int
-    activeDevices: int
-    inactiveDevices: int
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_hops(cls, data):
+        if isinstance(data, dict):
+            d = dict(data)
+            hops = d.get("path_hops") or d.get("traversed_devices") or []
+            d["path_hops"] = hops
+            d["traversed_devices"] = hops
+            return d
+        return data

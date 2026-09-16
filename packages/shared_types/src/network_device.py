@@ -1,150 +1,167 @@
-from enum import Enum
-import ipaddress
-import re
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field, field_validator
+from enum import Enum
 from datetime import datetime, timezone
-import uuid
+from pydantic import BaseModel, Field, model_validator
 
 class DeviceTypeEnum(str, Enum):
     ROUTER = "ROUTER"
     SWITCH = "SWITCH"
-    SERVER = "SERVER"
-    CLIENT = "CLIENT"
     FIREWALL = "FIREWALL"
-    LOAD_BALANCER = "LOAD_BALANCER"
-    IDS = "IDS"
-    IPS = "IPS"
-    VPN_GATEWAY = "VPN_GATEWAY"
-    DATABASE = "DATABASE"
-    DNS_SERVER = "DNS_SERVER"
+    SERVER = "SERVER"
+    WORKSTATION = "WORKSTATION"
+    CLIENT = "CLIENT"
 
 class NetworkZoneEnum(str, Enum):
-    INTERNAL = "INTERNAL"
-    DMZ = "DMZ"
     EXTERNAL = "EXTERNAL"
+    DMZ = "DMZ"
+    INTERNAL = "INTERNAL"
+    DATABASE = "DATABASE"
     MANAGEMENT = "MANAGEMENT"
-    UNKNOWN = "UNKNOWN"
-
-class RouteStatusEnum(str, Enum):
-    ACTIVE = "ACTIVE"
-    DISABLED = "DISABLED"
-    UNREACHABLE = "UNREACHABLE"
-
-MAC_REGEX = re.compile(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
-
-class RouteEntryModel(BaseModel):
-    id: str = Field(default_factory=lambda: f"rt-{uuid.uuid4().hex[:8]}")
-    destination: str = Field(..., description="Target CIDR (e.g., 192.168.1.0/24 or 0.0.0.0/0)")
-    nextHop: Optional[str] = Field(default=None, description="Next hop IP or None for DIRECT link")
-    interface: str = Field(..., description="Egress interface ID (e.g., eth0)")
-    metric: int = Field(default=1, ge=0, description="Routing metric / administrative distance")
-    status: RouteStatusEnum = Field(default=RouteStatusEnum.ACTIVE)
-
-    @field_validator("destination")
-    @classmethod
-    def validate_destination(cls, v: str) -> str:
-        try:
-            ipaddress.ip_network(v, strict=False)
-        except ValueError:
-            raise ValueError(f"Invalid CIDR network format: '{v}'")
-        return v
-
-    @field_validator("nextHop")
-    @classmethod
-    def validate_next_hop(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and v.upper() != "DIRECT":
-            try:
-                ipaddress.ip_address(v)
-            except ValueError:
-                raise ValueError(f"Invalid next hop IP address: '{v}'")
-        return v
-
-class ForwardingDecisionResult(BaseModel):
-    destination_ip: str
-    matched_route: Optional[RouteEntryModel] = None
-    next_hop: str
-    egress_interface: str
-    is_direct: bool
-    path_resolved: bool
-    explanation: str
-
-# Legacy RouteEntryConfig alias for compatibility
-RouteEntryConfig = RouteEntryModel
 
 class NetworkInterfaceConfig(BaseModel):
-    interface_id: str = Field(..., min_length=1)
-    ip_address: str = Field(..., description="IPv4 or IPv6 address")
-    mac_address: str = Field(..., description="EUI-48 MAC address")
-    subnet_cidr: str = Field(default="192.168.1.0/24")
-    status: str = Field(default="UP")
+    interface_id: str = Field(default="")
+    ip_address: str = Field(default="")
+    subnet_mask: str = Field(default="255.255.255.0")
+    subnet_cidr: Optional[str] = None
+    mac_address: Optional[str] = None
+    is_up: bool = True
 
-    @field_validator("ip_address")
+    @model_validator(mode="before")
     @classmethod
-    def validate_ip(cls, v: str) -> str:
-        if v != "0.0.0.0":
-            try:
-                ipaddress.ip_address(v)
-            except ValueError:
-                raise ValueError(f"Invalid IP address format: '{v}'")
-        return v
+    def _compat_interface(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            if "name" in d and "interface_id" not in d:
+                d["interface_id"] = d["name"]
+            if "interface_id" in d and "name" not in d:
+                d["name"] = d["interface_id"]
+            return d
+        return data
 
-    @field_validator("mac_address")
+class RouteEntryModel(BaseModel):
+    destination: str = Field(default="0.0.0.0/0")
+    destination_cidr: Optional[str] = None
+    gateway: Optional[str] = None
+    gateway_ip: Optional[str] = None
+    next_hop: Optional[str] = None
+    interface: str = Field(default="eth0")
+    interface_id: Optional[str] = None
+    metric: int = Field(default=1)
+
+    @model_validator(mode="before")
     @classmethod
-    def validate_mac(cls, v: str) -> str:
-        if not MAC_REGEX.match(v):
-            raise ValueError(f"Invalid MAC address format: '{v}'. Must be XX:XX:XX:XX:XX:XX")
-        return v.upper()
+    def _compat_route(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            dest = d.get("destination") or d.get("destination_cidr") or "0.0.0.0/0"
+            d["destination"] = dest
+            d["destination_cidr"] = dest
 
+            gw = d.get("gateway_ip") or d.get("gateway") or d.get("next_hop") or ""
+            d["gateway"] = gw
+            d["gateway_ip"] = gw
+            d["next_hop"] = gw
+
+            iface = d.get("interface") or d.get("interface_id") or "eth0"
+            d["interface"] = iface
+            d["interface_id"] = iface
+
+            return d
+        return data
+
+RouteEntryConfig = RouteEntryModel
+
+class ConfigurationHistoryRecord(BaseModel):
+    device_id: str = Field(default="")
+    deviceId: Optional[str] = None
+    action: str = Field(default="")
+    field_changed: str = Field(default="")
+    previous_value: Any = None
+    new_value: Any = None
+    reason: Optional[str] = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    @model_validator(mode="before")
+    @classmethod
+    def _compat_history(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            dev = d.get("device_id") or d.get("deviceId") or ""
+            d["device_id"] = dev
+            d["deviceId"] = dev
+            return d
+        return data
 class NetworkDeviceModel(BaseModel):
-    id: str = Field(..., min_length=2, pattern=r"^[a-zA-Z0-9_\-]+$", description="Unique alphanumeric identifier")
-    hostname: str = Field(..., min_length=2, pattern=r"^[a-zA-Z0-9_\-]+$", description="RFC 1123 compliant hostname")
-    type: DeviceTypeEnum
-    role: str = Field(default="GENERIC_NODE")
+    model_config = {"extra": "allow"}
+
+    id: str = Field(default="")
+    name: str = Field(default="")
+    hostname: Optional[str] = None
+    type: Optional[Any] = None
+    device_type: DeviceTypeEnum = Field(default=DeviceTypeEnum.SERVER)
+    role: Optional[str] = None
+    zone: Optional[Any] = None
+    networkZone: NetworkZoneEnum = Field(default=NetworkZoneEnum.INTERNAL)
+    ip_addresses: List[str] = Field(default_factory=list)
     ipAddresses: List[str] = Field(default_factory=list)
     macAddresses: List[str] = Field(default_factory=list)
     interfaces: List[NetworkInterfaceConfig] = Field(default_factory=list)
-    routes: List[RouteEntryModel] = Field(default_factory=list)
-    operatingSystem: str = Field(default="Linux")
-    services: List[str] = Field(default_factory=list)
+    operatingSystem: Optional[str] = None
     ports: List[int] = Field(default_factory=list)
-    connections: List[str] = Field(default_factory=list)
-    vulnerabilities: List[str] = Field(default_factory=list)
-    networkZone: NetworkZoneEnum = Field(default=NetworkZoneEnum.INTERNAL)
-    currentState: str = Field(default="ONLINE")
+    services: List[str] = Field(default_factory=list)
+    routes: List[RouteEntryModel] = Field(default_factory=list)
+    is_compromised: bool = False
+    security_state: str = Field(default="NORMAL")
     securityState: str = Field(default="NORMAL")
-    riskScore: float = Field(default=0.0, ge=0.0, le=100.0)
-    lastUpdated: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    currentState: str = Field(default="NORMAL")
+    status: str = Field(default="ONLINE")
+    riskScore: float = Field(default=0.0)
+    risk_score: float = Field(default=0.0)
+    lastUpdated: Optional[str] = None
+    last_updated: Optional[str] = None
+    createdAt: Optional[str] = None
+    created_at: Optional[str] = None
 
-    @field_validator("ipAddresses", mode="before")
+    @model_validator(mode="before")
     @classmethod
-    def validate_ips(cls, ips: List[str]) -> List[str]:
-        for ip in ips:
-            if ip != "0.0.0.0":
-                try:
-                    ipaddress.ip_address(ip)
-                except ValueError:
-                    raise ValueError(f"Invalid IP address in list: '{ip}'")
-        return ips
+    def _compat_device(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            if "name" in d and "hostname" not in d:
+                d["hostname"] = d["name"]
+            if "hostname" in d and "name" not in d:
+                d["name"] = d["hostname"]
 
-    @field_validator("macAddresses", mode="before")
-    @classmethod
-    def validate_macs(cls, macs: List[str]) -> List[str]:
-        cleaned = []
-        for mac in macs:
-            if not MAC_REGEX.match(mac):
-                raise ValueError(f"Invalid MAC address in list: '{mac}'")
-            cleaned.append(mac.upper())
-        return cleaned
+            if "type" in d and "device_type" not in d:
+                d["device_type"] = d["type"]
+            if "device_type" in d and "type" not in d:
+                d["type"] = d["device_type"]
 
-class ConfigurationHistoryRecord(BaseModel):
-    history_id: str = Field(default_factory=lambda: f"cfg-{uuid.uuid4().hex[:8]}")
-    device_id: str
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    action: str
-    field_changed: str
-    previous_value: Any
-    new_value: Any
-    operator: str = "SYSTEM_ADMIN"
-    reason: str = "Operational reconfiguration"
+            if "zone" in d and "networkZone" not in d:
+                d["networkZone"] = d["zone"]
+            if "networkZone" in d and "zone" not in d:
+                d["zone"] = d["networkZone"]
+
+            if "ip_addresses" in d and "ipAddresses" not in d:
+                d["ipAddresses"] = d["ip_addresses"]
+            if "ipAddresses" in d and "ip_addresses" not in d:
+                d["ip_addresses"] = d["ipAddresses"]
+
+            return d
+        return data
+
+    @property
+    def primary_ip(self) -> str:
+        if self.ipAddresses:
+            return self.ipAddresses[0]
+        if self.ip_addresses:
+            return self.ip_addresses[0]
+        return ""
+
+    @property
+    def ip(self) -> str:
+        return self.primary_ip
+
+    @property
+    def deviceId(self) -> str:
+        return self.id

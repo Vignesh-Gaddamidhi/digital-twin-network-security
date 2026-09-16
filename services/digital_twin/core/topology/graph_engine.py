@@ -25,8 +25,15 @@ class GraphEngine:
         self._nodes: Dict[str, GraphNodeModel] = {}
         self._edges: Dict[str, GraphEdgeModel] = {}
 
+    @property
+    def nodes(self) -> Dict[str, GraphNodeModel]:
+        return self._nodes
+
+    @property
+    def edges(self) -> Dict[str, GraphEdgeModel]:
+        return self._edges
+
     def addNode(self, node: Any) -> GraphNodeModel:
-        # Support both GraphNodeModel, NetworkDeviceModel, or raw dicts
         if isinstance(node, dict):
             node_id = node.get("id")
             node_type = node.get("type", "SERVER")
@@ -55,10 +62,7 @@ class GraphEngine:
             raise TypeError("Invalid node object passed to addNode.")
 
         if node_model.id in self._nodes:
-            # Update existing instead of hard crashing if re-registered
-            self._nodes[node_model.id] = node_model
-            self._graph.nodes[node_model.id].update(node_model.model_dump())
-            return node_model
+            raise NodeAlreadyExistsError(f"DUPLICATE_NODE: Node '{node_model.id}' already exists in graph.")
 
         self._nodes[node_model.id] = node_model
         self._graph.add_node(
@@ -70,6 +74,9 @@ class GraphEngine:
             **node_model.metadata
         )
         return node_model
+
+    def add_node(self, node: Any) -> GraphNodeModel:
+        return self.addNode(node)
 
     def removeNode(self, node_id: str) -> bool:
         if node_id not in self._nodes:
@@ -85,6 +92,9 @@ class GraphEngine:
         self._graph.remove_node(node_id)
         del self._nodes[node_id]
         return True
+
+    def remove_node(self, node_id: str) -> bool:
+        return self.removeNode(node_id)
 
     def addEdge(self, edge: Any, is_bidirectional: bool = False) -> GraphEdgeModel:
         if isinstance(edge, dict):
@@ -140,6 +150,9 @@ class GraphEngine:
 
         return edge_model
 
+    def add_edge(self, edge: Any, is_bidirectional: bool = False) -> GraphEdgeModel:
+        return self.addEdge(edge, is_bidirectional)
+
     def removeEdge(self, edge_id: str) -> bool:
         if edge_id not in self._edges:
             raise EdgeNotFoundError(f"Cannot remove: Edge '{edge_id}' not found.")
@@ -155,6 +168,9 @@ class GraphEngine:
 
         del self._edges[edge_id]
         return True
+
+    def remove_edge(self, edge_id: str) -> bool:
+        return self.removeEdge(edge_id)
 
     def getNeighbors(self, node_id: str) -> GraphNeighborsResult:
         if node_id not in self._nodes:
@@ -173,6 +189,9 @@ class GraphEngine:
             out_degree=len(outbound)
         )
 
+    def get_neighbors(self, node_id: str) -> GraphNeighborsResult:
+        return self.getNeighbors(node_id)
+
     def getNodes(self, zone: Optional[str] = None, node_type: Optional[str] = None) -> List[GraphNodeModel]:
         nodes = list(self._nodes.values())
         if zone:
@@ -180,6 +199,9 @@ class GraphEngine:
         if node_type:
             nodes = [n for n in nodes if n.type.upper() == node_type.upper()]
         return nodes
+
+    def get_nodes(self, zone: Optional[str] = None, node_type: Optional[str] = None) -> List[GraphNodeModel]:
+        return self.getNodes(zone, node_type)
 
     def getEdges(self, status: Optional[str] = None, protocol: Optional[str] = None) -> List[GraphEdgeModel]:
         edges = list(self._edges.values())
@@ -189,6 +211,9 @@ class GraphEngine:
             edges = [e for e in edges if e.protocol.upper() == protocol.upper()]
         return edges
 
+    def get_edges(self, status: Optional[str] = None, protocol: Optional[str] = None) -> List[GraphEdgeModel]:
+        return self.getEdges(status, protocol)
+
     def getSnapshot(self) -> GraphSnapshotModel:
         return GraphSnapshotModel(
             node_count=len(self._nodes),
@@ -196,6 +221,9 @@ class GraphEngine:
             nodes=list(self._nodes.values()),
             edges=list(self._edges.values())
         )
+
+    def get_snapshot(self) -> GraphSnapshotModel:
+        return self.getSnapshot()
 
     def clear(self):
         self._graph.clear()
