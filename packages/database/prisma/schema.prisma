@@ -115,6 +115,12 @@ model Device {
   outFlows         TrafficFlow[]       @relation("FlowSourceDevice")
   inFlows          TrafficFlow[]       @relation("FlowDestDevice")
   securityEvents   SecurityEvent[]
+  alerts           Alert[]             @relation("AlertDevice")
+  predictions      Prediction[]
+  temporalPreds    TemporalPrediction[]
+  riskAssessments  RiskAssessment[]
+  srcAttackPaths   AttackPath[]        @relation("AttackPathSource")
+  dstAttackPaths   AttackPath[]        @relation("AttackPathDestination")
 
   @@map("devices")
 }
@@ -295,8 +301,9 @@ model SecurityEvent {
   status          String   @default("UNRESOLVED")
   createdAt       DateTime @default(now()) @map("created_at")
 
-  device          Device?  @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  device          Device?    @relation(fields: [deviceId], references: [id], onDelete: SetNull)
   idsEvents       IdsEvent[]
+  alerts          Alert[]
 
   @@index([timestamp(sort: Desc)])
   @@index([deviceId])
@@ -328,78 +335,160 @@ model IdsEvent {
   @@map("ids_events")
 }
 
-model Alert {
-  id              String    @id
-  timestamp       DateTime  @default(now())
-  severity        String
-  eventType       String    @map("event_type")
-  detectionSource String    @map("detection_source")
-  confidence      Float
-  riskScore       Float     @map("risk_score")
-  riskLevel       String    @map("risk_level")
-  affectedDevice  String    @map("affected_device")
-  status          String    @default("NEW")
-  evidence        String?
-  incidentId      String?   @map("incident_id")
+enum AlertStatus {
+  NEW
+  ACKNOWLEDGED
+  INVESTIGATING
+  RESOLVED
+  FALSE_POSITIVE
+  CLOSED
+}
 
-  incident        Incident? @relation(fields: [incidentId], references: [id])
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  CONTAINED
+  RESOLVED
+  CLOSED
+}
+
+model Alert {
+  alertId           String        @id @map("alert_id")
+  timestamp         DateTime      @default(now())
+  source            String
+  destination       String
+  protocol          String        @default("TCP")
+  port              Int?
+  eventType         String        @map("event_type")
+  severity          String        @default("MEDIUM")
+  detectionSource   String        @map("detection_source")
+  detectionType     String        @map("detection_type")
+  confidence        Float         @default(1.0)
+  riskScore         Float         @default(0.0) @map("risk_score")
+  riskLevel         String        @default("MEDIUM") @map("risk_level")
+  affectedDeviceId  String        @map("affected_device_id")
+  status            AlertStatus   @default(NEW)
+  evidence          String?
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  incidentId        String?       @map("incident_id")
+  securityEventId   String?       @map("security_event_id")
+
+  affectedDevice    Device        @relation("AlertDevice", fields: [affectedDeviceId], references: [id], onDelete: Cascade)
+  incident          Incident?     @relation(fields: [incidentId], references: [incidentId], onDelete: SetNull)
+  securityEvent     SecurityEvent? @relation(fields: [securityEventId], references: [eventId], onDelete: SetNull)
+  predictions       Prediction[]
 
   @@index([timestamp(sort: Desc)])
   @@index([severity])
   @@index([status])
-  @@index([affectedDevice])
+  @@index([affectedDeviceId])
   @@map("alerts")
 }
 
 model Incident {
-  id               String    @id
-  title            String
-  description      String?
-  severity         String
-  status           String    @default("OPEN")
-  affectedDevices  String[]  @map("affected_devices")
-  assignedOperator String?   @map("assigned_operator")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  incidentId        String         @id @map("incident_id")
+  title             String
+  description       String?
+  severity          String         @default("HIGH")
+  status            IncidentStatus @default(OPEN)
+  assignedOperator  String?        @map("assigned_operator")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
 
-  alerts           Alert[]
+  alerts            Alert[]
+  predictions       Prediction[]
+  riskAssessments   RiskAssessment[]
+  attackPaths       AttackPath[]
 
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt(sort: Desc)])
   @@map("incidents")
 }
 
 // ==========================================
-// 5. ML INFERENCE, PREDICTIONS & XAI
+// 5. ML PREDICTIONS, TEMPORAL & XAI
 // ==========================================
-model ThreatPrediction {
-  id                 String   @id
-  deviceId           String   @map("device_id")
-  threatProbability  Float    @map("threat_probability")
-  futureProbability  Float?   @map("future_probability")
-  threatClass        String   @map("threat_class")
-  predictedCategory  String   @map("predicted_category")
-  confidence         Float
-  modelName          String   @map("model_name")
-  modelVersion       String   @map("model_version")
-  leadTimeSeconds    Float?   @map("lead_time_seconds")
-  status             String   @default("ACTIVE")
-  timestamp          DateTime @default(now())
 
-  xaiExplanation     XaiExplanation?
+enum ThreatWarningStatus {
+  NO_WARNING
+  WATCH
+  EARLY_WARNING
+  HIGH_CONFIDENCE_WARNING
+  IMPACT_STAGE
+}
 
-  @@map("threat_predictions")
+model Prediction {
+  predictionId        String         @id @map("prediction_id")
+  timestamp           DateTime       @default(now())
+  deviceId            String         @map("device_id")
+  source              String?
+  destination         String?
+  threatProbability   Float          @map("threat_probability")
+  threatClass         String         @map("threat_class")
+  predictedCategory   String         @map("predicted_category")
+  categoryConfidence  Float          @map("category_confidence")
+  riskScore           Float          @default(0.0) @map("risk_score")
+  riskLevel           String         @default("MEDIUM") @map("risk_level")
+  modelName           String         @map("model_name")
+  modelVersion        String         @map("model_version")
+  featureVersion      String         @default("v1.0") @map("feature_version")
+  evidence            String?
+  predictionStatus    String         @default("ACTIVE") @map("prediction_status")
+
+  alertId             String?        @map("alert_id")
+  incidentId          String?        @map("incident_id")
+
+  device              Device         @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  alert               Alert?         @relation(fields: [alertId], references: [alertId], onDelete: SetNull)
+  incident            Incident?      @relation(fields: [incidentId], references: [incidentId], onDelete: SetNull)
+  xaiExplanation      XaiExplanation?
+
+  @@index([deviceId])
+  @@index([timestamp(sort: Desc)])
+  @@index([predictedCategory])
+  @@map("predictions")
+}
+
+model TemporalPrediction {
+  predictionId             String              @id @map("prediction_id")
+  timestamp                DateTime            @default(now())
+  deviceId                 String              @map("device_id")
+  currentThreatProbability Float               @map("current_threat_probability")
+  futureThreatProbability  Float               @map("future_threat_probability")
+  predictionHorizon        String              @default("30s") @map("prediction_horizon")
+  leadTime                 Float               @map("lead_time")
+  impactStage              String              @map("impact_stage")
+  warningStatus            ThreatWarningStatus @default(WATCH) @map("warning_status")
+  modelName                String              @map("model_name")
+  modelVersion             String              @map("model_version")
+  featureVersion           String              @default("v1.0") @map("feature_version")
+
+  device                   Device              @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId])
+  @@index([warningStatus])
+  @@index([timestamp(sort: Desc)])
+  @@map("temporal_predictions")
 }
 
 model XaiExplanation {
-  id                 String   @id @default(uuid())
-  predictionId       String   @unique @map("prediction_id")
-  baseValue          Float    @map("base_value")
-  topPositiveFeature String   @map("top_positive_feature")
-  topNegativeFeature String   @map("top_negative_feature")
-  shapFeatures       Json     @map("shap_features")
-  humanExplanation   String   @map("human_explanation")
-  createdAt          DateTime @default(now()) @map("created_at")
+  explanationId         String     @id @default(uuid()) @map("explanation_id")
+  predictionId          String     @unique @map("prediction_id")
+  timestamp             DateTime   @default(now())
+  modelName             String     @map("model_name")
+  modelVersion          String     @map("model_version")
+  baseValue             Float      @map("base_value")
+  predictionProbability Float      @map("prediction_probability")
+  featureValues         Json       @map("feature_values")
+  featureImportance     Json       @map("feature_importance")
+  shapContributions     Json       @map("shap_contributions")
+  humanExplanation      String     @map("human_explanation")
+  explanationType       String     @default("TreeSHAP") @map("explanation_type")
 
-  prediction         ThreatPrediction @relation(fields: [predictionId], references: [id], onDelete: Cascade)
+  prediction            Prediction @relation(fields: [predictionId], references: [predictionId], onDelete: Cascade)
 
   @@map("xai_explanations")
 }
@@ -407,36 +496,66 @@ model XaiExplanation {
 // ==========================================
 // 6. QUANTITATIVE RISK & ATTACK PATHS
 // ==========================================
-model RiskAssessment {
-  id                 String   @id @default(uuid())
-  deviceId           String   @map("device_id")
-  threatProbability  Float    @map("threat_probability")
-  assetCriticality   Float    @map("asset_criticality")
-  vulnerabilityScore Float    @map("vulnerability_score")
-  attackImpact       Float    @map("attack_impact")
-  compositeRiskScore Float    @map("composite_risk_score")
-  riskLevel          String   @map("risk_level")
-  calculatedAt       DateTime @default(now()) @map("calculated_at")
 
+model RiskAssessment {
+  riskId              String    @id @default(uuid()) @map("risk_id")
+  timestamp           DateTime  @default(now())
+  deviceId            String    @map("device_id")
+  threatProbability   Float     @map("threat_probability")
+  assetCriticality    Float     @map("asset_criticality")
+  vulnerabilityFactor Float     @map("vulnerability_factor")
+  attackImpact        Float     @map("attack_impact")
+  riskScore           Float     @map("risk_score")
+  riskLevel           String    @map("risk_level")
+  source              String    @default("CANONICAL_ENGINE")
+
+  incidentId          String?   @map("incident_id")
+
+  device              Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  incident            Incident? @relation(fields: [incidentId], references: [incidentId], onDelete: SetNull)
+
+  @@index([deviceId])
+  @@index([riskLevel])
+  @@index([timestamp(sort: Desc)])
   @@map("risk_assessments")
 }
 
-model AttackPath {
-  id              String   @id
-  source          String
-  target          String
-  traversedHops   String[] @map("traversed_hops")
-  riskScore       Float    @map("risk_score")
-  reachability    String   @default("POSSIBLE")
-  vulnerabilities String[]
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+enum AttackPathStatus {
+  POSSIBLE
+  ACTIVE_SIMULATED
+  BLOCKED
+  MITIGATED
+  HISTORICAL
+  UNVERIFIED
+}
 
+model AttackPath {
+  attackPathId        String           @id @map("attack_path_id")
+  timestamp           DateTime         @default(now())
+  sourceDeviceId      String           @map("source_device_id")
+  destinationDeviceId String           @map("destination_device_id")
+  path                String[]         @default([])
+  riskScore           Float            @map("risk_score")
+  vulnerabilities     String[]         @default([])
+  exposure            String           @default("INTERNAL")
+  reachability        String           @default("POSSIBLE")
+  status              AttackPathStatus @default(POSSIBLE)
+  evidence            String?
+
+  incidentId          String?          @map("incident_id")
+
+  sourceDevice        Device           @relation("AttackPathSource", fields: [sourceDeviceId], references: [id], onDelete: Cascade)
+  destinationDevice   Device           @relation("AttackPathDestination", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
+  incident            Incident?        @relation(fields: [incidentId], references: [incidentId], onDelete: SetNull)
+
+  @@index([status])
+  @@index([riskScore(sort: Desc)])
+  @@index([sourceDeviceId, destinationDeviceId])
   @@map("attack_paths")
 }
 
 // ==========================================
-// 7. SIMULATION & VULNERABILITY ARCHIVE
+// 7. SIMULATION & VULNERABILITIES
 // ==========================================
 model SimulationRun {
   id              String    @id
