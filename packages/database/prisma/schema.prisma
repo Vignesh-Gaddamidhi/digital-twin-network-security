@@ -1,0 +1,375 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["twin"]
+}
+
+generator client {
+  provider             = "prisma-client-py"
+  previewFeatures      = ["multiSchema"]
+  recursive_type_depth = 5
+}
+
+// ==========================================
+// 1. IDENTITY & ACCESS MANAGEMENT (RBAC)
+// ==========================================
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique
+  email        String     @unique
+  fullName     String     @map("full_name")
+  role         String     @default("SOC_ANALYST")
+  status       String     @default("ACTIVE")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  auditLogs    AuditLog[]
+
+  @@map("users")
+  @@schema("twin")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  permissions String[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("roles")
+  @@schema("twin")
+}
+
+// ==========================================
+// 2. NETWORK DIGITAL TWIN INVENTORY
+// ==========================================
+model Device {
+  id               String               @id
+  hostname         String
+  deviceType       String               @map("device_type")
+  networkZone      String               @map("network_zone")
+  primaryIp        String               @map("primary_ip")
+  macAddress       String?              @map("mac_address")
+  operatingSystem  String?              @map("operating_system")
+  role             String?
+  securityState    String               @default("NORMAL") @map("security_state")
+  operationalState String               @default("HEALTHY") @map("operational_state")
+  riskScore        Float                @default(0.0) @map("risk_score")
+  isCompromised    Boolean              @default(false) @map("is_compromised")
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+  
+  interfaces       DeviceInterface[]
+  services         DeviceService[]
+  ports            DevicePort[]
+  routes           DeviceRoute[]
+  vulnerabilities  Vulnerability[]
+  outConnections   NetworkConnection[]  @relation("SourceDevice")
+  inConnections    NetworkConnection[]  @relation("DestDevice")
+
+  @@map("devices")
+  @@schema("twin")
+}
+
+model DeviceInterface {
+  id           String   @id @default(uuid())
+  deviceId     String   @map("device_id")
+  interfaceId  String   @map("interface_id")
+  ipAddress    String   @map("ip_address")
+  subnetMask   String   @default("255.255.255.0") @map("subnet_mask")
+  subnetCidr   String?  @map("subnet_cidr")
+  macAddress   String?  @map("mac_address")
+  isUp         Boolean  @default(true) @map("is_up")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_interfaces")
+  @@schema("twin")
+}
+
+model DeviceService {
+  id           String   @id @default(uuid())
+  deviceId     String   @map("device_id")
+  name         String
+  port         Int
+  protocol     String   @default("TCP")
+  status       String   @default("RUNNING")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_services")
+  @@schema("twin")
+}
+
+model DevicePort {
+  id           String   @id @default(uuid())
+  deviceId     String   @map("device_id")
+  portNumber   Int      @map("port_number")
+  protocol     String   @default("TCP")
+  state        String   @default("OPEN")
+  serviceName  String?  @map("service_name")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  device       Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_ports")
+  @@schema("twin")
+}
+
+model DeviceRoute {
+  id              String   @id @default(uuid())
+  deviceId        String   @map("device_id")
+  destinationCidr String   @map("destination_cidr")
+  gatewayIp       String   @map("gateway_ip")
+  interfaceId     String   @map("interface_id")
+  metric          Int      @default(1)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  device          Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("device_routes")
+  @@schema("twin")
+}
+
+model NetworkConnection {
+  id                  String   @id
+  sourceDeviceId      String   @map("source_device_id")
+  destinationDeviceId String   @map("destination_device_id")
+  protocol            String   @default("TCP")
+  port                Int?
+  status              String   @default("ACTIVE")
+  bandwidthMbps       Float    @default(1000.0) @map("bandwidth_mbps")
+  latencyMs           Float    @default(1.0) @map("latency_ms")
+  packetLossPct       Float    @default(0.0) @map("packet_loss_pct")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  sourceDevice        Device   @relation("SourceDevice", fields: [sourceDeviceId], references: [id], onDelete: Cascade)
+  destDevice          Device   @relation("DestDevice", fields: [destinationDeviceId], references: [id], onDelete: Cascade)
+
+  @@map("network_connections")
+  @@schema("twin")
+}
+
+// ==========================================
+// 3. TELEMETRY & NETWORK FLOWS
+// ==========================================
+model TelemetryRecord {
+  id          String   @id @default(uuid())
+  deviceId    String   @map("device_id")
+  cpuUsagePct Float    @map("cpu_usage_pct")
+  memUsagePct Float    @map("mem_usage_pct")
+  pps         Float
+  bps         Float
+  timestamp   DateTime @default(now())
+
+  @@map("telemetry_records")
+  @@schema("twin")
+}
+
+model TrafficFlow {
+  id            String   @id @default(uuid())
+  sourceIp      String   @map("source_ip")
+  destIp        String   @map("dest_ip")
+  sourcePort    Int      @map("source_port")
+  destPort      Int      @map("dest_port")
+  protocol      String
+  packetCount   Int      @map("packet_count")
+  byteCount     BigInt   @map("byte_count")
+  durationSec   Float    @map("duration_sec")
+  anomalyFlag   Boolean  @default(false) @map("anomaly_flag")
+  timestamp     DateTime @default(now())
+
+  @@map("traffic_flows")
+  @@schema("twin")
+}
+
+// ==========================================
+// 4. SECURITY EVENTS, ALERTS & INCIDENTS
+// ==========================================
+model SecurityEvent {
+  id              String   @id
+  eventType       String   @map("event_type")
+  sourceEngine    String   @map("source_engine")
+  severity        String
+  sourceIp        String   @map("source_ip")
+  destIp          String   @map("dest_ip")
+  sourcePort      Int?     @map("source_port")
+  destPort        Int?     @map("dest_port")
+  protocol        String   @default("TCP")
+  rawPayload      String?  @map("raw_payload")
+  isCorrelated    Boolean  @default(false) @map("is_correlated")
+  timestamp       DateTime @default(now())
+
+  @@map("security_events")
+  @@schema("twin")
+}
+
+model Alert {
+  id              String   @id
+  timestamp       DateTime @default(now())
+  severity        String
+  eventType       String   @map("event_type")
+  detectionSource String   @map("detection_source")
+  confidence      Float
+  riskScore       Float    @map("risk_score")
+  riskLevel       String   @map("risk_level")
+  affectedDevice  String   @map("affected_device")
+  status          String   @default("NEW")
+  evidence        String?
+  incidentId      String?  @map("incident_id")
+
+  incident        Incident? @relation(fields: [incidentId], references: [id])
+
+  @@map("alerts")
+  @@schema("twin")
+}
+
+model Incident {
+  id               String    @id
+  title            String
+  description      String?
+  severity         String
+  status           String    @default("OPEN")
+  affectedDevices  String[]  @map("affected_devices")
+  assignedOperator String?   @map("assigned_operator")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  alerts           Alert[]
+
+  @@map("incidents")
+  @@schema("twin")
+}
+
+// ==========================================
+// 5. ML INFERENCE, PREDICTIONS & XAI
+// ==========================================
+model ThreatPrediction {
+  id                 String   @id
+  deviceId           String   @map("device_id")
+  threatProbability  Float    @map("threat_probability")
+  futureProbability  Float?   @map("future_probability")
+  threatClass        String   @map("threat_class")
+  predictedCategory  String   @map("predicted_category")
+  confidence         Float
+  modelName          String   @map("model_name")
+  modelVersion       String   @map("model_version")
+  leadTimeSeconds    Float?   @map("lead_time_seconds")
+  status             String   @default("ACTIVE")
+  timestamp          DateTime @default(now())
+
+  xaiExplanation     XaiExplanation?
+
+  @@map("threat_predictions")
+  @@schema("twin")
+}
+
+model XaiExplanation {
+  id                 String   @id @default(uuid())
+  predictionId       String   @unique @map("prediction_id")
+  baseValue          Float    @map("base_value")
+  topPositiveFeature String   @map("top_positive_feature")
+  topNegativeFeature String   @map("top_negative_feature")
+  shapFeatures       Json     @map("shap_features")
+  humanExplanation   String   @map("human_explanation")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  prediction         ThreatPrediction @relation(fields: [predictionId], references: [id], onDelete: Cascade)
+
+  @@map("xai_explanations")
+  @@schema("twin")
+}
+
+// ==========================================
+// 6. QUANTITATIVE RISK & ATTACK PATHS
+// ==========================================
+model RiskAssessment {
+  id                 String   @id @default(uuid())
+  deviceId           String   @map("device_id")
+  threatProbability  Float    @map("threat_probability")
+  assetCriticality   Float    @map("asset_criticality")
+  vulnerabilityScore Float    @map("vulnerability_score")
+  attackImpact       Float    @map("attack_impact")
+  compositeRiskScore Float    @map("composite_risk_score")
+  riskLevel          String   @map("risk_level")
+  calculatedAt       DateTime @default(now()) @map("calculated_at")
+
+  @@map("risk_assessments")
+  @@schema("twin")
+}
+
+model AttackPath {
+  id              String   @id
+  source          String
+  target          String
+  traversedHops   String[] @map("traversed_hops")
+  riskScore       Float    @map("risk_score")
+  reachability    String   @default("POSSIBLE")
+  vulnerabilities String[]
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("attack_paths")
+  @@schema("twin")
+}
+
+// ==========================================
+// 7. SIMULATION & VULNERABILITY ARCHIVE
+// ==========================================
+model SimulationRun {
+  id              String   @id
+  scenarioType    String   @map("scenario_type")
+  status          String   @default("COMPLETED")
+  speedMultiplier Float    @default(1.0) @map("speed_multiplier")
+  horizonSeconds  Int      @default(30) @map("horizon_seconds")
+  eventsEmitted   Int      @default(0) @map("events_emitted")
+  startedAt       DateTime @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+
+  @@map("simulation_runs")
+  @@schema("twin")
+}
+
+model Vulnerability {
+  id              String   @id
+  deviceId        String   @map("device_id")
+  cveId           String   @map("cve_id")
+  severity        String
+  cvssScore       Float    @map("cvss_score")
+  description     String?
+  status          String   @default("OPEN")
+  remediation     String?
+  discoveredAt    DateTime @default(now()) @map("discovered_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  device          Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@map("vulnerabilities")
+  @@schema("twin")
+}
+
+// ==========================================
+// 8. GOVERNANCE & FORENSIC AUDIT TRAIL
+// ==========================================
+model AuditLog {
+  id             String   @id
+  timestamp      DateTime @default(now())
+  operator       String
+  action         String
+  objectType     String   @map("object_type")
+  objectId       String   @map("object_id")
+  previousState  String?  @map("previous_state")
+  newState       String   @map("new_state")
+  mode           String   @default("SIMULATION")
+  result         String   @default("SUCCESS")
+  reason         String?
+  userId         String?  @map("user_id")
+
+  user           User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+  @@schema("twin")
+}
