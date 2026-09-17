@@ -13,7 +13,6 @@ class RedisHealthStatus:
     AUTH_ERROR = "REDIS_AUTH_ERROR"
     CONNECTION_ERROR = "REDIS_CONNECTION_ERROR"
 
-# Canonical Stream and Channel Namespaces
 STREAMS = {
     "TELEMETRY": "cybertwin:stream:telemetry",
     "EVENTS": "cybertwin:stream:events",
@@ -37,13 +36,13 @@ class RedisServiceManager:
         self.port = int(os.getenv("REDIS_PORT", 6379))
         self.db = int(os.getenv("REDIS_DB", 0))
         self.password = os.getenv("REDIS_PASSWORD", None) or None
-        self.timeout = float(os.getenv("REDIS_TIMEOUT_SECONDS", 2.0))
+        self.timeout = float(os.getenv("REDIS_TIMEOUT_SECONDS", 5.0))
         self.pool: Optional[aioredis.ConnectionPool] = None
         self.client: Optional[aioredis.Redis] = None
         self._is_connected = False
 
     async def connect(self) -> bool:
-        """Initializes connection pool with health validation."""
+        """Initializes high-concurrency connection pool."""
         try:
             self.pool = aioredis.ConnectionPool(
                 host=self.host,
@@ -53,7 +52,7 @@ class RedisServiceManager:
                 socket_timeout=self.timeout,
                 socket_connect_timeout=self.timeout,
                 decode_responses=True,
-                max_connections=20
+                max_connections=200
             )
             self.client = aioredis.Redis(connection_pool=self.pool)
             await asyncio.wait_for(self.client.ping(), timeout=self.timeout)
@@ -64,7 +63,6 @@ class RedisServiceManager:
             return False
 
     async def disconnect(self):
-        """Cleanly releases connection pool resources."""
         if self.client:
             await self.client.aclose()
         if self.pool:
@@ -72,7 +70,6 @@ class RedisServiceManager:
         self._is_connected = False
 
     async def check_health(self) -> Tuple[str, Optional[str]]:
-        """Returns (Status, Diagnostic Message) derived from actual ping response."""
         if not self.client:
             return RedisHealthStatus.UNAVAILABLE, "Redis client not initialized"
         try:
@@ -89,16 +86,14 @@ class RedisServiceManager:
         except Exception as e:
             return RedisHealthStatus.UNAVAILABLE, str(e)
 
-    # ==================== STREAM OPERATIONS ====================
     async def publish_stream_event(
         self,
         stream_key: str,
         data: Dict[str, Any],
         max_len: int = 10000
     ) -> Optional[str]:
-        """Appends an event payload to a Redis Stream with automated ring-buffer trimming."""
         if not self._is_connected or not self.client:
-            return None
+            await self.connect()
         payload = {k: json.dumps(v) if isinstance(v, (dict, list, bool)) else str(v) for k, v in data.items()}
         payload["_timestamp"] = datetime.now(timezone.utc).isoformat()
         return await self.client.xadd(name=stream_key, fields=payload, maxlen=max_len, approximate=True)
@@ -109,9 +104,8 @@ class RedisServiceManager:
         last_id: str = "0",
         count: int = 50
     ) -> List[Tuple[str, Dict[str, Any]]]:
-        """Reads batch events from a stream starting after last_id."""
         if not self._is_connected or not self.client:
-            return []
+            await self.connect()
         res = await self.client.xread(streams={stream_key: last_id}, count=count)
         if not res:
             return []
@@ -127,25 +121,20 @@ class RedisServiceManager:
                 parsed.append((entry_id, parsed_fields))
         return parsed
 
-    # ==================== PUB/SUB OPERATIONS ====================
     async def publish_channel(self, channel: str, message: Dict[str, Any]) -> int:
-        """Publishes real-time fan-out message to subscribers (e.g. WebSocket router)."""
         if not self._is_connected or not self.client:
-            return 0
+            await self.connect()
         return await self.client.publish(channel, json.dumps(message))
 
-    # ==================== CACHING WITH TTL ====================
     async def set_cache(self, key: str, value: Any, ttl_seconds: int = 60):
-        """Sets temporary key with Time-To-Live."""
         if not self._is_connected or not self.client:
-            return
+            await self.connect()
         serialized = json.dumps(value) if not isinstance(value, str) else value
         await self.client.set(key, serialized, ex=ttl_seconds)
 
     async def get_cache(self, key: str) -> Optional[Any]:
-        """Fetches temporary key from cache."""
         if not self._is_connected or not self.client:
-            return None
+            await self.connect()
         val = await self.client.get(key)
         if val is None:
             return None
