@@ -7053,3 +7053,26 @@ def api_get_intelligence_lineage(response_id: str):
         "status": "LINEAGE_RECONSTRUCTED",
         "lineage": chain
     }
+
+# ====================================================
+# PHASE 24 - DAY 195: REDIS-DISTRIBUTED WEBSOCKET ROUTE
+# ====================================================
+from services.digital_twin.core.redis.websocket_distributor import ws_gateway
+
+@app.websocket("/ws/realtime")
+async def websocket_realtime_distributed_endpoint(websocket: WebSocket):
+    """Multiplexed WebSocket connection backed by Redis Pub/Sub and topic filtering."""
+    await websocket.accept()
+    sub = await ws_gateway.register_client(websocket)
+    try:
+        while True:
+            client_msg = await websocket.receive_json()
+            # Handle client subscription updates (e.g., {"action": "SUBSCRIBE", "topics": ["DEVICE:WEB-01"]})
+            if client_msg.get("action") == "SUBSCRIBE":
+                topics = client_msg.get("topics", ["ALL"])
+                ws_gateway.update_subscriptions(sub, topics)
+                await websocket.send_json({"type": "SUBSCRIPTION_CONFIRMED", "topics": list(sub.topics)})
+    except WebSocketDisconnect:
+        ws_gateway.unregister_client(sub)
+    except Exception:
+        ws_gateway.unregister_client(sub)
