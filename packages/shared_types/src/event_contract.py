@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field, ConfigDict
 
 class EventCategoryEnum(str, Enum):
+    # Week 24 Telemetry
     DEVICE_STATE_UPDATE = "DEVICE_STATE_UPDATE"
     CPU_UPDATE = "CPU_UPDATE"
     MEMORY_UPDATE = "MEMORY_UPDATE"
@@ -21,9 +22,47 @@ class EventCategoryEnum(str, Enum):
     HEARTBEAT = "HEARTBEAT"
     ERROR = "ERROR"
     RESPONSE_UPDATE = "RESPONSE_UPDATE"
+
+    # Week 28 Day 193 Simulation Lifecycles
+    SIMULATION_CREATED = "SIMULATION_CREATED"
+    SIMULATION_STARTED = "SIMULATION_STARTED"
+    SIMULATION_PAUSED = "SIMULATION_PAUSED"
+    SIMULATION_RESUMED = "SIMULATION_RESUMED"
+    SIMULATION_STOPPED = "SIMULATION_STOPPED"
+    SIMULATION_RESET = "SIMULATION_RESET"
+    SIMULATION_COMPLETED = "SIMULATION_COMPLETED"
+    SIMULATION_FAILED = "SIMULATION_FAILED"
+
+    # Infrastructure Lifecycle
     EVENT_PUBLISHED = "EVENT_PUBLISHED"
     EVENT_CONSUMED = "EVENT_CONSUMED"
     EVENT_FAILED = "EVENT_FAILED"
+
+class SimulationScenarioEnum(str, Enum):
+    # Normal & Baseline Anomalies
+    NORMAL = "NORMAL"
+    TRAFFIC_SPIKE = "TRAFFIC_SPIKE"
+    CONNECTION_ANOMALY = "CONNECTION_ANOMALY"
+    PORT_ANOMALY = "PORT_ANOMALY"
+    PROTOCOL_ANOMALY = "PROTOCOL_ANOMALY"
+    REPEATED_CONNECTION = "REPEATED_CONNECTION"
+
+    # Safe Attack Scenarios (Sandbox Isolated)
+    PORT_SCAN = "PORT_SCAN"
+    BRUTE_FORCE_LIKE = "BRUTE_FORCE_LIKE"
+    DOS_LIKE = "DOS_LIKE"
+    DNS_ANOMALY = "DNS_ANOMALY"
+    BEACONING = "BEACONING"
+    LATERAL_MOVEMENT_LIKE = "LATERAL_MOVEMENT_LIKE"
+    EXFILTRATION_LIKE = "EXFILTRATION_LIKE"
+
+class JobStatusEnum(str, Enum):
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    RETRYING = "RETRYING"
+    CANCELLED = "CANCELLED"
 
 class EventSeverityEnum(str, Enum):
     CRITICAL = "CRITICAL"
@@ -32,13 +71,28 @@ class EventSeverityEnum(str, Enum):
     LOW = "LOW"
     INFO = "INFO"
 
+class BackgroundJob(BaseModel):
+    model_config = ConfigDict(extra="allow", use_enum_values=True)
+
+    jobId: str = Field(default_factory=lambda: f"JOB-{uuid.uuid4().hex[:8].upper()}")
+    jobType: str = Field(default="SIMULATION_EXECUTION")
+    status: JobStatusEnum = Field(default=JobStatusEnum.QUEUED)
+    createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    startedAt: Optional[datetime] = None
+    completedAt: Optional[datetime] = None
+    attempt: int = Field(default=1)
+    maxAttempts: int = Field(default=3)
+    error: Optional[str] = None
+    result: Dict[str, Any] = Field(default_factory=dict)
+    params: Dict[str, Any] = Field(default_factory=dict)
+
 class CanonicalEvent(BaseModel):
     model_config = ConfigDict(extra="allow", use_enum_values=True)
 
     eventId: str = Field(default_factory=lambda: str(uuid.uuid4()))
     eventType: EventCategoryEnum
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    source: str = Field(default="TWIN_SIMULATOR")
+    source: str = Field(default="SIMULATION_ENGINE")
     environment: str = Field(default="PRODUCTION")
     correlationId: str = Field(default_factory=lambda: str(uuid.uuid4()))
     causationId: Optional[str] = None
