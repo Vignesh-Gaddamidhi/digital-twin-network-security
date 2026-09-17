@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field, ConfigDict
 
 class EventCategoryEnum(str, Enum):
-    # Week 24 Live Twin Telemetry & Detections
     DEVICE_STATE_UPDATE = "DEVICE_STATE_UPDATE"
     CPU_UPDATE = "CPU_UPDATE"
     MEMORY_UPDATE = "MEMORY_UPDATE"
@@ -21,11 +20,7 @@ class EventCategoryEnum(str, Enum):
     TWIN_STATE_UPDATE = "TWIN_STATE_UPDATE"
     HEARTBEAT = "HEARTBEAT"
     ERROR = "ERROR"
-
-    # Week 25 Automated Response Simulation
     RESPONSE_UPDATE = "RESPONSE_UPDATE"
-
-    # Week 28 Event Streaming Infrastructure Lifecycle
     EVENT_PUBLISHED = "EVENT_PUBLISHED"
     EVENT_CONSUMED = "EVENT_CONSUMED"
     EVENT_FAILED = "EVENT_FAILED"
@@ -38,10 +33,6 @@ class EventSeverityEnum(str, Enum):
     INFO = "INFO"
 
 class CanonicalEvent(BaseModel):
-    """
-    Enterprise Event Envelope for all Digital Twin & SOC streaming messages.
-    Supports causal lineage tracking (correlationId / causationId) and schema evolution.
-    """
     model_config = ConfigDict(extra="allow", use_enum_values=True)
 
     eventId: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -58,7 +49,6 @@ class CanonicalEvent(BaseModel):
     payload: Dict[str, Any] = Field(default_factory=dict)
 
     def to_redis_dict(self) -> Dict[str, str]:
-        """Converts model to a flat string map for Redis Stream XADD operations."""
         import json
         return {
             "eventId": self.eventId,
@@ -77,7 +67,6 @@ class CanonicalEvent(BaseModel):
 
     @classmethod
     def from_redis_dict(cls, data: Dict[str, Any]) -> "CanonicalEvent":
-        """Reconstructs strongly-typed CanonicalEvent from Redis stream payload."""
         import json
         payload_raw = data.get("payload", "{}")
         if isinstance(payload_raw, str):
@@ -90,19 +79,30 @@ class CanonicalEvent(BaseModel):
 
         ts_raw = data.get("timestamp")
         if isinstance(ts_raw, str):
-            ts = datetime.fromisoformat(ts_raw)
+            try:
+                ts = datetime.fromisoformat(ts_raw)
+            except Exception:
+                ts = datetime.now(timezone.utc)
         else:
             ts = datetime.now(timezone.utc)
 
+        dev_id = data.get("deviceId")
+        if not dev_id and isinstance(payload, dict):
+            dev_id = payload.get("device_id") or payload.get("deviceId")
+
+        caus_id = data.get("causationId")
+        if not caus_id:
+            caus_id = None
+
         return cls(
-            eventId=str(data.get("eventId", str(uuid.uuid4()))),
+            eventId=str(data.get("eventId") or str(uuid.uuid4())),
             eventType=EventCategoryEnum(str(data.get("eventType", "HEARTBEAT"))),
             timestamp=ts,
             source=str(data.get("source", "UNKNOWN")),
             environment=str(data.get("environment", "PRODUCTION")),
-            correlationId=str(data.get("correlationId", str(uuid.uuid4()))),
-            causationId=str(data.get("causationId")) if data.get("causationId") else None,
-            deviceId=str(data.get("deviceId")) if data.get("deviceId") else None,
+            correlationId=str(data.get("correlationId") or str(uuid.uuid4())),
+            causationId=caus_id,
+            deviceId=str(dev_id) if dev_id else None,
             severity=EventSeverityEnum(str(data.get("severity", "INFO"))),
             schemaVersion=str(data.get("schemaVersion", "1.0")),
             sequence=int(data.get("sequence", 1)),
