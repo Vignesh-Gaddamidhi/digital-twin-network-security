@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
-import { Users, UserPlus, ShieldCheck, Mail, Clock } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 export default function UsersPage() {
   const users = [
@@ -21,8 +21,7 @@ export default function UsersPage() {
         <SocHeader pageTitle="Authorized SOC Operators & Credential Management" />
 
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
-          {/* Header Action Bar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div className="glass-panel p-4 flex items-center justify-between">
             <div className="text-xs font-semibold text-slate-500">
               Total Operator Accounts: <span className="font-bold text-slate-900">{users.length}</span>
             </div>
@@ -32,8 +31,7 @@ export default function UsersPage() {
             </button>
           </div>
 
-          {/* Users Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-200">
                 <tr>

@@ -1,219 +1,166 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
 import { useSoc } from "@/lib/socContext";
 import { 
-  Box, Eye, Layers, ShieldCheck, AlertTriangle, Lock, 
-  Terminal, ArrowRight, ShieldAlert, Cpu, Network
+  Network, Server, ShieldAlert, Cpu, Activity, 
+  ExternalLink, Layers, Eye, RefreshCw, AlertTriangle
 } from "lucide-react";
 
 export default function NetworkTwinPage() {
   const { selectedDeviceId, setSelectedDeviceId } = useSoc();
   const [viewMode, setViewMode] = useState<"2D" | "3D">("2D");
-  const [filterState, setFilterState] = useState<string>("ALL");
 
-  const devices = [
-    { id: "WEB-01", hostname: "srv-web-frontend", ip: "10.0.2.99", subnet: "DMZ Subnet (10.0.2.0/24)", status: "COMPROMISED", risk: 85.0, ports: [80, 443, 22] },
-    { id: "API-GW-01", hostname: "srv-api-gateway", ip: "10.0.2.15", subnet: "DMZ Subnet (10.0.2.0/24)", status: "NORMAL", risk: 24.5, ports: [8080] },
-    { id: "MAIL-01", hostname: "srv-mail-relay", ip: "10.0.2.20", subnet: "DMZ Subnet (10.0.2.0/24)", status: "NORMAL", risk: 18.0, ports: [25, 587] },
-    { id: "CLIENT-01", hostname: "client-dev-null", ip: "10.0.1.25", subnet: "Internal Corp (10.0.1.0/24)", status: "SUSPICIOUS", risk: 62.0, ports: [3389] },
-    { id: "FILE-SHARE", hostname: "srv-file-share", ip: "10.0.1.44", subnet: "Internal Corp (10.0.1.0/24)", status: "NORMAL", risk: 32.0, ports: [445] },
-    { id: "DB-01", hostname: "srv-db-primary", ip: "10.0.3.10", subnet: "DB Tier (10.0.3.0/24)", status: "AT_RISK", risk: 78.4, ports: [3306, 22] },
+  const nodes = [
+    { id: "EDGE-FW-01", name: "edge-fw-01.perimeter", type: "FIREWALL", ip: "10.0.1.1", state: "NORMAL", cpu: 32, rx: "45.2 MB/s", tx: "38.1 MB/s" },
+    { id: "CORE-RTR-01", name: "core-rtr-01.backbone", type: "ROUTER", ip: "10.0.1.254", state: "NORMAL", cpu: 44, rx: "128.4 MB/s", tx: "120.9 MB/s" },
+    { id: "CLIENT-01", name: "client-01.corp.internal", type: "CLIENT", ip: "10.0.1.25", state: "SUSPICIOUS", cpu: 58, rx: "12.4 MB/s", tx: "8.1 MB/s" },
+    { id: "WEB-01", name: "web-01.dmz.internal", type: "SERVER", ip: "10.0.2.99", state: "COMPROMISED", cpu: 85, rx: "12.5 MB/s", tx: "4.2 MB/s" },
+    { id: "DB-01", name: "db-01.database.internal", type: "SERVER", ip: "10.0.3.10", state: "NORMAL", cpu: 61, rx: "8.2 MB/s", tx: "14.5 MB/s" },
   ];
 
-  const selectedDevice = devices.find((d) => d.id === selectedDeviceId) || devices[0];
-
-  const filteredDevices = filterState === "ALL" 
-    ? devices 
-    : devices.filter((d) => d.status === filterState);
+  const activeNode = nodes.find((n) => n.id === selectedDeviceId) || nodes[3];
 
   return (
-    <div className="flex h-screen w-screen bg-slate-100 text-slate-800">
+    <div className="flex h-screen w-screen bg-obsidian text-slate-200">
       <SocSidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
-        <SocHeader pageTitle="VPC Network Digital Twin" />
+        <SocHeader pageTitle="Network Digital Twin — Topology Canvas" />
 
-        {/* Action Header & 2D / 3D Switcher */}
-        <div className="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
-          <div className="flex items-center space-x-2">
-            {["ALL", "NORMAL", "SUSPICIOUS", "COMPROMISED", "ISOLATED"].map((st) => (
-              <button
-                key={st}
-                onClick={() => setFilterState(st)}
-                className={`text-xs font-bold px-3 py-1.5 rounded-lg transition ${
-                  filterState === st ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                {st}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <div className="bg-slate-100 p-1 rounded-lg flex space-x-1">
-              <button
-                onClick={() => setViewMode("2D")}
-                className={`flex items-center space-x-1 px-3 py-1 text-xs font-bold rounded-md transition ${
-                  viewMode === "2D" ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>2D Topology</span>
-              </button>
-              <button
-                onClick={() => setViewMode("3D")}
-                className={`flex items-center space-x-1 px-3 py-1 text-xs font-bold rounded-md transition ${
-                  viewMode === "3D" ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Box className="w-3.5 h-3.5" />
-                <span>3D WebGL</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Viewport Canvas + Inspection Drawer */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Main Visual Canvas */}
-          <div className="flex-1 p-6 flex flex-col justify-between overflow-y-auto">
-            {viewMode === "2D" ? (
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex-1 relative overflow-hidden flex flex-col justify-between">
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-                  Canonical Subnet Enclaves
-                </div>
-
-                <div className="grid grid-cols-3 gap-6 my-auto">
-                  {/* DMZ Subnet */}
-                  <div className="border-2 border-dashed border-blue-200 rounded-xl p-4 bg-blue-50/30">
-                    <div className="text-[11px] font-bold text-blue-600 uppercase mb-3">DMZ Subnet (10.0.2.0/24)</div>
-                    <div className="space-y-2">
-                      {filteredDevices.filter(d => d.subnet.includes("DMZ")).map(d => (
-                        <div
-                          key={d.id}
-                          onClick={() => setSelectedDeviceId(d.id)}
-                          className={`p-3 bg-white rounded-lg border text-xs cursor-pointer transition flex items-center justify-between ${
-                            selectedDeviceId === d.id ? "border-blue-600 shadow-md ring-2 ring-blue-100" : "border-slate-200 hover:border-slate-300"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-slate-800">{d.hostname}</div>
-                            <div className="text-[10px] text-slate-400 font-mono">{d.ip}</div>
-                          </div>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                            d.status === "COMPROMISED" ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"
-                          }`}>
-                            {d.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Internal Corp Subnet */}
-                  <div className="border-2 border-dashed border-purple-200 rounded-xl p-4 bg-purple-50/30">
-                    <div className="text-[11px] font-bold text-purple-600 uppercase mb-3">Internal Corp (10.0.1.0/24)</div>
-                    <div className="space-y-2">
-                      {filteredDevices.filter(d => d.subnet.includes("Internal Corp")).map(d => (
-                        <div
-                          key={d.id}
-                          onClick={() => setSelectedDeviceId(d.id)}
-                          className={`p-3 bg-white rounded-lg border text-xs cursor-pointer transition flex items-center justify-between ${
-                            selectedDeviceId === d.id ? "border-blue-600 shadow-md ring-2 ring-blue-100" : "border-slate-200 hover:border-slate-300"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-slate-800">{d.hostname}</div>
-                            <div className="text-[10px] text-slate-400 font-mono">{d.ip}</div>
-                          </div>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                            d.status === "SUSPICIOUS" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
-                          }`}>
-                            {d.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Database Subnet */}
-                  <div className="border-2 border-dashed border-emerald-200 rounded-xl p-4 bg-emerald-50/30">
-                    <div className="text-[11px] font-bold text-emerald-600 uppercase mb-3">Database Tier (10.0.3.0/24)</div>
-                    <div className="space-y-2">
-                      {filteredDevices.filter(d => d.subnet.includes("DB Tier")).map(d => (
-                        <div
-                          key={d.id}
-                          onClick={() => setSelectedDeviceId(d.id)}
-                          className={`p-3 bg-white rounded-lg border text-xs cursor-pointer transition flex items-center justify-between ${
-                            selectedDeviceId === d.id ? "border-blue-600 shadow-md ring-2 ring-blue-100" : "border-slate-200 hover:border-slate-300"
-                          }`}
-                        >
-                          <div>
-                            <div className="font-bold text-slate-800">{d.hostname}</div>
-                            <div className="text-[10px] text-slate-400 font-mono">{d.ip}</div>
-                          </div>
-                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                            d.status === "AT_RISK" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
-                          }`}>
-                            {d.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-slate-400 border-t border-slate-100 pt-2 flex justify-between">
-                  <span>Attack Path: CLIENT-01 -> WEB-01 -> DB-01</span>
-                  <span>Drag & Zoom Canvas Supported</span>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-slate-900 rounded-xl border border-slate-800 flex-1 flex items-center justify-center text-slate-400 font-mono text-xs shadow-inner">
-                [Three.js WebGL Scene Canvas Active - 3D Node Mesh Shaders & Particle Splines Running]
-              </div>
-            )}
-          </div>
-
-          {/* Right Inspection Drawer */}
-          <aside className="w-80 bg-white border-l border-slate-200 p-5 shrink-0 flex flex-col justify-between overflow-y-auto">
-            <div className="space-y-4">
-              <div className="border-b border-slate-100 pb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Inspected Asset</span>
-                <h3 className="text-base font-extrabold text-slate-900">{selectedDevice.hostname}</h3>
-                <span className="text-xs text-slate-500 font-mono">{selectedDevice.ip} ({selectedDevice.id})</span>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Security State</span>
-                  <span className="font-bold text-red-600">{selectedDevice.status}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Risk Score</span>
-                  <span className="font-bold text-slate-900">{selectedDevice.risk} / 100</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-slate-500">Open Ports</span>
-                  <span className="font-mono text-blue-600 font-bold">{selectedDevice.ports.join(", ")}</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-slate-600 space-y-1">
-                <div className="font-bold text-slate-800">Blast Radius Impact:</div>
-                <div>* Lateral pivot target to db-01.database.internal</div>
-                <div>* Ingress rule: TCP Port 80, 443</div>
+        <div className="flex-1 p-6 flex flex-col overflow-hidden space-y-4">
+          {/* Top Canvas Controls Ribbon */}
+          <div className="flex justify-between items-center bg-obsidian-900/90 border border-slate-800 p-3 rounded-xl">
+            <div className="flex items-center space-x-3">
+              <span className="text-xs font-mono font-bold text-slate-400">PERSPECTIVE:</span>
+              <div className="flex rounded-lg bg-slate-900 border border-slate-800 p-0.5">
+                <button
+                  onClick={() => setViewMode("2D")}
+                  className={`px-3 py-1 text-xs font-mono font-bold rounded ${
+                    viewMode === "2D" ? "bg-cyber-cyan text-obsidian shadow-cyan-glow" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  2D Logical View
+                </button>
+                <button
+                  onClick={() => setViewMode("3D")}
+                  className={`px-3 py-1 text-xs font-mono font-bold rounded ${
+                    viewMode === "3D" ? "bg-cyber-cyan text-obsidian shadow-cyan-glow" : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  3D Spatial WebGL
+                </button>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 space-y-2">
-              <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition">
-                Trigger Defensive Playbook
-              </button>
+            <div className="flex items-center space-x-3 text-xs font-mono">
+              <span className="flex items-center space-x-1.5 text-cyber-emerald">
+                <span className="w-2 h-2 rounded-full bg-cyber-emerald animate-pulse"></span>
+                <span>STATE SYNC ACTIVE</span>
+              </span>
+              <span className="text-slate-600">|</span>
+              <span className="text-slate-400">Nodes: 5 Monitored</span>
             </div>
-          </aside>
+          </div>
+
+          {/* Main Topological Canvas Workspace */}
+          <div className="flex-1 relative glass-panel rounded-xl border border-slate-800 overflow-hidden flex">
+            {/* 2D Topological Canvas Simulator */}
+            <div className="flex-1 relative bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px] p-8 flex items-center justify-around">
+              {nodes.map((node) => (
+                <div
+                  key={node.id}
+                  onClick={() => setSelectedDeviceId(node.id)}
+                  className={`cursor-pointer p-4 rounded-xl border transition-all duration-200 flex flex-col items-center space-y-2 select-none ${
+                    selectedDeviceId === node.id 
+                      ? "border-cyber-cyan bg-obsidian-800/90 shadow-cyan-glow scale-105" 
+                      : "border-slate-800 bg-obsidian-900/80 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="relative">
+                    <Server className={`w-8 h-8 ${
+                      node.state === "COMPROMISED" ? "text-cyber-crimson animate-pulse" :
+                      node.state === "SUSPICIOUS" ? "text-cyber-amber" : "text-cyber-cyan"
+                    }`} />
+                    {node.state === "COMPROMISED" && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-cyber-crimson animate-ping" />
+                    )}
+                  </div>
+                  <div className="text-center font-mono">
+                    <div className="font-bold text-xs text-white">{node.id}</div>
+                    <div className="text-[10px] text-slate-500">{node.ip}</div>
+                  </div>
+                  <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                    node.state === "COMPROMISED" ? "bg-cyber-crimson/20 border-cyber-crimson/40 text-cyber-crimson" :
+                    node.state === "SUSPICIOUS" ? "bg-cyber-amber/20 border-cyber-amber/40 text-cyber-amber" :
+                    "bg-cyber-emerald/20 border-cyber-emerald/40 text-cyber-emerald"
+                  }`}>
+                    {node.state}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Floating Device Inspection Drawer */}
+            <div className="w-80 border-l border-slate-800 bg-obsidian-900/95 p-5 flex flex-col justify-between font-mono">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                  <h3 className="font-bold text-sm text-white flex items-center space-x-2">
+                    <Cpu className="w-4 h-4 text-cyber-cyan" />
+                    <span>Device Telemetry</span>
+                  </h3>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    activeNode.state === "COMPROMISED" ? "bg-cyber-crimson/20 text-cyber-crimson" : "bg-cyber-cyan/20 text-cyber-cyan"
+                  }`}>
+                    {activeNode.id}
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 text-xs">
+                  <div>
+                    <span className="text-[10px] text-slate-500 block">HOSTNAME</span>
+                    <span className="font-bold text-slate-200">{activeNode.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 block">PRIMARY IP / INTERFACE</span>
+                    <span className="text-slate-300">{activeNode.ip} (eth0)</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-500 block">CPU UTILIZATION</span>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <div className="flex-1 bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${activeNode.cpu > 80 ? "bg-cyber-crimson" : "bg-cyber-cyan"}`} 
+                          style={{ width: `${activeNode.cpu}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-slate-200">{activeNode.cpu}%</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <div className="p-2 rounded bg-slate-800/40 border border-slate-800">
+                      <span className="text-[9px] text-slate-500 block">RX LOAD</span>
+                      <span className="text-xs text-cyber-cyan font-bold">{activeNode.rx}</span>
+                    </div>
+                    <div className="p-2 rounded bg-slate-800/40 border border-slate-800">
+                      <span className="text-[9px] text-slate-500 block">TX LOAD</span>
+                      <span className="text-xs text-slate-300 font-bold">{activeNode.tx}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-800 pt-3 space-y-2">
+                <div className="text-[11px] text-slate-400 flex justify-between">
+                  <span>Attack Path:</span>
+                  <span className="text-cyber-crimson font-bold">CLIENT-01 &rarr; WEB-01 &rarr; DB-01</span>
+                </div>
+                <div className="text-[10px] text-slate-500 text-right">Drag &amp; Zoom Canvas Supported</div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>

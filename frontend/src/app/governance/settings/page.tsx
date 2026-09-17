@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
-import { Settings, Save, RotateCcw, CheckCircle2 } from "lucide-react";
+import { Save, CheckCircle2 } from "lucide-react";
 
 export default function SettingsPage() {
   const [realtimeInterval, setRealtimeInterval] = useState(100);
@@ -31,7 +31,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
+          <div className="glass-panel p-6 space-y-6">
             <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3">
               Operational Real-Time Stream Parameters
             </h3>

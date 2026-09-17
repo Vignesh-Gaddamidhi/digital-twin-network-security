@@ -7,7 +7,6 @@ import { LineChart, Activity, Radio, ArrowUpDown, Server, HardDrive } from "luci
 
 export default function TrafficAnalyticsPage() {
   const [timeFilter, setTimeFilter] = useState("15m");
-  const [protocolFilter, setProtocolFilter] = useState("ALL");
 
   const trafficMetrics = {
     totalPackets: "1,420,850",
@@ -33,7 +32,7 @@ export default function TrafficAnalyticsPage() {
 
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
           {/* Time Filter Toolbar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div className="glass-panel p-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="text-xs font-bold text-slate-400 mr-2">Time Window:</span>
               {["5m", "15m", "30m", "1h", "6h", "24h"].map((t) => (
@@ -53,22 +52,22 @@ export default function TrafficAnalyticsPage() {
 
           {/* Traffic Gauges */}
           <div className="grid grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div className="glass-panel p-4">
               <div className="text-xs font-semibold text-slate-500">Packet Throughput</div>
               <div className="text-2xl font-black text-blue-600 mt-1">{trafficMetrics.packetRate}</div>
               <div className="text-[10px] text-slate-400">Total: {trafficMetrics.totalPackets}</div>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div className="glass-panel p-4">
               <div className="text-xs font-semibold text-slate-500">Bandwidth Bitrate</div>
               <div className="text-2xl font-black text-emerald-600 mt-1">{trafficMetrics.byteRate}</div>
               <div className="text-[10px] text-slate-400">Total: {trafficMetrics.totalBytes}</div>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div className="glass-panel p-4">
               <div className="text-xs font-semibold text-slate-500">Active State Connections</div>
               <div className="text-2xl font-black text-purple-600 mt-1">{trafficMetrics.activeConnections}</div>
               <div className="text-[10px] text-slate-400">TCP Handshakes: 34 ESTABLISHED</div>
             </div>
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div className="glass-panel p-4">
               <div className="text-xs font-semibold text-slate-500">Dominant Protocol</div>
               <div className="text-2xl font-black text-slate-900 mt-1">TCP (68.4%)</div>
               <div className="text-[10px] text-red-600 font-semibold">Anomalous SYN Flood active</div>
@@ -76,9 +75,9 @@ export default function TrafficAnalyticsPage() {
           </div>
 
           {/* Protocol Distribution Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel overflow-hidden">
             <div className="p-4 border-b border-slate-100 font-bold text-slate-900 text-sm">
-              Protocol Distribution & Anomaly Behavioral Context
+              Protocol Distribution & Behavioral Anomaly Context
             </div>
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-200">

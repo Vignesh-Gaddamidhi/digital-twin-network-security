@@ -5,169 +5,100 @@ import Link from "next/link";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
 import { useSoc } from "@/lib/socContext";
-import { BellRing, Filter, Search, ArrowRight, ShieldCheck, AlertOctagon, X } from "lucide-react";
+import { BellRing, Search, Filter, ShieldAlert, ArrowUpRight } from "lucide-react";
 
 export default function AlertsPage() {
-  const { selectedDeviceId, setSelectedDeviceId } = useSoc();
-  const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
-  const [filterSeverity, setFilterSeverity] = useState<string>("ALL");
-  const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const { setSelectedAlertId } = useSoc();
+  const [filterSev, setFilterSev] = useState("ALL");
 
   const alerts = [
-    {
-      id: "ALT-20260916-001",
-      timestamp: "10:20:14.102",
-      severity: "CRITICAL",
-      src: "192.168.1.105:48320",
-      dst: "10.0.2.99:80",
-      protocol: "TCP",
-      port: 80,
-      eventType: "SQL_INJECTION_PROBE",
-      detectionSource: "SURICATA",
-      detectionType: "SIGNATURE_MATCH",
-      confidence: 0.99,
-      riskScore: 85.0,
-      riskLevel: "CRITICAL",
-      affectedDevice: "WEB-01",
-      status: "NEW",
-      evidence: "Malicious payload 'UNION SELECT 1, @@version' observed in URI parameters.",
-      predictionId: "PRD-2026-001",
-      attackPath: "PATH-01"
-    },
-    {
-      id: "ALT-20260916-002",
-      timestamp: "10:20:18.450",
-      severity: "HIGH",
-      src: "10.0.1.25:52110",
-      dst: "10.0.2.99:443",
-      protocol: "TLS",
-      port: 443,
-      eventType: "PORT_SCAN_SWEEP",
-      detectionSource: "ZEEK",
-      detectionType: "FLOW_BEHAVIOR",
-      confidence: 0.94,
-      riskScore: 68.0,
-      riskLevel: "HIGH",
-      affectedDevice: "CLIENT-01",
-      status: "INVESTIGATING",
-      evidence: "High destination port diversity: 12 ports probed in 500ms.",
-      predictionId: "PRD-2026-003",
-      attackPath: "PATH-02"
-    },
-    {
-      id: "ALT-20260916-003",
-      timestamp: "10:20:25.890",
-      severity: "CRITICAL",
-      src: "10.0.2.99:38190",
-      dst: "10.0.3.10:3306",
-      protocol: "TCP",
-      port: 3306,
-      eventType: "UNAUTHORIZED_RPC_PIVOT",
-      detectionSource: "ML_DETECTOR",
-      detectionType: "ENSEMBLE_INFERENCE",
-      confidence: 0.989,
-      riskScore: 88.0,
-      riskLevel: "CRITICAL",
-      affectedDevice: "DB-01",
-      status: "ACKNOWLEDGED",
-      evidence: "Ensemble Classifier probability: 0.989 (LATERAL_MOVEMENT pivot).",
-      predictionId: "PRD-2026-002",
-      attackPath: "PATH-01"
-    }
+    { id: "ALT-20260916-001", time: "10:14:22.054", src: "192.168.1.105:48320", dev: "WEB-01", type: "Slowloris Inbound Attempt", conf: "99%", sev: "CRITICAL", status: "INVESTIGATING" },
+    { id: "ALT-20260916-002", time: "10:14:24.812", src: "10.0.1.25:52110", dev: "WEB-01", type: "Lateral Movement Probe", conf: "96%", sev: "CRITICAL", status: "NEW" },
+    { id: "ALT-20260916-003", time: "10:13:18.400", src: "10.0.1.50:41200", dev: "CLIENT-01", type: "Port Anomaly Sweep", conf: "88%", sev: "HIGH", status: "INVESTIGATING" },
+    { id: "ALT-20260916-004", time: "10:11:05.120", src: "10.0.2.99:53120", dev: "WEB-01", type: "DNS Anomaly Tunneling", conf: "74%", sev: "MEDIUM", status: "RESOLVED" },
   ];
 
-  const filteredAlerts = alerts.filter((a) => {
-    const matchSev = filterSeverity === "ALL" || a.severity === filterSeverity;
-    const matchSt = filterStatus === "ALL" || a.status === filterStatus;
-    return matchSev && matchSt;
-  });
+  const filtered = filterSev === "ALL" ? alerts : alerts.filter((a) => a.sev === filterSev);
 
   return (
-    <div className="flex h-screen w-screen bg-slate-100 text-slate-800">
+    <div className="flex h-screen w-screen bg-obsidian text-slate-200 font-mono">
       <SocSidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
-        <SocHeader pageTitle="Security Alerts Hub & Triage Queue" />
+        <SocHeader pageTitle="Enterprise SOC Alert Center" />
 
-        <div className="flex-1 flex overflow-hidden">
-          {/* Main Table View */}
-          <div className="flex-1 p-6 overflow-y-auto space-y-4">
-            {/* Filter Bar */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-slate-400 mr-1">Severity:</span>
-                {["ALL", "CRITICAL", "HIGH", "MEDIUM", "LOW"].map((sev) => (
-                  <button
-                    key={sev}
-                    onClick={() => setFilterSeverity(sev)}
-                    className={`text-xs font-bold px-2.5 py-1 rounded-lg transition ${
-                      filterSeverity === sev ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    {sev}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-slate-400 mr-1">Status:</span>
-                {["ALL", "NEW", "ACKNOWLEDGED", "INVESTIGATING", "RESOLVED"].map((st) => (
-                  <button
-                    key={st}
-                    onClick={() => setFilterStatus(st)}
-                    className={`text-xs font-bold px-2.5 py-1 rounded-lg transition ${
-                      filterStatus === st ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    {st}
-                  </button>
-                ))}
-              </div>
+        <div className="flex-1 p-6 flex flex-col space-y-4 overflow-hidden">
+          {/* Multi-attribute Filter Toolbar */}
+          <div className="glass-panel p-4 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+            <div className="flex items-center space-x-2">
+              <span className="text-slate-500 font-bold uppercase text-[10px]">Severity Filter:</span>
+              {["ALL", "CRITICAL", "HIGH", "MEDIUM"].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setFilterSev(s)}
+                  className={`px-2.5 py-1 rounded border text-[10px] font-bold transition ${
+                    filterSev === s ? "bg-cyber-cyan text-obsidian border-cyber-cyan shadow-cyan-glow" : "bg-obsidian-900 text-slate-400 border-slate-800"
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
             </div>
 
-            {/* Alerts Table */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-200">
+            <div className="text-[11px] text-slate-400">
+              Showing <span className="text-cyber-cyan font-bold">{filtered.length}</span> Active Alerts
+            </div>
+          </div>
+
+          {/* Alert Ledger Table */}
+          <div className="flex-1 glass-panel rounded-xl border border-slate-800 overflow-hidden flex flex-col">
+            <div className="overflow-x-auto flex-1">
+              <table className="w-full text-xs text-left">
+                <thead className="text-[10px] text-slate-400 uppercase bg-obsidian-900/90 border-b border-slate-800 sticky top-0">
                   <tr>
                     <th className="py-3 px-4">Alert ID</th>
                     <th className="py-3 px-4">Timestamp</th>
-                    <th className="py-3 px-4">Severity</th>
+                    <th className="py-3 px-4">Source IP</th>
+                    <th className="py-3 px-4">Affected Device</th>
                     <th className="py-3 px-4">Event Type</th>
-                    <th className="py-3 px-4">Target Device</th>
-                    <th className="py-3 px-4">Detection Source</th>
-                    <th className="py-3 px-4">Risk</th>
+                    <th className="py-3 px-4">Confidence</th>
+                    <th className="py-3 px-4">Severity</th>
                     <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Inspect</th>
+                    <th className="py-3 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredAlerts.map((a) => (
-                    <tr
-                      key={a.id}
-                      onClick={() => setSelectedAlert(a)}
-                      className={`hover:bg-slate-50/80 transition cursor-pointer ${
-                        selectedAlert?.id === a.id ? "bg-blue-50/50" : ""
-                      }`}
-                    >
-                      <td className="py-3 px-4 font-mono font-bold text-blue-600">{a.id}</td>
-                      <td className="py-3 px-4 font-mono text-slate-400">{a.timestamp}</td>
+                <tbody className="divide-y divide-slate-800/60">
+                  {filtered.map((a) => (
+                    <tr key={a.id} className="hover:bg-obsidian-800/60 transition">
+                      <td className="py-3 px-4 font-bold text-white">{a.id}</td>
+                      <td className="py-3 px-4 text-slate-400">{a.time}</td>
+                      <td className="py-3 px-4 text-slate-300">{a.src}</td>
+                      <td className="py-3 px-4 text-cyber-cyan font-bold">{a.dev}</td>
+                      <td className="py-3 px-4 text-slate-200">{a.type}</td>
+                      <td className="py-3 px-4 text-slate-400">{a.conf}</td>
                       <td className="py-3 px-4">
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                          a.severity === "CRITICAL" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                        <span className={`px-2 py-0.5 rounded font-black text-[10px] border ${
+                          a.sev === "CRITICAL" ? "bg-cyber-crimson/20 border-cyber-crimson/40 text-cyber-crimson" : "bg-cyber-amber/20 border-cyber-amber/40 text-cyber-amber"
                         }`}>
-                          {a.severity}
+                          {a.sev}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-bold text-slate-900">{a.eventType}</td>
-                      <td className="py-3 px-4 font-mono text-slate-700 font-semibold">{a.affectedDevice}</td>
-                      <td className="py-3 px-4 font-mono text-slate-500">{a.detectionSource}</td>
-                      <td className="py-3 px-4 font-mono font-bold text-slate-900">{a.riskScore}</td>
                       <td className="py-3 px-4">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                        <span className={`px-2 py-0.5 rounded font-bold text-[9px] ${
+                          a.status === "NEW" ? "bg-cyber-cyan/20 text-cyber-cyan" :
+                          a.status === "INVESTIGATING" ? "bg-cyber-amber/20 text-cyber-amber" :
+                          "bg-cyber-emerald/20 text-cyber-emerald"
+                        }`}>
                           {a.status}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <button className="text-xs font-bold text-blue-600 hover:underline">View Detail</button>
+                        <Link 
+                          href="/incidents" 
+                          onClick={() => setSelectedAlertId(a.id)}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[10px] font-bold"
+                        >
+                          Escalate
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -175,62 +106,6 @@ export default function AlertsPage() {
               </table>
             </div>
           </div>
-
-          {/* 8-Stage Alert Detail Drawer */}
-          {selectedAlert && (
-            <aside className="w-96 bg-white border-l border-slate-200 p-5 shrink-0 flex flex-col justify-between overflow-y-auto">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div>
-                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">Alert Inspection</span>
-                    <h3 className="text-sm font-extrabold text-slate-900">{selectedAlert.id}</h3>
-                  </div>
-                  <button onClick={() => setSelectedAlert(null)} className="p-1 hover:bg-slate-100 rounded-md">
-                    <X className="w-4 h-4 text-slate-400" />
-                  </button>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Event Type</span>
-                    <span className="font-bold text-slate-900">{selectedAlert.eventType}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Flow Origin ➔ Target</span>
-                    <span className="font-mono text-slate-700">{selectedAlert.src} ➔ {selectedAlert.dst}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Confidence</span>
-                    <span className="font-bold text-emerald-600">{(selectedAlert.confidence * 100).toFixed(1)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Composite Risk</span>
-                    <span className="font-bold text-red-600">{selectedAlert.riskScore} ({selectedAlert.riskLevel})</span>
-                  </div>
-                </div>
-
-                <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs space-y-1">
-                  <div className="font-bold text-slate-800">Forensic Evidence:</div>
-                  <div className="text-slate-600">{selectedAlert.evidence}</div>
-                </div>
-
-                <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100 text-xs space-y-1 font-mono">
-                  <div className="font-bold text-blue-900 font-sans">Investigation Linkage:</div>
-                  <div>Prediction : {selectedAlert.predictionId}</div>
-                  <div>Attack Path: {selectedAlert.attackPath}</div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100 space-y-2">
-                <Link
-                  href="/incidents"
-                  className="w-full block text-center py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition"
-                >
-                  Escalate to Incident Investigation ➔
-                </Link>
-              </div>
-            </aside>
-          )}
         </div>
       </main>
     </div>

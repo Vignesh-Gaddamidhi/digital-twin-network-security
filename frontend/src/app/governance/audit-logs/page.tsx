@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
-import { FileCheck2, Filter, Search, Lock, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export default function AuditLogsPage() {
   const [filterAction, setFilterAction] = useState("ALL");
@@ -62,6 +62,19 @@ export default function AuditLogsPage() {
       result: "SUCCESS"
     },
     {
+      auditId: "AUD-REAL-REJECTED",
+      timestamp: "2026-09-16T10:14:48Z",
+      operator: "SOC_LEAD_ANALYST",
+      action: "ISOLATE_DEVICE",
+      objectType: "DEVICE",
+      objectId: "WEB-01",
+      reason: "Illegal attempt to modify physical core switch interface",
+      previousState: "NORMAL",
+      newState: "REJECTED",
+      mode: "REAL",
+      result: "SAFETY_VIOLATION_REAL_EXECUTION_BLOCKED"
+    },
+    {
       auditId: "AUD-9F0E1D2C",
       timestamp: "2026-09-16T10:14:50Z",
       operator: "SOC_SENIOR_ANALYST",
@@ -71,19 +84,6 @@ export default function AuditLogsPage() {
       reason: "Elevated threat context in neighboring subnet",
       previousState: "STANDARD",
       newState: "HIGH",
-      mode: "SIMULATION",
-      result: "SUCCESS"
-    },
-    {
-      auditId: "AUD-B2C3D4E5",
-      timestamp: "2026-09-16T10:14:55Z",
-      operator: "AUTOMATED_PLAYBOOK",
-      action: "MARK_DEVICE_AT_RISK",
-      objectType: "DEVICE",
-      objectId: "DNS-SERVER-01",
-      reason: "Early warning trajectory alert from temporal LSTM",
-      previousState: "NORMAL",
-      newState: "AT_RISK",
       mode: "SIMULATION",
       result: "SUCCESS"
     }
@@ -101,10 +101,10 @@ export default function AuditLogsPage() {
 
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
           {/* Action Filter Bar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div className="glass-panel p-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="text-xs font-bold text-slate-400 mr-2">Action Filter:</span>
-              {["ALL", "ISOLATE_DEVICE", "BLOCK_CONNECTION", "DISABLE_SERVICE", "QUARANTINE_ENDPOINT", "INCREASE_SECURITY_LEVEL", "MARK_DEVICE_AT_RISK"].map((act) => (
+              {["ALL", "ISOLATE_DEVICE", "BLOCK_CONNECTION", "DISABLE_SERVICE", "QUARANTINE_ENDPOINT", "INCREASE_SECURITY_LEVEL"].map((act) => (
                 <button
                   key={act}
                   onClick={() => setFilterAction(act)}
@@ -123,7 +123,7 @@ export default function AuditLogsPage() {
           </div>
 
           {/* Audit Logs Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-200">
                 <tr>
@@ -152,15 +152,19 @@ export default function AuditLogsPage() {
                       {e.objectId} <span className="text-slate-400 text-[10px]">({e.objectType})</span>
                     </td>
                     <td className="py-3 px-4 text-slate-600">
-                      {e.previousState} ➔ <span className="font-bold text-red-600">{e.newState}</span>
+                      {e.previousState} &rarr; <span className="font-bold text-red-600">{e.newState}</span>
                     </td>
                     <td className="py-3 px-4 font-sans">
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-50 text-purple-700">
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        e.mode === "REAL" ? "bg-red-100 text-red-700 border border-red-200" : "bg-purple-50 text-purple-700"
+                      }`}>
                         {e.mode}
                       </span>
                     </td>
                     <td className="py-3 px-4 font-sans">
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700">
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        e.result.includes("BLOCKED") ? "bg-red-100 text-red-700 border border-red-200" : "bg-emerald-100 text-emerald-700"
+                      }`}>
                         {e.result}
                       </span>
                     </td>

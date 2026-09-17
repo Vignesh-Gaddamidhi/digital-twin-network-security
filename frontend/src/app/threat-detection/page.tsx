@@ -6,155 +6,140 @@ import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
 import { useSoc } from "@/lib/socContext";
 import { 
-  ShieldAlert, Radio, Search, Filter, ArrowRight, 
-  ExternalLink, Download, AlertTriangle, FileCode
+  ShieldAlert, Radio, Search, Play, Pause, 
+  Terminal, ArrowUpRight, Activity, Filter
 } from "lucide-react";
 
 export default function ThreatDetectionPage() {
-  const { setSelectedAlertId, setSelectedDeviceId } = useSoc();
-  const [sourceFilter, setSourceFilter] = useState<string>("ALL");
+  const { setSelectedAlertId } = useSoc();
+  const [isStreaming, setIsStreaming] = useState(true);
+  const [filterQuery, setFilterQuery] = useState("");
 
-  const threatFeeds = [
-    {
-      id: "THR-2026-001",
-      source: "SURICATA",
-      type: "ET DOS HTTP Slowloris Inbound",
-      severity: "CRITICAL",
-      confidence: 0.99,
-      timestamp: "10:18:04.212",
-      src: "192.168.1.105:48320",
-      dst: "10.0.2.99:80 (WEB-01)",
-      protocol: "TCP",
-      evidence: "HTTP Slowloris Keep-Alive timeout starvation threshold breached",
-      alertId: "ALERT-20260916-001"
-    },
-    {
-      id: "THR-2026-002",
-      source: "ZEEK",
-      type: "Suspicious SSL Cert Validation Failure",
-      severity: "HIGH",
-      confidence: 0.94,
-      timestamp: "10:18:10.144",
-      src: "10.0.1.25:52110 (CLIENT-01)",
-      dst: "10.0.2.99:443 (WEB-01)",
-      protocol: "TLSv1.3",
-      evidence: "Self-signed certificate subject CN does not match internal CA",
-      alertId: "ALERT-20260916-002"
-    },
-    {
-      id: "THR-2026-003",
-      source: "ML_DETECTOR",
-      type: "Ensemble LATERAL_MOVEMENT Pivot",
-      severity: "CRITICAL",
-      confidence: 0.989,
-      timestamp: "10:18:15.890",
-      src: "10.0.2.99:38190 (WEB-01)",
-      dst: "10.0.3.10:3306 (DB-01)",
-      protocol: "TCP",
-      evidence: "Random Forest + LSTM score: 0.989 | Feature: Unassigned port query burst",
-      alertId: "ALERT-20260916-003"
-    },
-    {
-      id: "THR-2026-004",
-      source: "SIMULATION",
-      type: "SYN Flood Saturation Test Probe",
-      severity: "MEDIUM",
-      confidence: 1.0,
-      timestamp: "10:18:22.001",
-      src: "10.0.1.12:44012",
-      dst: "10.0.2.99:80 (WEB-01)",
-      protocol: "TCP",
-      evidence: "Synthetic inject: 1,450 pkts/s stress cycle",
-      alertId: "ALERT-20260916-004"
-    }
+  const rawPackets = [
+    { time: "10:14:22.045", proto: "TCP", src: "192.168.1.105:48320", dst: "10.0.2.99:80", payload: "HTTP [GET] /index.php?id=1' UNION SELECT 1, @@version --" },
+    { time: "10:14:22.048", proto: "HTTP", src: "192.168.1.105:48321", dst: "10.0.2.99:80", payload: "HTTP [POST] /login.php [Content-Length: 42800] Keep-Alive" },
+    { time: "10:14:22.052", proto: "TCP", src: "192.168.1.105:48322", dst: "10.0.2.99:80", payload: "TCP [SYN] Win=65535 MSS=1460 SACK_PERM TSval=9821034" },
+    { time: "10:14:22.055", proto: "DNS", src: "10.0.2.99:53120", dst: "1.1.1.1:53", payload: "DNS Query: stage2-payload-exfil.attacker.internal IN A" },
+    { time: "10:14:22.058", proto: "TCP", src: "10.0.2.99:49210", dst: "10.0.3.10:3306", payload: "TCP [SYN] Probe toward MySQL Master port 3306" },
   ];
 
-  const filteredFeeds = sourceFilter === "ALL" 
-    ? threatFeeds 
-    : threatFeeds.filter((t) => t.source === sourceFilter);
+  const signatures = [
+    { time: "10:14:22.054", sensor: "SURICATA", sid: 200142, name: "ET DOS Slowloris Inbound Attempt", sev: "CRITICAL", match: "Observed starved HTTP connection pool" },
+    { time: "10:14:22.056", sensor: "ZEEK", sid: 104421, name: "Notice::Weird_Activity", sev: "HIGH", match: "High connection count from single foreign subnet" },
+    { time: "10:14:22.059", sensor: "ML_ENGINE", sid: 300101, name: "Ensemble LATERAL_MOVEMENT Hit", sev: "CRITICAL", match: "Port entropy spike 4.82 (96.4% confidence)" },
+    { time: "10:14:22.062", sensor: "SURICATA", sid: 200982, name: "ET SCAN Potential MySQL Scanner", sev: "HIGH", match: "Lateral scan from DMZ to Internal Database Tier" },
+  ];
 
   return (
-    <div className="flex h-screen w-screen bg-slate-100 text-slate-800">
+    <div className="flex h-screen w-screen bg-obsidian text-slate-200">
       <SocSidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
-        <SocHeader pageTitle="AI / ML Threat Detection & Deep Packet Inspection" />
+        <SocHeader pageTitle="Threat Detection & Deep Packet Inspection" />
 
-        <div className="flex-1 p-6 overflow-y-auto space-y-6">
-          {/* DPI Source Filter Bar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-slate-400 mr-2" />
-              {["ALL", "SURICATA", "ZEEK", "ML_DETECTOR", "SIMULATION"].map((src) => (
-                <button
-                  key={src}
-                  onClick={() => setSourceFilter(src)}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg transition ${
-                    sourceFilter === src ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {src}
-                </button>
-              ))}
+        <div className="flex-1 p-6 flex flex-col overflow-hidden space-y-4 font-mono">
+          {/* Top Inspection Control Bar */}
+          <div className="glass-panel p-4 rounded-xl border border-slate-800 flex justify-between items-center shrink-0">
+            <div className="flex items-center space-x-3 w-96">
+              <Search className="w-4 h-4 text-slate-500 shrink-0" />
+              <input
+                type="text"
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                placeholder="Search raw regex / signature matches..."
+                className="w-full bg-obsidian-900 border border-slate-700/80 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyber-cyan transition"
+              />
             </div>
-            <button className="flex items-center space-x-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition">
-              <Download className="w-3.5 h-3.5" />
-              <span>Download Live PCAP</span>
-            </button>
+
+            <div className="flex items-center space-x-4">
+              <span className="text-xs text-slate-400 flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-cyber-emerald animate-pulse"></span>
+                <span>PCAP BUFFER: ACTIVE</span>
+              </span>
+
+              <button
+                onClick={() => setIsStreaming(!isStreaming)}
+                className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-bold border transition ${
+                  isStreaming
+                    ? "bg-cyber-emerald/20 text-cyber-emerald border-cyber-emerald/40 shadow-emerald-glow"
+                    : "bg-slate-800 text-slate-400 border-slate-700"
+                }`}
+              >
+                {isStreaming ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                <span>{isStreaming ? "STREAMING (LIVE)" : "PAUSED"}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Threat Records Table with Investigation Handoff */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px]">
-                <tr>
-                  <th className="py-3 px-4">Timestamp</th>
-                  <th className="py-3 px-4">Source Engine</th>
-                  <th className="py-3 px-4">Threat Type</th>
-                  <th className="py-3 px-4">Flow Origin -> Target</th>
-                  <th className="py-3 px-4">Confidence</th>
-                  <th className="py-3 px-4">Severity</th>
-                  <th className="py-3 px-4 text-right">Investigation Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredFeeds.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/80 transition">
-                    <td className="py-3 px-4 font-mono text-slate-400">{t.timestamp}</td>
-                    <td className="py-3 px-4 font-bold text-slate-700">{t.source}</td>
-                    <td className="py-3 px-4">
-                      <div className="font-bold text-slate-900">{t.type}</div>
-                      <div className="text-[11px] text-slate-400">{t.evidence}</div>
-                    </td>
-                    <td className="py-3 px-4 font-mono text-slate-600">
-                      <div>{t.src} -></div>
-                      <div className="font-bold text-blue-600">{t.dst}</div>
-                    </td>
-                    <td className="py-3 px-4 font-bold text-slate-800">{(t.confidence * 100).toFixed(1)}%</td>
-                    <td className="py-3 px-4">
-                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${
-                        t.severity === "CRITICAL" ? "bg-red-100 text-red-700" :
-                        t.severity === "HIGH" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
-                      }`}>
-                        {t.severity}
+          {/* Split View: Left Raw Flows | Right Signatures */}
+          <div className="flex-1 grid grid-cols-2 gap-4 overflow-hidden">
+            {/* Left: Raw Flow Inspector */}
+            <div className="glass-panel rounded-xl border border-slate-800 flex flex-col overflow-hidden">
+              <div className="p-3 border-b border-slate-800 bg-obsidian-900/90 flex justify-between items-center">
+                <h3 className="text-xs font-bold text-slate-200 flex items-center space-x-2">
+                  <Terminal className="w-3.5 h-3.5 text-cyber-cyan" />
+                  <span>Incoming Raw Packet Flow Stream</span>
+                </h3>
+                <span className="text-[10px] text-slate-400">Layer 4/7 Payloads</span>
+              </div>
+              <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
+                {rawPackets.map((pkt, i) => (
+                  <div key={i} className="p-2.5 rounded-lg border border-slate-800/80 bg-obsidian-900/60 space-y-1">
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-500">{pkt.time}</span>
+                      <span className="px-1.5 py-0.2 rounded font-bold bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan">
+                        {pkt.proto}
                       </span>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Link
-                        href="/alerts"
-                        onClick={() => {
-                          setSelectedAlertId(t.alertId);
-                          setSelectedDeviceId("WEB-01");
-                        }}
-                        className="inline-flex items-center space-x-1 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-100 transition"
-                      >
-                        <span>Investigate</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="text-slate-300 font-semibold text-[11px]">
+                      {pkt.src} &rarr; {pkt.dst}
+                    </div>
+                    <div className="text-[11px] text-slate-400 truncate bg-slate-950/80 p-1.5 rounded border border-slate-800/50">
+                      {pkt.payload}
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
+
+            {/* Right: Suricata & Zeek Signatures */}
+            <div className="glass-panel rounded-xl border border-slate-800 flex flex-col overflow-hidden">
+              <div className="p-3 border-b border-slate-800 bg-obsidian-900/90 flex justify-between items-center">
+                <h3 className="text-xs font-bold text-slate-200 flex items-center space-x-2">
+                  <ShieldAlert className="w-3.5 h-3.5 text-cyber-crimson" />
+                  <span>Suricata / Zeek / ML Signature Engine</span>
+                </h3>
+                <span className="text-[10px] text-cyber-crimson font-bold">4 Matches Logged</span>
+              </div>
+              <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
+                {signatures.map((sig, i) => (
+                  <div key={i} className="p-3 rounded-lg border border-slate-800/80 bg-obsidian-900/60 space-y-1.5">
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-500">{sig.time}</span>
+                      <span className="font-bold text-cyber-cyan">{sig.sensor}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-slate-200 text-xs">{sig.name}</span>
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-black border ${
+                        sig.sev === "CRITICAL" ? "bg-cyber-crimson/20 border-cyber-crimson/40 text-cyber-crimson" : "bg-cyber-amber/20 border-cyber-amber/40 text-cyber-amber"
+                      }`}>
+                        {sig.sev}
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-slate-400">SID: {sig.sid} • {sig.match}</div>
+                    <div className="pt-1 flex justify-end">
+                      <Link 
+                        href="/alerts" 
+                        onClick={() => setSelectedAlertId("ALT-20260916-001")}
+                        className="text-[10px] text-cyber-cyan hover:underline flex items-center space-x-1"
+                      >
+                        <span>Escalate to SOC Triage</span>
+                        <span>&rarr;</span>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </main>

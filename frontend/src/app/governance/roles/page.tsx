@@ -3,7 +3,7 @@
 import React from "react";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
-import { ShieldCheck, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 export default function RolesPage() {
   const roles = [
@@ -46,15 +46,14 @@ export default function RolesPage() {
         <SocHeader pageTitle="Role-Based Access Control (RBAC) Matrix" />
 
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+          <div className="glass-panel p-5">
             <h3 className="text-sm font-bold text-slate-900 mb-1">Enterprise Access Control Policy</h3>
             <p className="text-xs text-slate-500">
               Role permissions mapped across Operational Modules, Playbook Execution, and Governance Ledgers.
             </p>
           </div>
 
-          {/* RBAC Matrix Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="glass-panel overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-200">
                 <tr>

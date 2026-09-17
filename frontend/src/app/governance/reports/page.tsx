@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import SocSidebar from "@/components/SocSidebar";
 import SocHeader from "@/components/SocHeader";
-import { FileSpreadsheet, Download, Calendar, Filter, FileText, CheckCircle2 } from "lucide-react";
+import { Download, FileText, CheckCircle2 } from "lucide-react";
 
 export default function ReportsPage() {
   const [selectedReportType, setSelectedReportType] = useState("Security Summary");
@@ -33,7 +33,7 @@ export default function ReportsPage() {
 
         <div className="flex-1 p-6 overflow-y-auto space-y-6">
           {/* Header Action Bar */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div className="glass-panel p-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <span className="text-xs font-bold text-slate-400">Environment:</span>
               <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
@@ -92,7 +92,7 @@ export default function ReportsPage() {
                 </div>
                 <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
                   <span>Available Records: {rep.records}</span>
-                  <span className="text-blue-600 font-bold hover:underline">Select Archetype ➔</span>
+                  <span className="text-blue-600 font-bold hover:underline">Select Archetype &rarr;</span>
                 </div>
               </div>
             ))}
