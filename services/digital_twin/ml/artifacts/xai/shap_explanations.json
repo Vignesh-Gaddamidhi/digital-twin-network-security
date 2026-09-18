@@ -1,6 +1,6 @@
 [
   {
-    "explanationId": "SHAP-6DE326FE",
+    "explanationId": "SHAP-3607FCD4",
     "predictionId": "PRED-PORT-SCAN-87",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
@@ -248,11 +248,11 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:06.405331+00:00"
+    "generatedAt": "2026-09-17T14:59:31.800985+00:00"
   },
   {
-    "explanationId": "SHAP-F56B9FF6",
-    "predictionId": "PRED-A45ED312",
+    "explanationId": "SHAP-60F5A963",
+    "predictionId": "PRED-17D00F49",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -498,11 +498,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.466549+00:00"
+    "generatedAt": "2026-09-17T14:59:40.983407+00:00"
   },
   {
-    "explanationId": "SHAP-B5DEC2F5",
-    "predictionId": "PRED-20D50929",
+    "explanationId": "SHAP-19F87D3C",
+    "predictionId": "PRED-D5108F4C",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -749,11 +749,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.542443+00:00"
+    "generatedAt": "2026-09-17T14:59:41.066330+00:00"
   },
   {
-    "explanationId": "SHAP-E3B4E0F6",
-    "predictionId": "PRED-58C54030",
+    "explanationId": "SHAP-8888BBB6",
+    "predictionId": "PRED-012A94DF",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -1000,11 +1000,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.634625+00:00"
+    "generatedAt": "2026-09-17T14:59:41.162014+00:00"
   },
   {
-    "explanationId": "SHAP-DD99D3AB",
-    "predictionId": "PRED-65C9A67C",
+    "explanationId": "SHAP-FFF6137E",
+    "predictionId": "PRED-4228BC82",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -1251,11 +1251,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.729826+00:00"
+    "generatedAt": "2026-09-17T14:59:41.255081+00:00"
   },
   {
-    "explanationId": "SHAP-6239E7A8",
-    "predictionId": "PRED-BEB0886D",
+    "explanationId": "SHAP-553E25E7",
+    "predictionId": "PRED-81E4B7E6",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -1502,11 +1502,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.831004+00:00"
+    "generatedAt": "2026-09-17T14:59:41.354770+00:00"
   },
   {
-    "explanationId": "SHAP-C3B7A323",
-    "predictionId": "PRED-1B3EBB91",
+    "explanationId": "SHAP-41E14C5C",
+    "predictionId": "PRED-B02316BC",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -1753,11 +1753,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:14.936004+00:00"
+    "generatedAt": "2026-09-17T14:59:41.472462+00:00"
   },
   {
-    "explanationId": "SHAP-05458282",
-    "predictionId": "PRED-372BB16B",
+    "explanationId": "SHAP-698AEC51",
+    "predictionId": "PRED-812AD209",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -2004,11 +2004,11 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:15.045633+00:00"
+    "generatedAt": "2026-09-17T14:59:41.592674+00:00"
   },
   {
-    "explanationId": "SHAP-907EF978",
-    "predictionId": "PRED-9FE22590",
+    "explanationId": "SHAP-D3FD3329",
+    "predictionId": "PRED-D227639E",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -2255,11 +2255,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:15.154774+00:00"
+    "generatedAt": "2026-09-17T14:59:41.703160+00:00"
   },
   {
-    "explanationId": "SHAP-7571F2BE",
-    "predictionId": "PRED-AB47948D",
+    "explanationId": "SHAP-692F0516",
+    "predictionId": "PRED-84A85341",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -2506,11 +2506,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:15.262516+00:00"
+    "generatedAt": "2026-09-17T14:59:41.809490+00:00"
   },
   {
-    "explanationId": "SHAP-218FDCFD",
-    "predictionId": "PRED-6C7D9D26",
+    "explanationId": "SHAP-38DB6AE5",
+    "predictionId": "PRED-8F0DA8B0",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -2757,11 +2757,11 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:15.370356+00:00"
+    "generatedAt": "2026-09-17T14:59:41.921438+00:00"
   },
   {
-    "explanationId": "SHAP-FF53C6D2",
-    "predictionId": "PRED-6879FB87",
+    "explanationId": "SHAP-53CB2128",
+    "predictionId": "PRED-F043BF91",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
     "baseValue": 0.5075,
@@ -3008,10 +3008,10 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:15.484762+00:00"
+    "generatedAt": "2026-09-17T14:59:42.039687+00:00"
   },
   {
-    "explanationId": "SHAP-F719D063",
+    "explanationId": "SHAP-5AD479CD",
     "predictionId": "PRED-VIS-DAY125",
     "modelName": "random_forest",
     "modelVersion": "rf-v1.0",
@@ -3259,10 +3259,10 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:19.220291+00:00"
+    "generatedAt": "2026-09-17T14:59:47.026780+00:00"
   },
   {
-    "explanationId": "SHAP-C62C0BC6",
+    "explanationId": "SHAP-3C7BDF7F",
     "predictionId": "PRED-BENCH-LOGISTIC_REGRESSION",
     "modelName": "logistic_regression",
     "modelVersion": "log-v1.0",
@@ -3509,10 +3509,10 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:23.251602+00:00"
+    "generatedAt": "2026-09-17T14:59:51.516095+00:00"
   },
   {
-    "explanationId": "SHAP-3464A593",
+    "explanationId": "SHAP-CAE4B9F6",
     "predictionId": "PRED-BENCH-DECISION_TREE",
     "modelName": "decision_tree",
     "modelVersion": "dec-v1.0",
@@ -3714,10 +3714,10 @@
         "rank": 1
       }
     ],
-    "generatedAt": "2026-09-16T06:01:23.277135+00:00"
+    "generatedAt": "2026-09-17T14:59:51.546395+00:00"
   },
   {
-    "explanationId": "SHAP-3615D1FC",
+    "explanationId": "SHAP-9F625928",
     "predictionId": "PRED-BENCH-RANDOM_FOREST",
     "modelName": "random_forest",
     "modelVersion": "ran-v1.0",
@@ -3964,10 +3964,10 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:23.462200+00:00"
+    "generatedAt": "2026-09-17T14:59:51.687554+00:00"
   },
   {
-    "explanationId": "SHAP-8EE5C51A",
+    "explanationId": "SHAP-5DDC64EF",
     "predictionId": "PRED-BENCH-SVM",
     "modelName": "svm",
     "modelVersion": "svm-v1.0",
@@ -3979,55 +3979,55 @@
       {
         "featureName": "connection_frequency",
         "featureValue": -1.1333,
-        "shapValue": -0.0809,
-        "shapValueFormatted": "-0.0809",
+        "shapValue": -0.0789,
+        "shapValueFormatted": "-0.0789",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0809,
+        "absoluteContribution": 0.0789,
         "rank": 1
-      },
-      {
-        "featureName": "packet_rate",
-        "featureValue": -1.0082,
-        "shapValue": -0.0753,
-        "shapValueFormatted": "-0.0753",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.0753,
-        "rank": 2
-      },
-      {
-        "featureName": "bytes",
-        "featureValue": -1.0016,
-        "shapValue": -0.0753,
-        "shapValueFormatted": "-0.0753",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.0753,
-        "rank": 3
       },
       {
         "featureName": "bytes_per_second",
         "featureValue": -1.0016,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "shapValue": -0.076,
+        "shapValueFormatted": "-0.0760",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.076,
+        "rank": 2
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": -1.0,
+        "shapValue": -0.0758,
+        "shapValueFormatted": "-0.0758",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0758,
+        "rank": 3
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -1.0082,
+        "shapValue": -0.0755,
+        "shapValueFormatted": "-0.0755",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0755,
         "rank": 4
       },
       {
         "featureName": "port_80_ratio",
         "featureValue": 1.0,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.075,
         "rank": 5
       },
       {
-        "featureName": "port_443_ratio",
-        "featureValue": -1.0,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "featureName": "bytes",
+        "featureValue": -1.0016,
+        "shapValue": -0.0732,
+        "shapValueFormatted": "-0.0732",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.0732,
         "rank": 6
       },
       {
@@ -4162,62 +4162,62 @@
       {
         "featureName": "connection_frequency",
         "featureValue": -1.1333,
-        "shapValue": -0.0809,
-        "shapValueFormatted": "-0.0809",
+        "shapValue": -0.0789,
+        "shapValueFormatted": "-0.0789",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0809,
+        "absoluteContribution": 0.0789,
         "rank": 1
-      },
-      {
-        "featureName": "packet_rate",
-        "featureValue": -1.0082,
-        "shapValue": -0.0753,
-        "shapValueFormatted": "-0.0753",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.0753,
-        "rank": 2
-      },
-      {
-        "featureName": "bytes",
-        "featureValue": -1.0016,
-        "shapValue": -0.0753,
-        "shapValueFormatted": "-0.0753",
-        "direction": "NEGATIVE",
-        "absoluteContribution": 0.0753,
-        "rank": 3
       },
       {
         "featureName": "bytes_per_second",
         "featureValue": -1.0016,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "shapValue": -0.076,
+        "shapValueFormatted": "-0.0760",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.076,
+        "rank": 2
+      },
+      {
+        "featureName": "port_443_ratio",
+        "featureValue": -1.0,
+        "shapValue": -0.0758,
+        "shapValueFormatted": "-0.0758",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0758,
+        "rank": 3
+      },
+      {
+        "featureName": "packet_rate",
+        "featureValue": -1.0082,
+        "shapValue": -0.0755,
+        "shapValueFormatted": "-0.0755",
+        "direction": "NEGATIVE",
+        "absoluteContribution": 0.0755,
         "rank": 4
       },
       {
         "featureName": "port_80_ratio",
         "featureValue": 1.0,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "shapValue": -0.075,
+        "shapValueFormatted": "-0.0750",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.075,
         "rank": 5
       },
       {
-        "featureName": "port_443_ratio",
-        "featureValue": -1.0,
-        "shapValue": -0.0743,
-        "shapValueFormatted": "-0.0743",
+        "featureName": "bytes",
+        "featureValue": -1.0016,
+        "shapValue": -0.0732,
+        "shapValueFormatted": "-0.0732",
         "direction": "NEGATIVE",
-        "absoluteContribution": 0.0743,
+        "absoluteContribution": 0.0732,
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.344613+00:00"
+    "generatedAt": "2026-09-17T15:00:00.891267+00:00"
   },
   {
-    "explanationId": "SHAP-C8BF5B13",
+    "explanationId": "SHAP-457B393A",
     "predictionId": "PRED-BENCH-XGBOOST",
     "modelName": "xgboost",
     "modelVersion": "xgb-v1.0",
@@ -4437,10 +4437,10 @@
         "rank": 3
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.443859+00:00"
+    "generatedAt": "2026-09-17T15:00:01.011654+00:00"
   },
   {
-    "explanationId": "SHAP-F440DABD",
+    "explanationId": "SHAP-4650E476",
     "predictionId": "PRED-Q-1",
     "modelName": "random_forest",
     "modelVersion": "1.0.0",
@@ -4688,10 +4688,10 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.552465+00:00"
+    "generatedAt": "2026-09-17T15:00:01.115945+00:00"
   },
   {
-    "explanationId": "SHAP-F60AB4EF",
+    "explanationId": "SHAP-DD2925AD",
     "predictionId": "PRED-Q-2",
     "modelName": "random_forest",
     "modelVersion": "1.0.0",
@@ -4939,10 +4939,10 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.619167+00:00"
+    "generatedAt": "2026-09-17T15:00:01.179472+00:00"
   },
   {
-    "explanationId": "SHAP-10610BFE",
+    "explanationId": "SHAP-DF44CB69",
     "predictionId": "PRED-Q-PERT",
     "modelName": "random_forest",
     "modelVersion": "1.0.0",
@@ -5190,10 +5190,10 @@
         "rank": 5
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.664886+00:00"
+    "generatedAt": "2026-09-17T15:00:01.225847+00:00"
   },
   {
-    "explanationId": "SHAP-61CBC8A3",
+    "explanationId": "SHAP-9993CB63",
     "predictionId": "FAIL-02",
     "modelName": "random_forest",
     "modelVersion": "1.0.0",
@@ -5441,10 +5441,10 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.733915+00:00"
+    "generatedAt": "2026-09-17T15:00:01.296365+00:00"
   },
   {
-    "explanationId": "SHAP-FC4C1388",
+    "explanationId": "SHAP-55271942",
     "predictionId": "FAIL-04",
     "modelName": "random_forest",
     "modelVersion": "1.0.0",
@@ -5692,6 +5692,6 @@
         "rank": 6
       }
     ],
-    "generatedAt": "2026-09-16T06:01:31.802132+00:00"
+    "generatedAt": "2026-09-17T15:00:01.364447+00:00"
   }
 ]

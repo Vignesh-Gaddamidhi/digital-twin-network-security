@@ -18,6 +18,7 @@ class DeviceConfigurationEngine:
     def _record_mutation(self, device_id: str, action: str, field: str, prev: Any, new: Any, operator: str, reason: str):
         record = ConfigurationHistoryRecord(
             device_id=device_id,
+            component=field or "network",
             timestamp=datetime.now(timezone.utc).isoformat(),
             action=action,
             field_changed=field,
@@ -52,7 +53,6 @@ class DeviceConfigurationEngine:
         return device_registry.updateDevice(device)
 
     def assignIPAddress(self, device_id: str, ip_address: str, interface_id: str = "eth0", operator: str = "ADMIN", reason: str = "Assign IP") -> NetworkDeviceModel:
-        # Validate format
         ipaddress.ip_address(ip_address)
 
         device = device_registry.getDevice(device_id)
@@ -63,12 +63,10 @@ class DeviceConfigurationEngine:
         if ip_address not in device.ipAddresses:
             device.ipAddresses.append(ip_address)
 
-        # Update interface if exists
         target_iface = next((i for i in device.interfaces if i.interface_id == interface_id), None)
         if target_iface:
             target_iface.ip_address = ip_address
         else:
-            # Create default interface
             device.interfaces.append(NetworkInterfaceConfig(
                 interface_id=interface_id,
                 ip_address=ip_address,
@@ -89,7 +87,6 @@ class DeviceConfigurationEngine:
         prev_ips = list(device.ipAddresses)
         device.ipAddresses.remove(ip_address)
 
-        # Clear from interface
         for iface in device.interfaces:
             if iface.ip_address == ip_address:
                 iface.ip_address = "0.0.0.0"
@@ -170,7 +167,6 @@ class DeviceConfigurationEngine:
             raise DeviceNotFoundError(f"Device '{device_id}' not found.")
 
         prev_routes = [r.model_dump() for r in device.routes]
-        # Overwrite route if same destination prefix exists
         device.routes = [r for r in device.routes if r.destination_cidr != route.destination_cidr]
         device.routes.append(route)
 

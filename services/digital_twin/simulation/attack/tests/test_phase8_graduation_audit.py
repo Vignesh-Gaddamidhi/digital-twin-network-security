@@ -31,19 +31,18 @@ def provision_environment():
     network_state_engine.clear()
     performance_state_engine.clear()
 
-    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, networkZone=NetworkZoneEnum.INTERNAL)
-    srv = NetworkDeviceModel(id="SERVER-01", hostname="SERVER-01", type=DeviceTypeEnum.SERVER, networkZone=NetworkZoneEnum.INTERNAL, ports=[22, 443])
-    web = NetworkDeviceModel(id="WEB-01",    hostname="WEB-01",    type=DeviceTypeEnum.SERVER, networkZone=NetworkZoneEnum.DMZ, ports=[80, 443])
-    dns = NetworkDeviceModel(id="DNS-01",    hostname="DNS-01",    type=DeviceTypeEnum.DNS_SERVER, networkZone=NetworkZoneEnum.DMZ, ports=[53])
-    s2  = NetworkDeviceModel(id="SERVER-02", hostname="SERVER-02", type=DeviceTypeEnum.SERVER, networkZone=NetworkZoneEnum.INTERNAL, ports=[445])
-    db  = NetworkDeviceModel(id="DB-01",     hostname="DB-01",     type=DeviceTypeEnum.DATABASE, networkZone=NetworkZoneEnum.INTERNAL, ports=[5432])
-    ext = NetworkDeviceModel(id="EXTERNAL-SIMULATED-ENDPOINT", hostname="EXT-C2", type=DeviceTypeEnum.SERVER, networkZone=NetworkZoneEnum.EXTERNAL, ports=[443])
+    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, ipAddresses=["192.168.1.10"], networkZone=NetworkZoneEnum.INTERNAL)
+    srv = NetworkDeviceModel(id="SERVER-01", hostname="SERVER-01", type=DeviceTypeEnum.SERVER, ipAddresses=["192.168.1.20"], networkZone=NetworkZoneEnum.INTERNAL, ports=[22, 443])
+    web = NetworkDeviceModel(id="WEB-01",    hostname="WEB-01",    type=DeviceTypeEnum.SERVER, ipAddresses=["192.168.1.21"], networkZone=NetworkZoneEnum.DMZ, ports=[80, 443])
+    dns = NetworkDeviceModel(id="DNS-01",    hostname="DNS-01",    type=DeviceTypeEnum.DNS_SERVER, ipAddresses=["192.168.1.53"], networkZone=NetworkZoneEnum.DMZ, ports=[53])
+    s2  = NetworkDeviceModel(id="SERVER-02", hostname="SERVER-02", type=DeviceTypeEnum.SERVER, ipAddresses=["192.168.1.25"], networkZone=NetworkZoneEnum.INTERNAL, ports=[445])
+    db  = NetworkDeviceModel(id="DB-01",     hostname="DB-01",     type=DeviceTypeEnum.DATABASE, ipAddresses=["192.168.1.100"], networkZone=NetworkZoneEnum.INTERNAL, ports=[5432])
+    ext = NetworkDeviceModel(id="EXTERNAL-SIMULATED-ENDPOINT", hostname="EXT-C2", type=DeviceTypeEnum.SERVER, ipAddresses=["203.0.113.100"], networkZone=NetworkZoneEnum.EXTERNAL, ports=[443])
 
     for d in [cli, srv, web, dns, s2, db, ext]:
         device_registry.createDevice(d)
         graph_engine.addNode(d)
 
-    # Topology links
     for idx, (s, dst) in enumerate([
         ("CLIENT-01", "SERVER-01"), ("CLIENT-01", "WEB-01"), ("CLIENT-01", "DNS-01"),
         ("SERVER-01", "SERVER-02"), ("SERVER-02", "DB-01"),  ("CLIENT-01", "EXTERNAL-SIMULATED-ENDPOINT")
@@ -65,7 +64,7 @@ def run_graduation_suite():
     print("       PHASE 8 GRAND GRADUATION & COMPLETE CANONICAL MATRIX AUDIT")
     print("=" * 80 + "\n")
 
-    # 1. Deterministic Reproducibility Audit (Invariant: A == A, A != B)
+    # 1. Deterministic Reproducibility
     print("[1/3] Auditing Deterministic Reproducibility on SCN-BEACON-001...")
     provision_environment()
 
@@ -78,12 +77,12 @@ def run_graduation_suite():
     scen_b = BeaconingAttackScenario(source_device="CLIENT-01", target_device="SERVER-01", seed=67890)
     evts_b = [(e.sourcePort, e.timestamp, e.bytes) for e in scen_b.generate_traffic_events()]
 
-    assert evts_a1 == evts_a2, "Determinism Failure: Identical seed produced divergent packet sequences"
-    assert evts_a1 != evts_b,  "Deviation Failure: Different seed produced identical packet sequences"
+    assert evts_a1 == evts_a2
+    assert evts_a1 != evts_b
     print("    [PASS] Invariant Verified: Seed 12345 (A == A), Seed 67890 (A != B).")
 
-    # 2. Complete 7-Scenario Canonical Matrix Execution Audit
-    print("\n[2/3] Executing All 7 Canonical Attack Scenarios Through End-to-End Lifecycle...")
+    # 2. Complete 7-Scenario Canonical Matrix Execution
+    print("\n[2/3] Executing All 7 Canonical Attack Scenarios...")
     canonical_matrix = [
         ("SCN-PORTSCAN-001",   PortDiscoveryScenario("CLIENT-01", "SERVER-01", seed=12345), "MEDIUM"),
         ("SCN-BRUTEFORCE-001", BruteForceAttackScenario("CLIENT-01", "SERVER-01", seed=12345), "HIGH"),
@@ -97,14 +96,14 @@ def run_graduation_suite():
     for scn_id, scn_inst, expected_sev in canonical_matrix:
         provision_environment()
         res = scn_inst.execute()
-        print(f"    {scn_id:<20} -> Status: {res.finalState:<10} | Severity: {res.riskLevel:<8} | Indicators: {len(res.indicatorsObserved)} | Healed: {res.recoveryVerified}")
+        print(f"    {scn_id:<20} -> Status: {res.finalState:<10} | Severity: {res.riskLevel:<8} | Healed: {res.recoveryVerified}")
         assert res.finalState == "COMPLETED"
         assert res.riskLevel == expected_sev
         assert len(res.indicatorsObserved) >= 3
         assert res.recoveryVerified is True
-    print("    [PASS] All 7 canonical scenarios executed, detected, scored, and healed to baseline.")
+    print("    [PASS] All 7 canonical scenarios executed, detected, scored, and healed.")
 
-    # 3. Verify Final Digital Twin Baseline Cleanliness
+    # 3. Baseline Cleanliness
     print("\n[3/3] Auditing Clean Post-Execution Digital Twin Posture...")
     for dev_id in ["CLIENT-01", "SERVER-01", "WEB-01", "DNS-01", "SERVER-02", "DB-01"]:
         conns = network_state_engine.getConnectionStats(dev_id).active
@@ -116,8 +115,8 @@ def run_graduation_suite():
     print("    [PASS] All virtual hosts confirmed operating at normal baseline telemetry.")
 
     print("\n" + "=" * 80)
-    print("       PHASE 8 GRADUATION AUDIT: 100% SUCCESS — READY FOR PHASE 9")
-    print("=" * 80)
+    print("       PHASE 8 GRADUATION AUDIT: 100% SUCCESS")
+    print("================================================================================")
 
 if __name__ == "__main__":
     run_graduation_suite()

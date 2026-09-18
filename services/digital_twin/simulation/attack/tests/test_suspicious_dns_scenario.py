@@ -49,8 +49,8 @@ def run_suspicious_dns_suite():
 
     # 2. Provision Topology & Port 53
     print("\n[2/5] Provisioning Topology: CLIENT-01 <-> Switch <-> DNS-01 (Port 53 OPEN)...")
-    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, networkZone=NetworkZoneEnum.INTERNAL)
-    dns = NetworkDeviceModel(id="DNS-01", hostname="DNS-01", type=DeviceTypeEnum.DNS_SERVER, networkZone=NetworkZoneEnum.DMZ, ports=[53])
+    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, ipAddresses=["192.168.1.10"], networkZone=NetworkZoneEnum.INTERNAL)
+    dns = NetworkDeviceModel(id="DNS-01", hostname="DNS-01", type=DeviceTypeEnum.DNS_SERVER, ipAddresses=["192.168.1.53"], networkZone=NetworkZoneEnum.DMZ, ports=[53])
     device_registry.createDevice(cli)
     device_registry.createDevice(dns)
     graph_engine.addNode(cli)
@@ -70,10 +70,8 @@ def run_suspicious_dns_suite():
     # 3. Traffic Generation & Protocol Invariant Audit
     print("\n[3/5] Generating Synthetic DNS Traffic Streams (High Frequency & TXT Clustering)...")
     events = scenario.generate_traffic_events()
-    print(f"    Total DNS Query Frames Generated : {len(events)}")
     assert len(events) == 60
 
-    # Invariant: All domain queries must reside within safe .test zone
     for evt in events:
         domain = evt.details.get("dns_domain", "")
         assert domain.endswith(".test"), f"Safety invariant violation: {domain} does not end in .test"
@@ -81,8 +79,6 @@ def run_suspicious_dns_suite():
     txt_queries = [e for e in events if e.details.get("dns_record_type") == "TXT"]
     repeated_queries = [e for e in events if e.details.get("dns_domain") == "service.test"]
 
-    print(f"    TXT Record Queries (Tunneling Pattern) : {len(txt_queries)} ({len(txt_queries)/len(events)*100:.1f}%)")
-    print(f"    Repeated Queries for 'service.test'     : {len(repeated_queries)}")
     assert len(txt_queries) == 25
     assert len(repeated_queries) == 20
     print("    [PASS] Traffic pattern adheres to .test safety constraints and tunneling patterns.")
@@ -90,13 +86,11 @@ def run_suspicious_dns_suite():
     # 4. Expected Indicators Verification
     print("\n[4/5] Evaluating Expected Security Indicators...")
     observed = scenario.evaluate_indicators(events)
-    print(f"    Observed Indicators: {observed}")
-
     assert "UNUSUAL_DNS_FREQUENCY" in observed
     assert "UNUSUAL_DNS_QUERY_TYPE" in observed
     assert "REPEATED_DNS_REQUESTS" in observed
     assert "UNUSUAL_DNS_DISTRIBUTION" in observed
-    print("    [PASS] All 4 expected indicators matched: UNUSUAL_DNS_FREQUENCY, UNUSUAL_DNS_QUERY_TYPE, REPEATED_DNS_REQUESTS, UNUSUAL_DNS_DISTRIBUTION.")
+    print("    [PASS] All 4 expected indicators matched.")
 
     # 5. Full End-to-End Execution & Recovery
     print("\n[5/5] Executing Full Scenario Lifecycle via execute()...")
@@ -109,19 +103,11 @@ def run_suspicious_dns_suite():
     )
     result = scenario_fresh.execute()
 
-    print(f"    Final State        : {result.finalState}")
-    print(f"    Events Emitted     : {result.eventsGenerated}")
-    print(f"    Total Bytes        : {result.bytesGenerated}B")
-    print(f"    Risk Score         : {result.riskScore} ({result.riskLevel})")
-    print(f"    Alerts Generated   : {result.alertsGenerated}")
-    print(f"    Recovery Verified  : {result.recoveryVerified}")
-
     assert result.finalState == "COMPLETED"
     assert result.riskScore == 36.3
     assert result.riskLevel == "MEDIUM"
     assert result.recoveryVerified is True
 
-    # Confirm twin state healed
     healed_cpu = performance_state_engine.getPerformanceState("DNS-01").cpu
     healed_util = network_state_engine.getNetworkMetrics("DNS-01").networkUtilisation
     assert healed_cpu <= 25.0
@@ -130,7 +116,7 @@ def run_suspicious_dns_suite():
 
     print("\n" + "=" * 80)
     print("       ALL DAY 75 SCN-DNS-001 TESTS PASSED CLEANLY")
-    print("=" * 80)
+    print("================================================================================")
 
 if __name__ == "__main__":
     run_suspicious_dns_suite()

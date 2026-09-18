@@ -1,123 +1,114 @@
-from typing import List, Optional, Dict, Any
 from enum import Enum
+from typing import Optional, Dict, Any, List
+from datetime import datetime, timezone
 from pydantic import BaseModel, Field, model_validator
 
 class ConnectionTypeEnum(str, Enum):
-
-    DIRECT = "DIRECT"
-    LOGICAL = "LOGICAL"
-    ROUTED = "ROUTED"
-    BRIDGED = "BRIDGED"
-    WIRELESS = "WIRELESS"
-    TUNNEL = "TUNNEL"
     PHYSICAL = "PHYSICAL"
-    VIRTUAL = "VIRTUAL"
-    VPN = "VPN"
+    LOGICAL = "LOGICAL"
+    NETWORK = "NETWORK"
+    SERVICE = "SERVICE"
+
+class ConnectionStatusEnum(str, Enum):
+    ACTIVE = "ACTIVE"
+    DEGRADED = "DEGRADED"
+    BLOCKED = "BLOCKED"
+    FAILED = "FAILED"
+    CLOSED = "CLOSED"
 
 class ProtocolEnum(str, Enum):
     TCP = "TCP"
     UDP = "UDP"
     ICMP = "ICMP"
-    IP = "IP"
     HTTP = "HTTP"
     HTTPS = "HTTPS"
     DNS = "DNS"
     SSH = "SSH"
 
-class ConnectionStatusEnum(str, Enum):
-    ACTIVE = "ACTIVE"
-    BLOCKED = "BLOCKED"
-    DEGRADED = "DEGRADED"
-    DISABLED = "DISABLED"
-
 class NetworkConnectionModel(BaseModel):
-    id: str = Field(default="")
+    id: str
+    sourceDevice: str
+    destinationDevice: str
+    protocol: Optional[ProtocolEnum] = ProtocolEnum.TCP
+    destinationPort: Optional[int] = Field(default=None, ge=1, le=65535)
+    sourcePort: Optional[int] = Field(default=None, ge=1, le=65535)
+    connectionType: Optional[ConnectionTypeEnum] = ConnectionTypeEnum.PHYSICAL
+    status: Optional[ConnectionStatusEnum] = ConnectionStatusEnum.ACTIVE
+    bandwidth: Optional[float] = 1000.0
+    latency: Optional[float] = 0.5
+    lastUpdated: Optional[str] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def validate_no_self_loop(self):
+        if self.sourceDevice and self.destinationDevice:
+            if self.sourceDevice.strip() == self.destinationDevice.strip():
+                raise ValueError(f"Self-loop connection rejected: {self.sourceDevice} cannot connect to itself.")
+        return self
+
+class ConnectionEntity(BaseModel):
+    id: str
     connection_id: Optional[str] = None
-    sourceDevice: str = Field(default="")
-    source_device: Optional[str] = None
-    destinationDevice: str = Field(default="")
-    destination_device: Optional[str] = None
-    protocol: str = Field(default="TCP")
-    port: Optional[int] = None
-    connection_type: Optional[str] = Field(default="DIRECT")
-    connectionType: Optional[str] = Field(default="DIRECT")
-    status: ConnectionStatusEnum = Field(default=ConnectionStatusEnum.ACTIVE)
-    bandwidth_mbps: float = Field(default=1000.0)
-    latency_ms: float = Field(default=1.0)
-    packet_loss_pct: float = Field(default=0.0)
+    source_device: str
+    destination_device: str
+    protocol: str = "TCP"
+    destination_port: Optional[int] = None
+    connection_type: str = "NETWORK"
+    status: str = "ACTIVE"
+    bandwidth: float = 1000.0
+    latency: float = 0.5
+    latency_ms: Optional[float] = None
+    bandwidth_mbps: Optional[float] = 1000.0
 
     @model_validator(mode="before")
     @classmethod
-    def _compat_conn(cls, data: Any) -> Any:
+    def _normalize_connection(cls, data: Any) -> Any:
         if isinstance(data, dict):
-            d = dict(data)
-            cid = d.get("id") or d.get("connection_id") or ""
-            d["id"] = cid
-            d["connection_id"] = cid
-
-            src = d.get("sourceDevice") or d.get("source_device") or d.get("source") or ""
-            d["sourceDevice"] = src
-            d["source_device"] = src
-
-            dst = d.get("destinationDevice") or d.get("destination_device") or d.get("destination") or ""
-            d["destinationDevice"] = dst
-            d["destination_device"] = dst
-
-            ctype = d.get("connection_type") or d.get("connectionType") or "DIRECT"
-            d["connection_type"] = ctype
-            d["connectionType"] = ctype
-
-            return d
+            cid = data.get("connection_id") or data.get("id")
+            if cid:
+                data["id"] = cid
+                data["connection_id"] = cid
+            
+            lat = data.get("latency") or data.get("latency_ms")
+            if lat is not None:
+                data["latency"] = float(lat)
+                data["latency_ms"] = float(lat)
         return data
 
-ConnectionEntity = NetworkConnectionModel
+    @model_validator(mode="after")
+    def _sync_connection_attrs(self):
+        if not self.connection_id:
+            self.connection_id = self.id
+        if self.latency_ms is None:
+            self.latency_ms = self.latency
+        if self.bandwidth_mbps is None:
+            self.bandwidth_mbps = self.bandwidth
+        else:
+            self.bandwidth = self.bandwidth_mbps
+        return self
+
 
 class TopologyValidationResult(BaseModel):
     is_valid: bool = True
-    errors: List[str] = Field(default_factory=list)
-    warnings: List[str] = Field(default_factory=list)
-    isolated_nodes: List[str] = Field(default_factory=list)
-    total_nodes: int = 0
-    total_edges: int = 0
+    is_connected: bool = True
+    hop_count: int = 0
     traversed_devices: List[str] = Field(default_factory=list)
     path_hops: List[str] = Field(default_factory=list)
-    hop_count: int = 0
     total_latency_ms: float = 0.0
-    path_found: bool = True
+    errors: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
 
-    @model_validator(mode="before")
-    @classmethod
-    def _compat_hops(cls, data):
-        if isinstance(data, dict):
-            d = dict(data)
-            hops = d.get("path_hops") or d.get("traversed_devices") or []
-            d["path_hops"] = hops
-            d["traversed_devices"] = hops
-            return d
-        return data
+class PathfindingResult(BaseModel):
+    is_connected: bool = False
+    hop_count: int = 0
+    path_hops: List[str] = Field(default_factory=list)
+    traversed_devices: List[str] = Field(default_factory=list)
+    total_latency_ms: float = 0.0
 
 class TopologySummarySnapshotModel(BaseModel):
-    total_devices: int = 0
-    total_connections: int = 0
-    active_connections: int = 0
-    degraded_connections: int = 0
-    blocked_connections: int = 0
-    zones_represented: List[str] = Field(default_factory=list)
-    average_latency_ms: float = 0.0
-    isolated_nodes: List[str] = Field(default_factory=list)
-    is_valid: bool = True
-    errors: List[str] = Field(default_factory=list)
-
-    @model_validator(mode="before")
-    @classmethod
-    def _compat_summary(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            d = dict(data)
-            if "total_nodes" in d and "total_devices" not in d:
-                d["total_devices"] = d["total_nodes"]
-            if "total_edges" in d and "total_connections" not in d:
-                d["total_connections"] = d["total_edges"]
-            return d
-        return data
-
-TopologySummarySnapshot = TopologySummarySnapshotModel
+    nodes: int = 0
+    edges: int = 0
+    zones: int = 0
+    activeDevices: int = 0
+    inactiveDevices: int = 0
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())

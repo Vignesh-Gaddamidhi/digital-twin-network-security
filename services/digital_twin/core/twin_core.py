@@ -90,8 +90,9 @@ class DigitalTwinCore:
             risk_engine.calculate_node_risk(dev)
         return success
 
-    def find_path(self, source_id: str, destination_id: str) -> TopologyValidationResult:
+    def find_path(self, source_id: str, destination_id: str):
         import networkx as nx
+        from services.twin_engine.src.core.twin_state import TopologyValidationResult
 
         graph = None
         if hasattr(self, "topology") and hasattr(self.topology, "graph"):
@@ -100,44 +101,37 @@ class DigitalTwinCore:
             graph = self.topology._graph
         elif hasattr(self, "topology") and hasattr(self.topology, "engine") and hasattr(self.topology.engine, "_graph"):
             graph = self.topology.engine._graph
+        elif hasattr(self, "_graph"):
+            graph = self._graph
 
-        if graph is not None:
+        if graph is not None and graph.has_node(source_id) and graph.has_node(destination_id):
             try:
-                path = nx.shortest_path(graph, source=source_id, target=destination_id)
-                total_latency = 0.0
-                for u, v in zip(path[:-1], path[1:]):
-                    edge_data = graph.get_edge_data(u, v)
-                    if isinstance(edge_data, dict):
-                        first_val = next(iter(edge_data.values())) if edge_data else {}
-                        total_latency += first_val.get("latency_ms", first_val.get("weight", 0.4))
-                return TopologyValidationResult(
-                    is_valid=True,
-                    traversed_devices=path,
-                    path_hops=path,
-                    hop_count=len(path) - 1,
-                    total_latency_ms=round(total_latency, 2)
-                )
+                if nx.has_path(graph, source=source_id, target=destination_id):
+                    path = nx.shortest_path(graph, source=source_id, target=destination_id)
+                    total_latency = 0.0
+                    for u, v in zip(path[:-1], path[1:]):
+                        edge_data = graph.get_edge_data(u, v)
+                        if isinstance(edge_data, dict):
+                            first_val = next(iter(edge_data.values())) if edge_data else {}
+                            total_latency += first_val.get("latency_ms", first_val.get("weight", 0.4))
+                    return TopologyValidationResult(
+                        is_valid=True,
+                        is_connected=True,
+                        traversed_devices=path,
+                        path_hops=path,
+                        hop_count=len(path) - 1,
+                        total_latency_ms=round(total_latency, 2)
+                    )
             except Exception:
                 pass
 
-        # Canonical sequence for DEV-001 -> DEV-005 -> DEV-006 -> DEV-004
-        if source_id == "DEV-001" and destination_id == "DEV-004":
-            seq = ["DEV-001", "DEV-005", "DEV-006", "DEV-004"]
-            return TopologyValidationResult(
-                is_valid=True,
-                traversed_devices=seq,
-                path_hops=seq,
-                hop_count=3,
-                total_latency_ms=1.2
-            )
-
-        seq = [source_id, destination_id]
         return TopologyValidationResult(
-            is_valid=True,
-            traversed_devices=seq,
-            path_hops=seq,
-            hop_count=1,
-            total_latency_ms=0.4
+            is_valid=False,
+            is_connected=False,
+            traversed_devices=[],
+            path_hops=[],
+            hop_count=0,
+            total_latency_ms=0.0
         )
 
     def generate_snapshot_text(self) -> str:

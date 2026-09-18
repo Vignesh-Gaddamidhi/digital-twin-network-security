@@ -9,21 +9,21 @@ class DeviceRepository:
 
     @staticmethod
     async def upsert_device(device: NetworkDeviceModel) -> Device:
-        primary_ip = device.ip or (device.ip_addresses[0] if device.ip_addresses else "0.0.0.0")
+        primary_ip = getattr(device, "ip", None) or (device.ip_addresses[0] if getattr(device, "ip_addresses", None) else "0.0.0.0")
 
         async with db_manager.session() as sess:
             res = await sess.execute(select(Device).where(Device.id == device.id))
             db_dev = res.scalar_one_or_none()
 
-            hostname_val = device.name or device.hostname or device.id
-            dev_type = str(getattr(device.device_type, "value", device.device_type))
-            net_zone = str(getattr(device.networkZone, "value", device.networkZone))
-            ip_addrs = list(device.ip_addresses) if device.ip_addresses else ([primary_ip] if primary_ip != "0.0.0.0" else [])
+            hostname_val = getattr(device, "name", None) or getattr(device, "hostname", None) or device.id
+            dev_type = str(getattr(getattr(device, "device_type", None), "value", getattr(device, "device_type", "SERVER")))
+            net_zone = str(getattr(getattr(device, "networkZone", None), "value", getattr(device, "networkZone", "DMZ")))
+            ip_addrs = list(device.ip_addresses) if getattr(device, "ip_addresses", None) else ([primary_ip] if primary_ip != "0.0.0.0" else [])
             mac_addrs = list(getattr(device, "macAddresses", [])) if getattr(device, "macAddresses", None) else []
-            sec_state = str(device.security_state)
-            op_state = str(getattr(device, "currentState", "HEALTHY"))
+            sec_state = str(getattr(device, "security_state", "NORMAL"))
+            op_state = str(getattr(device, "currentState", getattr(device, "state", "HEALTHY")))
             risk_val = float(getattr(device, "riskScore", 0.0))
-            is_comp = bool(device.is_compromised)
+            is_comp = bool(getattr(device, "is_compromised", False))
 
             if not db_dev:
                 db_dev = Device(

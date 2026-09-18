@@ -1,193 +1,228 @@
-from typing import List, Optional, Dict, Any
 from enum import Enum
+from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
-from pydantic import BaseModel, Field, model_validator
+from pydantic import model_validator, BaseModel, Field, field_validator
+import re
 
 class DeviceTypeEnum(str, Enum):
     ROUTER = "ROUTER"
     SWITCH = "SWITCH"
     FIREWALL = "FIREWALL"
     SERVER = "SERVER"
-    WORKSTATION = "WORKSTATION"
     CLIENT = "CLIENT"
+    DATABASE = "DATABASE"
+    DNS_SERVER = "DNS_SERVER"
 
 class NetworkZoneEnum(str, Enum):
+    INTERNAL = "INTERNAL"
     EXTERNAL = "EXTERNAL"
     DMZ = "DMZ"
-    INTERNAL = "INTERNAL"
-    DATABASE = "DATABASE"
+    RESTRICTED = "RESTRICTED"
     MANAGEMENT = "MANAGEMENT"
+    DATABASE = "DATABASE"
 
 class RouteStatusEnum(str, Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
-    UNREACHABLE = "UNREACHABLE"
     DEGRADED = "DEGRADED"
+
+class OperationalStatusEnum(str, Enum):
+    ONLINE = "ONLINE"
+    OFFLINE = "OFFLINE"
+    DEGRADED = "DEGRADED"
+    MAINTENANCE = "MAINTENANCE"
+    RUNNING = "RUNNING"
+    ACTIVE = "ACTIVE"
 
 class NetworkInterfaceConfig(BaseModel):
-    interface_id: str = Field(default="")
-    ip_address: str = Field(default="")
-    subnet_mask: str = Field(default="255.255.255.0")
-    subnet_cidr: Optional[str] = None
+    interface_id: str
+    ip_address: Optional[str] = None
     mac_address: Optional[str] = None
-    is_up: bool = True
-
-    @model_validator(mode="before")
-    @classmethod
-    def _compat_interface(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            d = dict(data)
-            if "name" in d and "interface_id" not in d:
-                d["interface_id"] = d["name"]
-            if "interface_id" in d and "name" not in d:
-                d["name"] = d["interface_id"]
-            return d
-        return data
+    subnet_cidr: Optional[str] = None
+    speed_mbps: Optional[float] = 1000.0
 
 class RouteEntryModel(BaseModel):
-    destination: str = Field(default="0.0.0.0/0")
+    destination: str
+    nextHop: str
+    interface: str
+    metric: int = 1
+    status: Optional[RouteStatusEnum] = RouteStatusEnum.ACTIVE
+
+class RouteEntryConfig(BaseModel):
+    destination: str = ""
+    nextHop: str = ""
+    interface: str = "eth0"
+    metric: int = 100
     destination_cidr: Optional[str] = None
-    gateway: Optional[str] = None
     gateway_ip: Optional[str] = None
-    next_hop: Optional[str] = None
-    interface: str = Field(default="eth0")
     interface_id: Optional[str] = None
-    metric: int = Field(default=1)
 
     @model_validator(mode="before")
     @classmethod
-    def _compat_route(cls, data: Any) -> Any:
+    def _normalize_route_fields(cls, data):
         if isinstance(data, dict):
-            d = dict(data)
-            dest = d.get("destination") or d.get("destination_cidr") or "0.0.0.0/0"
-            d["destination"] = dest
-            d["destination_cidr"] = dest
-
-            gw = d.get("gateway_ip") or d.get("gateway") or d.get("next_hop") or ""
-            d["gateway"] = gw
-            d["gateway_ip"] = gw
-            d["next_hop"] = gw
-
-            iface = d.get("interface") or d.get("interface_id") or "eth0"
-            d["interface"] = iface
-            d["interface_id"] = iface
-
-            return d
+            dst = data.get("destination") or data.get("destination_cidr") or "0.0.0.0/0"
+            nh = data.get("nextHop") or data.get("gateway_ip") or "0.0.0.0"
+            iface = data.get("interface") or data.get("interface_id") or "eth0"
+            data["destination"] = dst
+            data["destination_cidr"] = dst
+            data["nextHop"] = nh
+            data["gateway_ip"] = nh
+            data["interface"] = iface
+            data["interface_id"] = iface
         return data
 
-RouteEntryConfig = RouteEntryModel
-
-class ConfigurationHistoryRecord(BaseModel):
-    device_id: str = Field(default="")
-    deviceId: Optional[str] = None
-    action: str = Field(default="")
-    field_changed: str = Field(default="")
-    previous_value: Any = None
-    new_value: Any = None
-    reason: Optional[str] = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    @model_validator(mode="before")
-    @classmethod
-    def _compat_history(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            d = dict(data)
-            dev = d.get("device_id") or d.get("deviceId") or ""
-            d["device_id"] = dev
-            d["deviceId"] = dev
-            return d
-        return data
-class NetworkDeviceModel(BaseModel):
-    model_config = {"extra": "allow"}
-
-    id: str = Field(default="")
-    name: str = Field(default="")
-    hostname: Optional[str] = None
-    type: Optional[Any] = None
-    device_type: DeviceTypeEnum = Field(default=DeviceTypeEnum.SERVER)
-    role: Optional[str] = None
-    zone: Optional[Any] = None
-    networkZone: NetworkZoneEnum = Field(default=NetworkZoneEnum.INTERNAL)
-    ip_addresses: List[str] = Field(default_factory=list)
-    ipAddresses: List[str] = Field(default_factory=list)
-    macAddresses: List[str] = Field(default_factory=list)
-    interfaces: List[NetworkInterfaceConfig] = Field(default_factory=list)
-    operatingSystem: Optional[str] = None
-    ports: List[int] = Field(default_factory=list)
-    services: List[str] = Field(default_factory=list)
-    routes: List[RouteEntryModel] = Field(default_factory=list)
-    is_compromised: bool = False
-    security_state: str = Field(default="NORMAL")
-    securityState: str = Field(default="NORMAL")
-    currentState: str = Field(default="NORMAL")
-    status: str = Field(default="ONLINE")
-    riskScore: float = Field(default=0.0)
-    risk_score: float = Field(default=0.0)
-    lastUpdated: Optional[str] = None
-    last_updated: Optional[str] = None
-    createdAt: Optional[str] = None
-    created_at: Optional[str] = None
-
-    @model_validator(mode="before")
-    @classmethod
-    def _compat_device(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            d = dict(data)
-            if "name" in d and "hostname" not in d:
-                d["hostname"] = d["name"]
-            if "hostname" in d and "name" not in d:
-                d["name"] = d["hostname"]
-
-            if "type" in d and "device_type" not in d:
-                d["device_type"] = d["type"]
-            if "device_type" in d and "type" not in d:
-                d["type"] = d["device_type"]
-
-            if "zone" in d and "networkZone" not in d:
-                d["networkZone"] = d["zone"]
-            if "networkZone" in d and "zone" not in d:
-                d["zone"] = d["networkZone"]
-
-            if "ip_addresses" in d and "ipAddresses" not in d:
-                d["ipAddresses"] = d["ip_addresses"]
-            if "ipAddresses" in d and "ip_addresses" not in d:
-                d["ip_addresses"] = d["ipAddresses"]
-
-            return d
-        return data
-
-    @property
-    def primary_ip(self) -> str:
-        if self.ipAddresses:
-            return self.ipAddresses[0]
-        if self.ip_addresses:
-            return self.ip_addresses[0]
-        return ""
-
-    @property
-    def ip(self) -> str:
-        return self.primary_ip
-
-    @property
-    def deviceId(self) -> str:
-        return self.id
-class RouteStatusEnum(str, Enum):
-    ACTIVE = "ACTIVE"
-    INACTIVE = "INACTIVE"
-    UNREACHABLE = "UNREACHABLE"
-    DEGRADED = "DEGRADED"
+    @model_validator(mode="after")
+    def _sync_route_attrs(self):
+        if not self.destination_cidr:
+            self.destination_cidr = self.destination
+        if not self.gateway_ip:
+            self.gateway_ip = self.nextHop
+        if not self.interface_id:
+            self.interface_id = self.interface
+        return self
 
 class ForwardingDecisionResult(BaseModel):
-    model_config = {"extra": "allow"}
-
-    action: str = Field(default="FORWARD")  # FORWARD, DROP, REJECT, LOCAL_DELIVERY
-    destination_ip: str = Field(default="")
+    matched_route: Optional[RouteEntryModel] = None
+    egress_interface: Optional[str] = None
     next_hop: Optional[str] = None
-    interface_id: Optional[str] = None
-    matched_route: Optional[Any] = None
-    hop_count: int = 0
-    traversed_devices: List[str] = Field(default_factory=list)
-    path_hops: List[str] = Field(default_factory=list)
-    total_latency_ms: float = 0.0
-    status: str = Field(default="SUCCESS")
+    is_direct: bool = False
+    path_resolved: bool = True
+
+class ConfigurationHistoryRecord(BaseModel):
+    device_id: Optional[str] = None
+    component: Optional[str] = "network"
+    action: str
+    field_changed: Optional[str] = None
+    previous_value: Optional[Any] = None
+    new_value: Optional[Any] = None
+    operator: str = "ADMIN"
     reason: Optional[str] = None
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class NetworkDeviceModel(BaseModel):
+    id: str
+    name: str
+    hostname: str
+    device_type: DeviceTypeEnum = DeviceTypeEnum.SERVER
+    type: Optional[DeviceTypeEnum] = None
+    networkZone: NetworkZoneEnum = NetworkZoneEnum.DMZ
+    ipAddresses: List[str] = Field(default_factory=list)
+    macAddresses: List[str] = Field(default_factory=list)
+    openPorts: List[int] = Field(default_factory=list)
+    ports: List[int] = Field(default_factory=list)
+    connections: List[str] = Field(default_factory=list)
+    role: Optional[str] = "SERVER"
+    services: List[str] = Field(default_factory=list)
+    interfaces: List[NetworkInterfaceConfig] = Field(default_factory=list)
+    routes: List[RouteEntryConfig] = Field(default_factory=list)
+    security_state: str = "NORMAL"
+    currentState: str = "ONLINE"
+    state: str = "ONLINE"
+    risk_score: float = 0.0
+    vulnerabilities: List[str] = Field(default_factory=list)
+    isActive: bool = True
+    lastUpdated: Optional[str] = None
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+    # Properties to support legacy snake_case/camelCase engine calls (.riskScore, .securityState)
+    @property
+    def riskScore(self) -> float:
+        return self.risk_score
+
+    @riskScore.setter
+    def riskScore(self, val: float):
+        self.risk_score = float(val)
+
+    @property
+    def securityState(self) -> str:
+        return self.security_state
+
+    @securityState.setter
+    def securityState(self, val: str):
+        self.security_state = str(val)
+
+    @field_validator("ipAddresses", mode="before")
+    @classmethod
+    def _validate_ip_addresses(cls, v):
+        if not v:
+            return []
+        if isinstance(v, str):
+            v = [v]
+        ipv4_regex = re.compile(r"^(\d{1,3}\.){3}\d{1,3}$")
+        for ip in v:
+            if not isinstance(ip, str) or not ipv4_regex.match(ip):
+                raise ValueError(f"Invalid IP address format: {ip}")
+            octets = ip.split(".")
+            if any(int(oct) > 255 for oct in octets):
+                raise ValueError(f"IP address octet out of range (0-255): {ip}")
+        return v
+
+    @field_validator("macAddresses", mode="before")
+    @classmethod
+    def _validate_mac_addresses(cls, v):
+        if not v:
+            return []
+        if isinstance(v, str):
+            v = [v]
+        mac_regex = re.compile(r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")
+        for mac in v:
+            if not isinstance(mac, str) or not mac_regex.match(mac):
+                raise ValueError(f"Invalid MAC address format: {mac}")
+        return v
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_device_fields(cls, data):
+        if isinstance(data, dict):
+            did = data.get("id") or data.get("device_id") or data.get("name")
+            if not did or not str(did).strip():
+                raise ValueError("Device ID cannot be empty or blank.")
+            data["id"] = did
+
+            hname = data.get("hostname") or data.get("name")
+            if not hname or not str(hname).strip():
+                raise ValueError("Hostname cannot be empty or blank.")
+            data["hostname"] = hname
+
+            if "name" not in data or not data["name"]:
+                data["name"] = hname
+
+            if "riskScore" in data and "risk_score" not in data:
+                data["risk_score"] = data["riskScore"]
+            elif "risk_score" in data and "riskScore" not in data:
+                data["riskScore"] = data["risk_score"]
+
+            if "securityState" in data and "security_state" not in data:
+                data["security_state"] = data["securityState"]
+            elif "security_state" in data and "securityState" not in data:
+                data["securityState"] = data["security_state"]
+
+            if "type" in data and "device_type" not in data:
+                data["device_type"] = data["type"]
+            elif "device_type" in data and "type" not in data:
+                data["type"] = data["device_type"]
+
+            if "ports" not in data and "openPorts" in data:
+                data["ports"] = data["openPorts"]
+            elif "openPorts" not in data and "ports" in data:
+                data["openPorts"] = data["ports"]
+        return data
+
+    @model_validator(mode="after")
+    def _sync_device_attrs(self):
+        if not self.ports and self.openPorts:
+            self.ports = self.openPorts
+        elif not self.openPorts and self.ports:
+            self.openPorts = self.ports
+        
+        if not self.type and self.device_type:
+            self.type = self.device_type
+        elif not self.device_type and self.type:
+            self.device_type = self.type
+
+        if not self.currentState and self.state:
+            self.currentState = self.state
+        elif not self.state and self.currentState:
+            self.state = self.currentState
+        return self

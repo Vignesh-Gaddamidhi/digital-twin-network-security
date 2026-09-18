@@ -1,6 +1,6 @@
 [
   {
-    "explanationId": "REXP-FA558D39",
+    "explanationId": "REXP-187CCA53",
     "riskId": "RISK-CANON-131",
     "predictionId": "PRED-CANON-131",
     "deviceId": "DB-01",
@@ -27,10 +27,10 @@
     "recommendedAction": "Investigation should be prioritized. Prepare mitigation and segmentation playbooks.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:34.183847+00:00"
+    "generatedAt": "2026-09-17T15:00:04.877706+00:00"
   },
   {
-    "explanationId": "REXP-06DDF95D",
+    "explanationId": "REXP-C4380E5A",
     "riskId": "RISK-MISSING",
     "predictionId": "PRED-MISSING",
     "deviceId": "WEB-01",
@@ -57,10 +57,10 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:34.185591+00:00"
+    "generatedAt": "2026-09-17T15:00:04.879151+00:00"
   },
   {
-    "explanationId": "REXP-D75DAD97",
+    "explanationId": "REXP-7555457E",
     "riskId": "RISK-PARTIAL",
     "predictionId": "PRED-PARTIAL",
     "deviceId": "CLIENT-01",
@@ -87,11 +87,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:34.193596+00:00"
+    "generatedAt": "2026-09-17T15:00:04.902669+00:00"
   },
   {
-    "explanationId": "REXP-E5026341",
-    "riskId": "CALC-13CCF7A9",
+    "explanationId": "REXP-5878A9B5",
+    "riskId": "CALC-B651A675",
     "predictionId": "PRED-000123",
     "deviceId": "DB-01",
     "threatExplanation": "Threat probability increased primarily because connection_frequency, destination_diversity, unique_destination_ports showed significant baseline deviation.",
@@ -117,11 +117,11 @@
     "recommendedAction": "Investigation should be prioritized. Prepare mitigation and segmentation playbooks.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.094031+00:00"
+    "generatedAt": "2026-09-17T15:00:06.061553+00:00"
   },
   {
-    "explanationId": "REXP-47F0E1BA",
-    "riskId": "CALC-000CECEE",
+    "explanationId": "REXP-70086B65",
+    "riskId": "CALC-9263F0D7",
     "predictionId": "PRED-NORM-HTTP",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -147,11 +147,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.106528+00:00"
+    "generatedAt": "2026-09-17T15:00:06.073989+00:00"
   },
   {
-    "explanationId": "REXP-1558A076",
-    "riskId": "CALC-2106C548",
+    "explanationId": "REXP-70388CC7",
+    "riskId": "CALC-93B6F74C",
     "predictionId": "PRED-NORM-HTTPS",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -177,11 +177,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.134579+00:00"
+    "generatedAt": "2026-09-17T15:00:06.143534+00:00"
   },
   {
-    "explanationId": "REXP-2E75B2CF",
-    "riskId": "CALC-3BBF6D0F",
+    "explanationId": "REXP-E2EB696F",
+    "riskId": "CALC-403EAC8F",
     "predictionId": "PRED-NORM-DNS",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -207,11 +207,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.163156+00:00"
+    "generatedAt": "2026-09-17T15:00:06.175530+00:00"
   },
   {
-    "explanationId": "REXP-81E3D699",
-    "riskId": "CALC-964CE45A",
+    "explanationId": "REXP-F61F5931",
+    "riskId": "CALC-85715CFA",
     "predictionId": "PRED-NORM-SSH",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -237,11 +237,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.194706+00:00"
+    "generatedAt": "2026-09-17T15:00:06.204952+00:00"
   },
   {
-    "explanationId": "REXP-81016798",
-    "riskId": "CALC-52EA5CC7",
+    "explanationId": "REXP-0CBB9445",
+    "riskId": "CALC-5728EA34",
     "predictionId": "PRED-NORM-ICMP",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -267,11 +267,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.226472+00:00"
+    "generatedAt": "2026-09-17T15:00:06.231818+00:00"
   },
   {
-    "explanationId": "REXP-AC1F3144",
-    "riskId": "CALC-B824AD21",
+    "explanationId": "REXP-AFFDE667",
+    "riskId": "CALC-4B3F10A7",
     "predictionId": "PRED-NORM-TCP",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -297,11 +297,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.257059+00:00"
+    "generatedAt": "2026-09-17T15:00:06.260191+00:00"
   },
   {
-    "explanationId": "REXP-24CCA5EC",
-    "riskId": "CALC-349B077D",
+    "explanationId": "REXP-59C121AE",
+    "riskId": "CALC-6F10B4C1",
     "predictionId": "PRED-NORM-UDP",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability was assessed at 8.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -327,11 +327,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.285967+00:00"
+    "generatedAt": "2026-09-17T15:00:06.288577+00:00"
   },
   {
-    "explanationId": "REXP-53366575",
-    "riskId": "CALC-4D8BC3E4",
+    "explanationId": "REXP-A4A0FD00",
+    "riskId": "CALC-023531AF",
     "predictionId": "PRED-ATT-PORT_SCAN",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability increased primarily because connection_frequency, destination_diversity showed significant baseline deviation.",
@@ -357,11 +357,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.318776+00:00"
+    "generatedAt": "2026-09-17T15:00:06.317519+00:00"
   },
   {
-    "explanationId": "REXP-8D20AB48",
-    "riskId": "CALC-30826605",
+    "explanationId": "REXP-E8900C2C",
+    "riskId": "CALC-4A55455C",
     "predictionId": "PRED-ATT-BRUTE_FORCE_LIKE",
     "deviceId": "WEB-01",
     "threatExplanation": "Threat probability increased primarily because failed_connections, connection_frequency showed significant baseline deviation.",
@@ -387,11 +387,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.349303+00:00"
+    "generatedAt": "2026-09-17T15:00:06.347117+00:00"
   },
   {
-    "explanationId": "REXP-A9AC7B23",
-    "riskId": "CALC-F3D36B05",
+    "explanationId": "REXP-AEA7DD9A",
+    "riskId": "CALC-5EE9552D",
     "predictionId": "PRED-ATT-DOS_LIKE",
     "deviceId": "WEB-01",
     "threatExplanation": "Threat probability increased primarily because packet_rate, bytes_per_second showed significant baseline deviation.",
@@ -417,11 +417,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.378610+00:00"
+    "generatedAt": "2026-09-17T15:00:06.372554+00:00"
   },
   {
-    "explanationId": "REXP-1AA0CF60",
-    "riskId": "CALC-D08C7D1C",
+    "explanationId": "REXP-BA8CC3A5",
+    "riskId": "CALC-7A532392",
     "predictionId": "PRED-ATT-DNS_ANOMALY",
     "deviceId": "DNS-SERVER-01",
     "threatExplanation": "Threat probability increased primarily because dns_frequency, dns_queries showed significant baseline deviation.",
@@ -447,11 +447,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.411309+00:00"
+    "generatedAt": "2026-09-17T15:00:06.412548+00:00"
   },
   {
-    "explanationId": "REXP-742566FB",
-    "riskId": "CALC-E8F75D9C",
+    "explanationId": "REXP-1496E58E",
+    "riskId": "CALC-770ACD22",
     "predictionId": "PRED-ATT-BEACONING",
     "deviceId": "CLIENT-01",
     "threatExplanation": "Threat probability increased primarily because connection_frequency, flow_duration showed significant baseline deviation.",
@@ -477,11 +477,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.441628+00:00"
+    "generatedAt": "2026-09-17T15:00:06.442924+00:00"
   },
   {
-    "explanationId": "REXP-0B3B052C",
-    "riskId": "CALC-8844B8D0",
+    "explanationId": "REXP-7F3506DA",
+    "riskId": "CALC-988B3F1F",
     "predictionId": "PRED-ATT-LATERAL_MOVEMENT_LIKE",
     "deviceId": "WEB-01",
     "threatExplanation": "Threat probability increased primarily because destination_diversity, port_443_ratio showed significant baseline deviation.",
@@ -507,11 +507,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.473750+00:00"
+    "generatedAt": "2026-09-17T15:00:06.473073+00:00"
   },
   {
-    "explanationId": "REXP-926B2D21",
-    "riskId": "CALC-B82C2B10",
+    "explanationId": "REXP-3A1A673C",
+    "riskId": "CALC-DA71898F",
     "predictionId": "PRED-ATT-EXFILTRATION_LIKE",
     "deviceId": "DB-01",
     "threatExplanation": "Threat probability increased primarily because bytes, bytes_per_second showed significant baseline deviation.",
@@ -537,11 +537,11 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.507260+00:00"
+    "generatedAt": "2026-09-17T15:00:06.506044+00:00"
   },
   {
-    "explanationId": "REXP-28C6F32A",
-    "riskId": "CALC-767C6352",
+    "explanationId": "REXP-71B904B9",
+    "riskId": "CALC-4652B7E8",
     "predictionId": "P4",
     "deviceId": "DB-01",
     "threatExplanation": "Threat probability was assessed at 85.0%, but detailed local SHAP feature attributions were only partially available.",
@@ -567,6 +567,6 @@
     "recommendedAction": "Continue standard monitoring. No immediate operational intervention required.",
     "riskAssessmentConfidence": "HIGH",
     "limitations": "This risk explanation represents a calculated operational assessment and does not constitute absolute proof of compromise.",
-    "generatedAt": "2026-09-16T06:01:35.578187+00:00"
+    "generatedAt": "2026-09-17T15:00:06.535913+00:00"
   }
 ]

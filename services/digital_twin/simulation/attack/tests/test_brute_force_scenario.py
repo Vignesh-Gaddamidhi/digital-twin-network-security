@@ -7,7 +7,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from packages.shared_types.src.network_device import NetworkDeviceModel, DeviceTypeEnum, NetworkZoneEnum
 from packages.shared_types.src.topology import NetworkConnectionModel
-from packages.shared_types.src.attack_scenario import AttackScenarioStateEnum, AttackScenarioSeverityEnum
+from packages.shared_types.src.attack_scenario import AttackScenarioStateEnum
 
 from services.digital_twin.core.devices.network_device_registry import device_registry
 from services.digital_twin.core.connections.network_connection_registry import connection_registry
@@ -48,8 +48,8 @@ def run_brute_force_suite():
 
     # 2. Provision Topology & Service
     print("\n[2/5] Provisioning Topology with SSH on SERVER-01...")
-    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, networkZone=NetworkZoneEnum.INTERNAL)
-    srv = NetworkDeviceModel(id="SERVER-01", hostname="SERVER-01", type=DeviceTypeEnum.SERVER, networkZone=NetworkZoneEnum.INTERNAL, ports=[22])
+    cli = NetworkDeviceModel(id="CLIENT-01", hostname="CLIENT-01", type=DeviceTypeEnum.CLIENT, ipAddresses=["192.168.1.10"], networkZone=NetworkZoneEnum.INTERNAL)
+    srv = NetworkDeviceModel(id="SERVER-01", hostname="SERVER-01", type=DeviceTypeEnum.SERVER, ipAddresses=["192.168.1.20"], networkZone=NetworkZoneEnum.INTERNAL, ports=[22])
     device_registry.createDevice(cli)
     device_registry.createDevice(srv)
     graph_engine.addNode(cli)
@@ -69,13 +69,9 @@ def run_brute_force_suite():
     # 3. Traffic Generation & Synthetic Flow Audit
     print("\n[3/5] Generating Synthetic Repeated Auth Flow (11 Failures -> 1 Success)...")
     events = scenario.generate_traffic_events()
-    print(f"    Total Wire Packets Generated : {len(events)} (12 Client attempts + 12 Server responses)")
-    print(f"    Auth Event Audit Ledger Rows : {len(scenario.auth_audit_log)}")
-
     assert len(events) == 24
     assert len(scenario.auth_audit_log) == 24
 
-    # Audit that no weaponized payloads exist
     for log_evt in scenario.auth_audit_log:
         assert log_evt.username == "admin"
         assert log_evt.details.get("password") is None, "Safety invariant: No cleartext passwords permitted"
@@ -90,8 +86,6 @@ def run_brute_force_suite():
     # 4. Expected Indicators Verification
     print("\n[4/5] Evaluating Expected Security Indicators...")
     observed = scenario.evaluate_indicators(events)
-    print(f"    Observed Indicators: {observed}")
-
     assert "HIGH_AUTH_FAILURE_RATE" in observed
     assert "REPEATED_AUTH_FAILURES" in observed
     assert "SHORT_FAILURE_INTERVAL" in observed
@@ -110,25 +104,18 @@ def run_brute_force_suite():
     )
     result = scenario_fresh.execute()
 
-    print(f"    Final State        : {result.finalState}")
-    print(f"    Total Wire Frames  : {result.eventsGenerated}")
-    print(f"    Risk Score         : {result.riskScore} ({result.riskLevel})")
-    print(f"    Alerts Generated   : {result.alertsGenerated}")
-    print(f"    Recovery Verified  : {result.recoveryVerified}")
-
     assert result.finalState == "COMPLETED"
     assert result.eventsGenerated == 24
     assert result.riskLevel == "HIGH"
     assert result.recoveryVerified is True
 
-    # Confirm twin connection state is clear
     stats = network_state_engine.getConnectionStats("SERVER-01")
     assert stats.active == 0
     print("    [PASS] Complete scenario succeeded and twin state confirmed healed.")
 
     print("\n" + "=" * 80)
     print("       ALL DAY 73 SCN-BRUTEFORCE-001 TESTS PASSED CLEANLY")
-    print("=" * 80)
+    print("================================================================================")
 
 if __name__ == "__main__":
     run_brute_force_suite()
