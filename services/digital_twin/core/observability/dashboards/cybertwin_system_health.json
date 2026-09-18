@@ -1,0 +1,164 @@
+{
+  "title": "CYBERTWIN — SYSTEM HEALTH",
+  "uid": "cybertwin-sys-health-v1",
+  "tags": ["cybertwin", "soc", "observability", "production"],
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"],
+    "time_options": ["5m", "15m", "30m", "1h", "6h", "24h"]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "SYSTEM HEALTH OVERVIEW",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
+      "targets": [
+        {"refId": "A", "expr": "cybertwin_service_health", "legendFormat": "{{service}}"}
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "title": "API INFRASTRUCTURE & GOLDEN SIGNALS",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [
+        {"refId": "A", "expr": "sum(rate(api_requests_total[1m]))", "legendFormat": "Requests/sec"},
+        {"refId": "B", "expr": "histogram_quantile(0.50, sum(rate(api_request_duration_seconds_bucket[1m])) by (le))", "legendFormat": "p50 Latency (s)"},
+        {"refId": "C", "expr": "histogram_quantile(0.95, sum(rate(api_request_duration_seconds_bucket[1m])) by (le))", "legendFormat": "p95 Latency (s)"},
+        {"refId": "D", "expr": "histogram_quantile(0.99, sum(rate(api_request_duration_seconds_bucket[1m])) by (le))", "legendFormat": "p99 Latency (s)"},
+        {"refId": "E", "expr": "sum(api_active_requests)", "legendFormat": "Active In-Flight Requests"}
+      ]
+    },
+    {
+      "id": 3,
+      "title": "API ERROR STRATIFICATION (4xx vs 5xx vs Timeouts)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [
+        {"refId": "A", "expr": "sum(rate(api_client_errors_total[1m]))", "legendFormat": "4xx Client Errors/sec"},
+        {"refId": "B", "expr": "sum(rate(api_server_errors_total[1m]))", "legendFormat": "5xx Server Errors/sec"},
+        {"refId": "C", "expr": "sum(rate(api_timeouts_total[1m]))", "legendFormat": "Timeouts/sec"}
+      ]
+    },
+    {
+      "id": 4,
+      "title": "POSTGRESQL PERSISTENCE & CONNECTION POOL",
+      "type": "gauge",
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 12},
+      "targets": [
+        {"refId": "A", "expr": "db_pool_active", "legendFormat": "Active Connections"},
+        {"refId": "B", "expr": "db_pool_idle", "legendFormat": "Idle Connections"},
+        {"refId": "C", "expr": "db_pool_max_size", "legendFormat": "Max Pool Capacity"}
+      ]
+    },
+    {
+      "id": 5,
+      "title": "DATABASE QUERY EXECUTION & TRANSACTION LATENCIES",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 16, "x": 8, "y": 12},
+      "targets": [
+        {"refId": "A", "expr": "rate(db_queries_total[1m])", "legendFormat": "Queries/sec"},
+        {"refId": "B", "expr": "rate(db_query_errors_total[1m])", "legendFormat": "Query Errors/sec"},
+        {"refId": "C", "expr": "rate(db_slow_queries_total[1m])", "legendFormat": "Slow Queries (>100ms)/sec"},
+        {"refId": "D", "expr": "rate(db_transaction_failures_total[1m])", "legendFormat": "Rollbacks/sec"}
+      ]
+    },
+    {
+      "id": 6,
+      "title": "REDIS CLUSTER, STREAM BUFFERS & CACHE EFFICIENCY",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 18},
+      "targets": [
+        {"refId": "A", "expr": "redis_connected_clients", "legendFormat": "Connected Clients"},
+        {"refId": "B", "expr": "redis_used_memory_bytes / 1048576", "legendFormat": "Used Memory (MB)"},
+        {"refId": "C", "expr": "sum(redis_stream_length)", "legendFormat": "Total Stream Backlog"},
+        {"refId": "D", "expr": "rate(redis_cache_hits_total[1m]) / (rate(redis_cache_hits_total[1m]) + rate(redis_cache_misses_total[1m])) * 100", "legendFormat": "Cache Hit Ratio %"}
+      ]
+    },
+    {
+      "id": 7,
+      "title": "EVENT-STREAM THROUGHPUT & NON-SILENT DROPPED AUDIT",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 18},
+      "targets": [
+        {"refId": "A", "expr": "sum(rate(events_published_total[1m]))", "legendFormat": "Published/sec"},
+        {"refId": "B", "expr": "sum(rate(events_consumed_total[1m]))", "legendFormat": "Consumed/sec"},
+        {"refId": "C", "expr": "sum(rate(events_failed_total[1m]))", "legendFormat": "Failed/sec"},
+        {"refId": "D", "expr": "sum(rate(events_dropped_total[1m])) by (reason)", "legendFormat": "Dropped ({{reason}})"}
+      ]
+    },
+    {
+      "id": 8,
+      "title": "DIGITAL TWIN TOPOLOGY & SYNCHRONIZATION PIPELINES",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 24},
+      "targets": [
+        {"refId": "A", "expr": "devices_tracked", "legendFormat": "Devices Tracked"},
+        {"refId": "B", "expr": "active_connections", "legendFormat": "Active Graph Links"},
+        {"refId": "C", "expr": "rate(twin_updates_total[1m])", "legendFormat": "State Updates/sec"},
+        {"refId": "D", "expr": "rate(state_transition_failures_total[1m])", "legendFormat": "Transition Errors/sec"}
+      ]
+    },
+    {
+      "id": 9,
+      "title": "ML INFERENCE LATENCY, ACCURACY & XAI DRIVERS",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 24},
+      "targets": [
+        {"refId": "A", "expr": "sum(rate(predictions_total[1m]))", "legendFormat": "Predictions/sec"},
+        {"refId": "B", "expr": "histogram_quantile(0.95, sum(rate(ml_inference_latency_seconds_bucket[1m])) by (le))", "legendFormat": "p95 Inference Latency (s)"},
+        {"refId": "C", "expr": "predictions_high_confidence_total", "legendFormat": "High Confidence (>=0.85)"},
+        {"refId": "D", "expr": "predictions_low_confidence_total", "legendFormat": "Low Confidence (<0.65)"},
+        {"refId": "E", "expr": "rate(xai_explanations_total[1m])", "legendFormat": "SHAP Explanations/sec"}
+      ]
+    },
+    {
+      "id": 10,
+      "title": "ATTACK SIMULATION LIFECYCLE & SCENARIO EXECUTION",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 30},
+      "targets": [
+        {"refId": "A", "expr": "simulation_runs_active", "legendFormat": "Active Runs"},
+        {"refId": "B", "expr": "sum(rate(simulation_runs_total[1m]))", "legendFormat": "Started Runs/sec"},
+        {"refId": "C", "expr": "sum(rate(simulation_events_total[1m]))", "legendFormat": "Synthetic Attack Events/sec"}
+      ]
+    },
+    {
+      "id": 11,
+      "title": "WEBSOCKET GATEWAY & LIVE SOC BROADCAST LATENCY",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 30},
+      "targets": [
+        {"refId": "A", "expr": "ws_active_connections", "legendFormat": "Active Clients"},
+        {"refId": "B", "expr": "rate(ws_messages_sent_total[1m])", "legendFormat": "Broadcasts/sec"},
+        {"refId": "C", "expr": "histogram_quantile(0.95, sum(rate(ws_broadcast_latency_seconds_bucket[1m])) by (le))", "legendFormat": "p95 Broadcast Latency (s)"},
+        {"refId": "D", "expr": "ws_reconnects_total", "legendFormat": "Reconnections"}
+      ]
+    },
+    {
+      "id": 12,
+      "title": "HOST & PROCESS RESOURCE CONSTRAINTS (CPU & MEMORY)",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 36},
+      "targets": [
+        {"refId": "A", "expr": "host_cpu_percent", "legendFormat": "Host CPU %"},
+        {"refId": "B", "expr": "host_memory_percent", "legendFormat": "Host Memory %"},
+        {"refId": "C", "expr": "host_memory_used_bytes / 1073741824", "legendFormat": "Used RAM (GB)"},
+        {"refId": "D", "expr": "host_memory_available_bytes / 1073741824", "legendFormat": "Available RAM (GB)"},
+        {"refId": "E", "expr": "worker_memory_rss_bytes / 1048576", "legendFormat": "Worker Process RSS (MB)"}
+      ]
+    }
+  ]
+}
