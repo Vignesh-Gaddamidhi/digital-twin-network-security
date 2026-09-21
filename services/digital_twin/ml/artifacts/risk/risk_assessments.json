@@ -1,6 +1,6 @@
 [
   {
-    "riskId": "RISK-6FBBEBB7",
+    "riskId": "RISK-FF660423",
     "predictionId": "PRED-TEST-A",
     "threatProbability": 0.9,
     "threatProbabilityFormatted": "90.0%",
@@ -16,7 +16,7 @@
     "explanation": "Assigned MEDIUM risk (score: 42.7) synthesized from PORT_SCAN prediction on LOW asset with INTERNAL_ISOLATED perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:58:45.454188+00:00",
+    "timestamp": "2026-09-21T05:40:41.672085+00:00",
     "contextSnapshot": {
       "deviceCriticality": "LOW",
       "networkExposure": "INTERNAL_ISOLATED",
@@ -25,7 +25,7 @@
     }
   },
   {
-    "riskId": "RISK-164A6629",
+    "riskId": "RISK-30674626",
     "predictionId": "PRED-TEST-B",
     "threatProbability": 0.9,
     "threatProbabilityFormatted": "90.0%",
@@ -44,7 +44,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from PORT_SCAN prediction on MISSION_CRITICAL asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:58:45.455152+00:00",
+    "timestamp": "2026-09-21T05:40:41.673790+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MISSION_CRITICAL",
       "networkExposure": "EXTERNAL_FACING",
@@ -53,7 +53,7 @@
     }
   },
   {
-    "riskId": "RISK-1C7ED60A",
+    "riskId": "RISK-19FD9935",
     "predictionId": "PRED-CANONICAL-01",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
@@ -73,7 +73,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from NETWORK_INTRUSION prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:58:45.466096+00:00",
+    "timestamp": "2026-09-21T05:40:41.682436+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -82,7 +82,7 @@
     }
   },
   {
-    "riskId": "RISK-764A2AFE",
+    "riskId": "RISK-86CC7C22",
     "predictionId": "PRED-STRICT",
     "threatProbability": 0.6,
     "threatProbabilityFormatted": "60.0%",
@@ -97,7 +97,7 @@
     "explanation": "Assigned MEDIUM risk (score: 39.8) synthesized from PORT_SCAN prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:58:45.477257+00:00",
+    "timestamp": "2026-09-21T05:40:41.693668+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -106,8 +106,8 @@
     }
   },
   {
-    "riskId": "RISK-BC93FB79",
-    "predictionId": "PRED-TS-9934ff",
+    "riskId": "RISK-1A93F97E",
+    "predictionId": "PRED-TS-70c767",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "DOS_LIKE",
@@ -124,7 +124,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:24.077103+00:00",
+    "timestamp": "2026-09-21T05:41:27.488087+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -133,8 +133,8 @@
     }
   },
   {
-    "riskId": "RISK-46458434",
-    "predictionId": "PRED-TS-3fcb5b",
+    "riskId": "RISK-621EFF7E",
+    "predictionId": "PRED-TS-889b71",
     "threatProbability": 0.05,
     "threatProbabilityFormatted": "5.0%",
     "predictedCategory": "NORMAL",
@@ -150,7 +150,7 @@
     "explanation": "Assigned LOW risk (score: 1.0) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:40.898158+00:00",
+    "timestamp": "2026-09-21T05:41:52.147820+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -159,8 +159,8 @@
     }
   },
   {
-    "riskId": "RISK-6E029B5E",
-    "predictionId": "PRED-17D00F49",
+    "riskId": "RISK-647C9090",
+    "predictionId": "PRED-05BC57C5",
     "threatProbability": 0.28,
     "threatProbabilityFormatted": "28.0%",
     "predictedCategory": "NORMAL",
@@ -175,7 +175,7 @@
     "explanation": "Assigned LOW risk (score: 10.5) synthesized from NORMAL prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:40.987241+00:00",
+    "timestamp": "2026-09-21T05:41:52.225121+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -184,8 +184,8 @@
     }
   },
   {
-    "riskId": "RISK-388DAA79",
-    "predictionId": "PRED-TS-b2606d",
+    "riskId": "RISK-CC90D910",
+    "predictionId": "PRED-TS-cfdf71",
     "threatProbability": 0.05,
     "threatProbabilityFormatted": "5.0%",
     "predictedCategory": "NORMAL",
@@ -201,7 +201,7 @@
     "explanation": "Assigned LOW risk (score: 1.0) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.026511+00:00",
+    "timestamp": "2026-09-21T05:41:52.261728+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -210,8 +210,8 @@
     }
   },
   {
-    "riskId": "RISK-2D9D6634",
-    "predictionId": "PRED-D5108F4C",
+    "riskId": "RISK-87456A13",
+    "predictionId": "PRED-57CB8B06",
     "threatProbability": 0.44,
     "threatProbabilityFormatted": "44.0%",
     "predictedCategory": "NORMAL",
@@ -226,7 +226,7 @@
     "explanation": "Assigned LOW risk (score: 12.9) synthesized from NORMAL prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.085686+00:00",
+    "timestamp": "2026-09-21T05:41:52.316160+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -235,8 +235,8 @@
     }
   },
   {
-    "riskId": "RISK-CF6286F6",
-    "predictionId": "PRED-TS-cd62bd",
+    "riskId": "RISK-ABC7CA85",
+    "predictionId": "PRED-TS-28a1cc",
     "threatProbability": 0.05,
     "threatProbabilityFormatted": "5.0%",
     "predictedCategory": "NORMAL",
@@ -252,7 +252,7 @@
     "explanation": "Assigned LOW risk (score: 1.0) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.125753+00:00",
+    "timestamp": "2026-09-21T05:41:52.352013+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -261,8 +261,8 @@
     }
   },
   {
-    "riskId": "RISK-D8CDE955",
-    "predictionId": "PRED-012A94DF",
+    "riskId": "RISK-4C807DE6",
+    "predictionId": "PRED-3999E133",
     "threatProbability": 0.67,
     "threatProbabilityFormatted": "67.0%",
     "predictedCategory": "NORMAL",
@@ -277,7 +277,7 @@
     "explanation": "Assigned LOW risk (score: 11.5) synthesized from NORMAL prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.180136+00:00",
+    "timestamp": "2026-09-21T05:41:52.409131+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -286,8 +286,8 @@
     }
   },
   {
-    "riskId": "RISK-C7499607",
-    "predictionId": "PRED-TS-e3ea3b",
+    "riskId": "RISK-C12205B4",
+    "predictionId": "PRED-TS-a31f9d",
     "threatProbability": 0.05,
     "threatProbabilityFormatted": "5.0%",
     "predictedCategory": "NORMAL",
@@ -303,7 +303,7 @@
     "explanation": "Assigned LOW risk (score: 1.0) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.216400+00:00",
+    "timestamp": "2026-09-21T05:41:52.444421+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -312,8 +312,8 @@
     }
   },
   {
-    "riskId": "RISK-080D03FE",
-    "predictionId": "PRED-4228BC82",
+    "riskId": "RISK-419BF7A0",
+    "predictionId": "PRED-826758CA",
     "threatProbability": 0.36,
     "threatProbabilityFormatted": "36.0%",
     "predictedCategory": "NORMAL",
@@ -328,7 +328,7 @@
     "explanation": "Assigned LOW risk (score: 12.0) synthesized from NORMAL prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.275759+00:00",
+    "timestamp": "2026-09-21T05:41:52.500449+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -337,8 +337,8 @@
     }
   },
   {
-    "riskId": "RISK-D61DECDA",
-    "predictionId": "PRED-TS-659f1f",
+    "riskId": "RISK-0E0F51BE",
+    "predictionId": "PRED-TS-89f974",
     "threatProbability": 0.05,
     "threatProbabilityFormatted": "5.0%",
     "predictedCategory": "NORMAL",
@@ -354,7 +354,7 @@
     "explanation": "Assigned LOW risk (score: 1.0) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.317596+00:00",
+    "timestamp": "2026-09-21T05:41:52.537717+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -363,8 +363,8 @@
     }
   },
   {
-    "riskId": "RISK-771D2D3C",
-    "predictionId": "PRED-81E4B7E6",
+    "riskId": "RISK-5204585B",
+    "predictionId": "PRED-FB50D867",
     "threatProbability": 0.1,
     "threatProbabilityFormatted": "10.0%",
     "predictedCategory": "NORMAL",
@@ -380,7 +380,7 @@
     "explanation": "Assigned LOW risk (score: 2.0) synthesized from NORMAL prediction on MEDIUM asset with INTERNAL_ROUTABLE perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.387305+00:00",
+    "timestamp": "2026-09-21T05:41:52.594894+00:00",
     "contextSnapshot": {
       "deviceCriticality": "MEDIUM",
       "networkExposure": "INTERNAL_ROUTABLE",
@@ -389,8 +389,8 @@
     }
   },
   {
-    "riskId": "RISK-5EE470E5",
-    "predictionId": "PRED-TS-c93ee2",
+    "riskId": "RISK-3B40AA9B",
+    "predictionId": "PRED-TS-cdd32a",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -407,7 +407,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.423941+00:00",
+    "timestamp": "2026-09-21T05:41:52.634736+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -416,8 +416,8 @@
     }
   },
   {
-    "riskId": "RISK-31FA6CD4",
-    "predictionId": "PRED-B02316BC",
+    "riskId": "RISK-34F7E834",
+    "predictionId": "PRED-FD0F0DCC",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "PORT_SCAN",
@@ -436,7 +436,7 @@
     "explanation": "Assigned CRITICAL risk (score: 92.8) synthesized from PORT_SCAN prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.493600+00:00",
+    "timestamp": "2026-09-21T05:41:52.707669+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -445,8 +445,8 @@
     }
   },
   {
-    "riskId": "RISK-C7770EAD",
-    "predictionId": "PRED-TS-4ef267",
+    "riskId": "RISK-D919FCBB",
+    "predictionId": "PRED-TS-0900f4",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -463,7 +463,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.533617+00:00",
+    "timestamp": "2026-09-21T05:41:52.747808+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -472,8 +472,8 @@
     }
   },
   {
-    "riskId": "RISK-9EBD031E",
-    "predictionId": "PRED-812AD209",
+    "riskId": "RISK-D69CA05C",
+    "predictionId": "PRED-E596D999",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DOS_LIKE",
@@ -492,7 +492,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DOS_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.614205+00:00",
+    "timestamp": "2026-09-21T05:41:52.815816+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -501,8 +501,8 @@
     }
   },
   {
-    "riskId": "RISK-9F93FB7A",
-    "predictionId": "PRED-TS-f0a843",
+    "riskId": "RISK-F1C43F90",
+    "predictionId": "PRED-TS-7ad96e",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -519,7 +519,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.654235+00:00",
+    "timestamp": "2026-09-21T05:41:52.855160+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -528,8 +528,8 @@
     }
   },
   {
-    "riskId": "RISK-BD7A5AB7",
-    "predictionId": "PRED-D227639E",
+    "riskId": "RISK-9513450B",
+    "predictionId": "PRED-76ED16D4",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "DNS_ANOMALY",
@@ -549,7 +549,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from DNS_ANOMALY prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.723865+00:00",
+    "timestamp": "2026-09-21T05:41:52.927490+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -558,8 +558,8 @@
     }
   },
   {
-    "riskId": "RISK-7FB2A390",
-    "predictionId": "PRED-TS-3cfc26",
+    "riskId": "RISK-F03A6428",
+    "predictionId": "PRED-TS-be93e7",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -576,7 +576,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.761369+00:00",
+    "timestamp": "2026-09-21T05:41:52.972421+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -585,8 +585,8 @@
     }
   },
   {
-    "riskId": "RISK-AFEEC138",
-    "predictionId": "PRED-84A85341",
+    "riskId": "RISK-A87D03CB",
+    "predictionId": "PRED-24B517D8",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "BEACONING",
@@ -606,7 +606,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from BEACONING prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.830935+00:00",
+    "timestamp": "2026-09-21T05:41:53.054151+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -615,8 +615,8 @@
     }
   },
   {
-    "riskId": "RISK-4E17F756",
-    "predictionId": "PRED-TS-02ebf7",
+    "riskId": "RISK-EEC7E4D1",
+    "predictionId": "PRED-TS-9243c1",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -633,7 +633,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.872194+00:00",
+    "timestamp": "2026-09-21T05:41:53.090789+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -642,8 +642,8 @@
     }
   },
   {
-    "riskId": "RISK-445BA482",
-    "predictionId": "PRED-8F0DA8B0",
+    "riskId": "RISK-6D62D8AB",
+    "predictionId": "PRED-E8955533",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "LATERAL_MOVEMENT_LIKE",
@@ -663,7 +663,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from LATERAL_MOVEMENT_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.947178+00:00",
+    "timestamp": "2026-09-21T05:41:53.165844+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -672,8 +672,8 @@
     }
   },
   {
-    "riskId": "RISK-626EF26A",
-    "predictionId": "PRED-TS-3706f2",
+    "riskId": "RISK-ED4E946B",
+    "predictionId": "PRED-TS-613acd",
     "threatProbability": 0.87,
     "threatProbabilityFormatted": "87.0%",
     "predictedCategory": "NORMAL",
@@ -690,7 +690,7 @@
     "explanation": "Assigned MEDIUM risk (score: 49.9) synthesized from NORMAL prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:41.987638+00:00",
+    "timestamp": "2026-09-21T05:41:53.205477+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",
@@ -699,8 +699,8 @@
     }
   },
   {
-    "riskId": "RISK-E59043D3",
-    "predictionId": "PRED-F043BF91",
+    "riskId": "RISK-C8C28097",
+    "predictionId": "PRED-C0D8BEBC",
     "threatProbability": 1.0,
     "threatProbabilityFormatted": "100.0%",
     "predictedCategory": "EXFILTRATION_LIKE",
@@ -720,7 +720,7 @@
     "explanation": "Assigned CRITICAL risk (score: 100.0) synthesized from EXFILTRATION_LIKE prediction on HIGH asset with EXTERNAL_FACING perimeter exposure.",
     "modelVersion": "1.0.0",
     "riskEngineVersion": "v2.0-ml-contextual",
-    "timestamp": "2026-09-17T14:59:42.066177+00:00",
+    "timestamp": "2026-09-21T05:41:53.272715+00:00",
     "contextSnapshot": {
       "deviceCriticality": "HIGH",
       "networkExposure": "EXTERNAL_FACING",

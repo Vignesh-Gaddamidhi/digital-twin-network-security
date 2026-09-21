@@ -1,3 +1,5 @@
+from services.digital_twin.core.observability.infra_metrics import infra_metrics, PrometheusMiddleware
+
 from security.response.audit.response_audit import response_audit_trail_engine, AuditFilterCriteria
 from security.response.models.response import CanonicalResponseContract
 from security.response.engine.twin_state_mutation_engine import twin_state_mutation_engine
@@ -7076,3 +7078,38 @@ async def websocket_realtime_distributed_endpoint(websocket: WebSocket):
         ws_gateway.unregister_client(sub)
     except Exception:
         ws_gateway.unregister_client(sub)
+
+# -------------------------------------------------------------------
+# Phase 25 Observability & Prometheus Scrape Route
+# -------------------------------------------------------------------
+from fastapi.responses import PlainTextResponse
+from services.digital_twin.core.observability.prometheus_metrics import platform_metrics
+from services.digital_twin.core.observability.health_evaluator import health_evaluator
+from services.digital_twin.core.observability.infra_metrics import PrometheusMiddleware, infra_metrics
+from services.digital_twin.core.observability.event_ws_observability import event_ws_observability
+from services.digital_twin.core.observability.intelligence_observability import intel_observability
+from services.digital_twin.core.observability.system_resource_observability import sys_resource_observability
+
+# Attach ASGI auto-instrumentation middleware
+app.add_middleware(PrometheusMiddleware, service_name="twin_api")
+
+@app.get("/metrics", response_class=PlainTextResponse, tags=["Observability"], include_in_schema=False)
+async def get_prometheus_metrics():
+    """Prometheus :9090 scrape target with live subsystem polling."""
+    await health_evaluator.evaluate_all()
+
+    try:
+        sys_resource_observability.sample_system_resources()
+        await infra_metrics.collect_db_metrics()
+        await infra_metrics.collect_redis_metrics()
+    except Exception:
+        pass
+
+    return (
+        platform_metrics.render_prometheus_exposition()
+        + infra_metrics.render_infra_exposition()
+        + event_ws_observability.render_event_and_ws_exposition()
+        + intel_observability.render_intelligence_exposition()
+        + sys_resource_observability.render_system_exposition()
+    )
+

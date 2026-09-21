@@ -15,3 +15,6 @@ data/simulation/attack_runs/
 
 .env
 
+data/simulation/baselines/run-*.json
+data/simulation/runs/run-*.json
+run_all_tests.ps1

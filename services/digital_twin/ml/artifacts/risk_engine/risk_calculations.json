@@ -1,9 +1,9 @@
 [
   {
-    "calculationId": "CALC-72903E91",
+    "calculationId": "CALC-D70706E7",
     "predictionId": "PRED-CANON-130",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-17T15:00:04.409710+00:00",
+    "timestamp": "2026-09-21T05:42:12.390347+00:00",
     "rawRiskScore": 0.696,
     "riskScore": 69.6,
     "riskScoreFormatted": "69.60 / 100.0",
@@ -31,10 +31,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-B86CE8F2",
+    "calculationId": "CALC-F5A2EA50",
     "predictionId": "PRED-TC1",
     "deviceId": "DEV-01",
-    "timestamp": "2026-09-17T15:00:04.411501+00:00",
+    "timestamp": "2026-09-21T05:42:12.391342+00:00",
     "rawRiskScore": 0.032,
     "riskScore": 3.2,
     "riskScoreFormatted": "3.20 / 100.0",
@@ -62,10 +62,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-D727E3F6",
+    "calculationId": "CALC-2B739C81",
     "predictionId": "PRED-TC2",
     "deviceId": "DEV-02",
-    "timestamp": "2026-09-17T15:00:04.427235+00:00",
+    "timestamp": "2026-09-21T05:42:12.405163+00:00",
     "rawRiskScore": 0.4096,
     "riskScore": 40.96,
     "riskScoreFormatted": "40.96 / 100.0",
@@ -93,10 +93,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-09366626",
+    "calculationId": "CALC-AF42F351",
     "predictionId": "PRED-TC3",
     "deviceId": "DEV-03",
-    "timestamp": "2026-09-17T15:00:04.436337+00:00",
+    "timestamp": "2026-09-21T05:42:12.413803+00:00",
     "rawRiskScore": 0.9,
     "riskScore": 90.0,
     "riskScoreFormatted": "90.00 / 100.0",
@@ -124,10 +124,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-B651A675",
+    "calculationId": "CALC-54EB8B63",
     "predictionId": "PRED-000123",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-17T15:00:06.058505+00:00",
+    "timestamp": "2026-09-21T05:42:13.707651+00:00",
     "rawRiskScore": 0.696,
     "riskScore": 69.6,
     "riskScoreFormatted": "69.60 / 100.0",
@@ -155,10 +155,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-9263F0D7",
+    "calculationId": "CALC-98242D7A",
     "predictionId": "PRED-NORM-HTTP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.063779+00:00",
+    "timestamp": "2026-09-21T05:42:13.712475+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -186,10 +186,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-93B6F74C",
+    "calculationId": "CALC-4E41E28C",
     "predictionId": "PRED-NORM-HTTPS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.103856+00:00",
+    "timestamp": "2026-09-21T05:42:13.752682+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -217,10 +217,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-403EAC8F",
+    "calculationId": "CALC-3A823CA9",
     "predictionId": "PRED-NORM-DNS",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.164021+00:00",
+    "timestamp": "2026-09-21T05:42:13.812703+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -248,10 +248,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-85715CFA",
+    "calculationId": "CALC-57804C76",
     "predictionId": "PRED-NORM-SSH",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.193302+00:00",
+    "timestamp": "2026-09-21T05:42:13.844731+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -279,10 +279,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-5728EA34",
+    "calculationId": "CALC-E0D22C3D",
     "predictionId": "PRED-NORM-ICMP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.221565+00:00",
+    "timestamp": "2026-09-21T05:42:13.874477+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -310,10 +310,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-4B3F10A7",
+    "calculationId": "CALC-711C81A1",
     "predictionId": "PRED-NORM-TCP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.249643+00:00",
+    "timestamp": "2026-09-21T05:42:13.903591+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -341,10 +341,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-6F10B4C1",
+    "calculationId": "CALC-9F1807A0",
     "predictionId": "PRED-NORM-UDP",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.277542+00:00",
+    "timestamp": "2026-09-21T05:42:13.931334+00:00",
     "rawRiskScore": 0.00128,
     "riskScore": 0.13,
     "riskScoreFormatted": "0.13 / 100.0",
@@ -372,10 +372,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-023531AF",
+    "calculationId": "CALC-CACAB0F0",
     "predictionId": "PRED-ATT-PORT_SCAN",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.307410+00:00",
+    "timestamp": "2026-09-21T05:42:13.961526+00:00",
     "rawRiskScore": 0.024,
     "riskScore": 2.4,
     "riskScoreFormatted": "2.40 / 100.0",
@@ -403,10 +403,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-4A55455C",
+    "calculationId": "CALC-0D46BD8A",
     "predictionId": "PRED-ATT-BRUTE_FORCE_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-17T15:00:06.336956+00:00",
+    "timestamp": "2026-09-21T05:42:13.990654+00:00",
     "rawRiskScore": 0.1088,
     "riskScore": 10.88,
     "riskScoreFormatted": "10.88 / 100.0",
@@ -434,10 +434,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-5EE9552D",
+    "calculationId": "CALC-7E8C6274",
     "predictionId": "PRED-ATT-DOS_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-17T15:00:06.363367+00:00",
+    "timestamp": "2026-09-21T05:42:14.021030+00:00",
     "rawRiskScore": 0.1216,
     "riskScore": 12.16,
     "riskScoreFormatted": "12.16 / 100.0",
@@ -465,10 +465,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-7A532392",
+    "calculationId": "CALC-66CE96BD",
     "predictionId": "PRED-ATT-DNS_ANOMALY",
     "deviceId": "DNS-SERVER-01",
-    "timestamp": "2026-09-17T15:00:06.402315+00:00",
+    "timestamp": "2026-09-21T05:42:14.048891+00:00",
     "rawRiskScore": 0.0576,
     "riskScore": 5.76,
     "riskScoreFormatted": "5.76 / 100.0",
@@ -496,10 +496,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-770ACD22",
+    "calculationId": "CALC-CC04D023",
     "predictionId": "PRED-ATT-BEACONING",
     "deviceId": "CLIENT-01",
-    "timestamp": "2026-09-17T15:00:06.432691+00:00",
+    "timestamp": "2026-09-21T05:42:14.078334+00:00",
     "rawRiskScore": 0.0336,
     "riskScore": 3.36,
     "riskScoreFormatted": "3.36 / 100.0",
@@ -527,10 +527,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-988B3F1F",
+    "calculationId": "CALC-440EADB4",
     "predictionId": "PRED-ATT-LATERAL_MOVEMENT_LIKE",
     "deviceId": "WEB-01",
-    "timestamp": "2026-09-17T15:00:06.461946+00:00",
+    "timestamp": "2026-09-21T05:42:14.109924+00:00",
     "rawRiskScore": 0.11264,
     "riskScore": 11.26,
     "riskScoreFormatted": "11.26 / 100.0",
@@ -558,10 +558,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-DA71898F",
+    "calculationId": "CALC-33D60EC5",
     "predictionId": "PRED-ATT-EXFILTRATION_LIKE",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-17T15:00:06.494682+00:00",
+    "timestamp": "2026-09-21T05:42:14.140015+00:00",
     "rawRiskScore": 0.19,
     "riskScore": 19.0,
     "riskScoreFormatted": "19.00 / 100.0",
@@ -589,10 +589,10 @@
     "status": "CALCULATED"
   },
   {
-    "calculationId": "CALC-4652B7E8",
+    "calculationId": "CALC-5F4C2FE0",
     "predictionId": "P4",
     "deviceId": "DB-01",
-    "timestamp": "2026-09-17T15:00:06.524831+00:00",
+    "timestamp": "2026-09-21T05:42:14.170365+00:00",
     "rawRiskScore": 0.102,
     "riskScore": 10.2,
     "riskScoreFormatted": "10.20 / 100.0",
