@@ -7,15 +7,20 @@ from services.digital_twin.core.observability.prometheus_metrics import (
 
 class SystemHealthEvaluator:
     def __init__(self):
-        self.check_timeout = 2.0
+        self.check_timeout = 3.0
 
     async def evaluate_redis(self) -> Tuple[HealthState, float, str]:
         t0 = time.perf_counter()
         try:
             from services.digital_twin.core.redis.redis_manager import redis_manager
+            if getattr(redis_manager, "client", None) is None:
+                await asyncio.wait_for(redis_manager.connect(), timeout=self.check_timeout)
+
             code, msg = await asyncio.wait_for(redis_manager.check_health(), timeout=self.check_timeout)
             dur = (time.perf_counter() - t0) * 1000.0
-            state = HealthState.HEALTHY if code.value == "HEALTHY" else HealthState.DEGRADED
+            
+            val_str = getattr(code, "value", str(code)).upper()
+            state = HealthState.HEALTHY if "HEALTHY" in val_str else HealthState.DEGRADED
             return state, dur, msg
         except Exception as ex:
             dur = (time.perf_counter() - t0) * 1000.0
@@ -25,11 +30,15 @@ class SystemHealthEvaluator:
         t0 = time.perf_counter()
         try:
             from packages.database.src.db_connection import db_manager
-            if getattr(db_manager, "_pool", None) is not None:
+            if getattr(db_manager, "_pool", None) is None:
+                await asyncio.wait_for(db_manager.connect(), timeout=self.check_timeout)
+
+            if db_manager._pool is not None:
                 async with db_manager._pool.acquire() as conn:
                     val = await asyncio.wait_for(conn.fetchval("SELECT 1"), timeout=self.check_timeout)
                     dur = (time.perf_counter() - t0) * 1000.0
                     return HealthState.HEALTHY, dur, "PostgreSQL connected and responsive"
+            
             dur = (time.perf_counter() - t0) * 1000.0
             return HealthState.DEGRADED, dur, "Database pool not connected"
         except Exception as ex:

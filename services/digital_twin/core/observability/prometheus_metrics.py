@@ -30,10 +30,8 @@ class PrometheusMetricsRegistry:
         self.errors_total: Dict[Tuple[str, str, int, str], int] = {}
         self.active_requests: Dict[Tuple[str, str], int] = {}
         
-        # Histograms: (method, route, service) -> {bucket: count, "sum": float, "count": int, "observations": list}
         self.duration_histograms: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
         
-        # Service health mappings
         self.service_health: Dict[SubsystemEnum, Dict[str, Any]] = {
             s: {"state": HealthState.UNKNOWN, "latency_ms": 0.0, "last_check": 0.0, "message": "Initialized"}
             for s in SubsystemEnum
@@ -46,7 +44,12 @@ class PrometheusMetricsRegistry:
         for p in parts:
             if not p:
                 continue
-            if p.startswith(("DEV-", "SIM-", "INC-", "ALT-", "USR-")) or len(p) > 24 or p.isnumeric():
+            if (
+                p.startswith(("DEV-", "SIM-", "INC-", "ALT-", "USR-"))
+                or len(p) > 24
+                or p.isnumeric()
+                or p in ("critical", "isolation")
+            ):
                 normalized.append("{id}")
             else:
                 normalized.append(p)
@@ -63,21 +66,17 @@ class PrometheusMetricsRegistry:
         norm_route = self.normalize_route(route)
         method_str = method.upper()
 
-        # Decrement active requests
         active_key = (method_str, norm_route)
         if active_key in self.active_requests:
             self.active_requests[active_key] = max(0, self.active_requests[active_key] - 1)
 
-        # Increment total counter
         counter_key = (method_str, norm_route, status_code, service)
         self.requests_total[counter_key] = self.requests_total.get(counter_key, 0) + 1
 
-        # Check errors
         if status_code >= 400:
             err_key = (method_str, norm_route, status_code, service)
             self.errors_total[err_key] = self.errors_total.get(err_key, 0) + 1
 
-        # Histogram tracking
         hist_key = (method_str, norm_route, service)
         if hist_key not in self.duration_histograms:
             self.duration_histograms[hist_key] = {
@@ -128,10 +127,8 @@ class PrometheusMetricsRegistry:
         }
 
     def render_prometheus_exposition(self) -> str:
-        """Render metrics strictly in Prometheus exposition format for :9090 scrapes."""
         lines = []
         
-        # HELP and TYPE definitions
         lines.append("# HELP api_requests_total Total count of processed HTTP API requests.")
         lines.append("# TYPE api_requests_total counter")
         for (m, r, sc, s), cnt in self.requests_total.items():
@@ -167,5 +164,4 @@ class PrometheusMetricsRegistry:
 
         return "\n".join(lines) + "\n"
 
-# Singleton platform metrics instance
 platform_metrics = PrometheusMetricsRegistry()
