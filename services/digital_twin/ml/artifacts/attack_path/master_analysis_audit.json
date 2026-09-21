@@ -1478,5 +1478,29 @@
     "featureVersion": "feature-v1.0",
     "explanationId": "PEXP-179B45",
     "status": "COMPLETED"
+  },
+  {
+    "analysisId": "APANA-2F4D17C0",
+    "timestamp": "2026-09-21T05:51:13.299478+00:00",
+    "graphVersion": "v1.0",
+    "source": "CLIENT-01",
+    "target": "DB-01",
+    "traversalMethod": "DFS_ALL_BOUNDED",
+    "pathsDiscovered": 2,
+    "pathsBlocked": 1,
+    "pathsPartial": 0,
+    "selectedPath": [
+      "CLIENT-01",
+      "WEB-01",
+      "DB-01"
+    ],
+    "pathRiskScore": 80.36,
+    "pathRiskLevel": "CRITICAL",
+    "criticalTarget": true,
+    "riskEngineVersion": "v3.0-multiplicative",
+    "modelVersion": "rf-v1.0",
+    "featureVersion": "feature-v1.0",
+    "explanationId": "PEXP-9EFCDE",
+    "status": "COMPLETED"
   }
 ]
